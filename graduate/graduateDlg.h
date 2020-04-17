@@ -3,12 +3,14 @@
 //
 
 #pragma once
+#include "CStock.h"
 
 
 // CgraduateDlg 대화 상자
 class CgraduateDlg : public CDialogEx
 {
 // 생성입니다.
+
 public:
 	CgraduateDlg(CWnd* pParent = nullptr);	// 표준 생성자입니다.
 
@@ -22,6 +24,8 @@ public:
 
 
 // 구현입니다.
+private:
+	CStock* stock;
 protected:
 	HICON m_hIcon;
 
@@ -33,4 +37,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedButtonRun();
+	CListBox LISTBOX;
+	CListBox userInfoList;
+	afx_msg void OnBnClickedButton1();
+	DECLARE_EVENTSINK_MAP()
+	void OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LPCTSTR sTrCode, LPCTSTR sRecordName, LPCTSTR sPrevNext, long nDataLength, LPCTSTR sErrorCode, LPCTSTR sMessage, LPCTSTR sSplmMsg);
+	afx_msg void OnBnClickedSend();
+	CListBox stockList;
 };

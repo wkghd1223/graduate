@@ -1,5 +1,4 @@
-﻿
-// graduateDlg.cpp: 구현 파일
+﻿// graduateDlg.cpp: 구현 파일
 //
 
 #include "pch.h"
@@ -54,11 +53,18 @@ CgraduateDlg::CgraduateDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_GRADUATE_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+
 }
 
 void CgraduateDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_KHOPENAPICTRL1, theApp.kStock);
+
+	DDX_Control(pDX, IDC_LIST_USER, userInfoList);
+	DDX_Control(pDX, IDC_STOCK_LIST, stockList);
+	DDX_Control(pDX, IDC_STOCK_LIST, stockList);
+	DDX_Control(pDX, IDC_STOCK_LIST, stockList);
 }
 
 BEGIN_MESSAGE_MAP(CgraduateDlg, CDialogEx)
@@ -66,6 +72,8 @@ BEGIN_MESSAGE_MAP(CgraduateDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON_RUN, &CgraduateDlg::OnBnClickedButtonRun)
+	ON_BN_CLICKED(IDC_BUTTON1, &CgraduateDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_SEND, &CgraduateDlg::OnBnClickedSend)
 END_MESSAGE_MAP()
 
 
@@ -73,8 +81,9 @@ END_MESSAGE_MAP()
 
 BOOL CgraduateDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	stock = new CStock();
 
+	CDialogEx::OnInitDialog();
 	// 시스템 메뉴에 "정보..." 메뉴 항목을 추가합니다.
 
 	// IDM_ABOUTBOX는 시스템 명령 범위에 있어야 합니다.
@@ -158,5 +167,61 @@ HCURSOR CgraduateDlg::OnQueryDragIcon()
 
 void CgraduateDlg::OnBnClickedButtonRun()
 {
-	::AfxMessageBox(_T("Run Button is Clicked."));
+	int loginFlag;
+	loginFlag = theApp.kStock.CommConnect();
+	if (loginFlag == 0)
+		::AfxMessageBox(_T("log in"));
+	else
+		::AfxMessageBox(_T("log in fail"));
+}
+
+void CgraduateDlg::OnBnClickedButton1()
+{
+	userInfoList.AddString(theApp.kStock.GetLoginInfo(_T("ACCOUNT_CNT")) + "\n");
+	userInfoList.AddString(theApp.kStock.GetLoginInfo(_T("ACCNO")) + "\n");
+	userInfoList.AddString(theApp.kStock.GetLoginInfo(_T("USER_ID")) + "\n");
+	userInfoList.AddString(theApp.kStock.GetLoginInfo(_T("USER_NAME")) + "\n");
+	userInfoList.AddString(theApp.kStock.GetLoginInfo(_T("KEY_BSECGB")) + "\n");
+	userInfoList.AddString(theApp.kStock.GetLoginInfo(_T("FIREW_SECGB")) + "\n");
+}BEGIN_EVENTSINK_MAP(CgraduateDlg, CDialogEx)
+ON_EVENT(CgraduateDlg, IDC_KHOPENAPICTRL1, 1, CgraduateDlg::OnReceiveTrDataKhopenapictrl1, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR)
+END_EVENTSINK_MAP()
+
+
+void CgraduateDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LPCTSTR sTrCode, LPCTSTR sRecordName, LPCTSTR sPrevNext, long nDataLength, LPCTSTR sErrorCode, LPCTSTR sMessage, LPCTSTR sSplmMsg)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+	CString out = sRQName;
+
+	if (out == _T("주식기본정보")) {
+		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("종목명"));
+		out.Trim();
+		stockList.AddString(_T("종목명") + out);
+		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("시가총액"));
+		out.Trim();
+		stockList.AddString(_T("시가총액\t") + out);
+		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("현재가"));
+		out.Trim();
+		stockList.AddString(_T("현재가\t") + out);
+		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("거래량"));
+		out.Trim();
+		stockList.AddString(_T("거래량\t") + out);
+		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("PER"));
+		out.Trim();
+		stockList.AddString(_T("PER\t") + out);
+		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("PBR"));
+		out.Trim();
+		stockList.AddString(_T("PBR\t") + out);
+		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("ROE"));
+		out.Trim();
+		stockList.AddString(_T("ROE\t") + out);
+	}
+}
+
+
+void CgraduateDlg::OnBnClickedSend()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	theApp.kStock.SetInputValue(_T("종목코드"), _T("005930"));
+	theApp.kStock.CommRqData(_T("주식기본정보"), _T("OPT10001"), 0, _T("0101"));
 }

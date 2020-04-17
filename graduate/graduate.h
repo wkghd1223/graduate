@@ -9,6 +9,7 @@
 #endif
 
 #include "resource.h"		// 주 기호입니다.
+#include "khopenapictrl1.h"
 
 
 // CgraduateApp:
@@ -19,6 +20,7 @@ class CgraduateApp : public CWinApp
 {
 public:
 	CgraduateApp();
+	CKhopenapictrl1 kStock;	// 키움증권 클래스 객체선언
 
 // 재정의입니다.
 public:
