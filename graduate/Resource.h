@@ -12,6 +12,7 @@
 #define IDD_KWANSIM_DLG                 104
 #define IDD_ORDER_DLG1                  105
 #define IDD_FO_ORDER_DLG                105
+#define IDD_CMainDlg                    106
 #define IDR_MAINFRAME                   128
 #define IDC_BUTTON_RUN                  1000
 #define IDC_BTN_CURRENTPRICE            1001
@@ -23,12 +24,16 @@
 #define IDC_STOCK_GROUP                 1004
 #define IDC_STC_JONGNAME                1005
 #define IDC_STOCK_LIST                  1005
+#define IDC_TEXT_USER                   1005
 #define IDC_BTN_SEARCH                  1006
 #define IDC_SEND                        1006
 #define IDC_GRD_HOGA                    1007
+#define IDC_ABOUT_US                    1007
 #define IDC_GRD_JONGINFO                1008
 #define IDC_GRD_TICK                    1009
+#define IDC_TEXT_STATIC                 1009
 #define IDC_GRD_CURPRC                  1010
+#define IDC_GROUP_USER_INFO             1010
 #define IDC_KHOPENAPICTRL1              1011
 #define IDC_EDT_ACCNO                   1021
 #define IDC_COM_TRTP                    1022
@@ -48,9 +53,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        131
+#define _APS_NEXT_RESOURCE_VALUE        137
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1007
-#define _APS_NEXT_SYMED_VALUE           101
+#define _APS_NEXT_CONTROL_VALUE         1011
+#define _APS_NEXT_SYMED_VALUE           107
 #endif
 #endif

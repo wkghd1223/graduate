@@ -185,7 +185,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CGraph.h" />
+    <ClInclude Include="CMainDlg.h" />
     <ClInclude Include="CStock.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="graduate.h" />
@@ -195,9 +195,10 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="CUser.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CGraph.cpp" />
+    <ClCompile Include="CMainDlg.cpp" />
     <ClCompile Include="CStock.cpp" />
     <ClCompile Include="graduate.cpp" />
     <ClCompile Include="graduateDlg.cpp" />
@@ -209,6 +210,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="CUser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="graduate.rc" />

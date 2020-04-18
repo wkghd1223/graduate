@@ -10,6 +10,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+#include "CMainDlg.h"
 
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
@@ -60,10 +61,6 @@ void CgraduateDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_KHOPENAPICTRL1, theApp.kStock);
-
-	DDX_Control(pDX, IDC_LIST_USER, userInfoList);
-	DDX_Control(pDX, IDC_STOCK_LIST, stockList);
-	DDX_Control(pDX, IDC_STOCK_LIST, stockList);
 	DDX_Control(pDX, IDC_STOCK_LIST, stockList);
 }
 
@@ -81,7 +78,6 @@ END_MESSAGE_MAP()
 
 BOOL CgraduateDlg::OnInitDialog()
 {
-	stock = new CStock();
 
 	CDialogEx::OnInitDialog();
 	// 시스템 메뉴에 "정보..." 메뉴 항목을 추가합니다.
@@ -167,23 +163,33 @@ HCURSOR CgraduateDlg::OnQueryDragIcon()
 
 void CgraduateDlg::OnBnClickedButtonRun()
 {
-	int loginFlag;
-	loginFlag = theApp.kStock.CommConnect();
-	if (loginFlag == 0)
-		::AfxMessageBox(_T("log in"));
-	else
-		::AfxMessageBox(_T("log in fail"));
+	ShowWindow(FALSE);
+	CMainDlg dlg;
+	//dlg.user = new User(theApp.kStock.GetLoginInfo(_T("USER_NAME"))
+	//	, theApp.kStock.GetLoginInfo(_T("ACCNO")) 
+	//	, theApp.kStock.GetLoginInfo(_T("USER_ID"))
+	//	, theApp.kStock.GetLoginInfo(_T("GetServerGubun")));
+	
+	dlg.user = new CUser(_T("USER_NAME")
+		, _T("ACCNO") 
+		, _T("USER_ID")
+		, _T("GetServerGubun"));
+
+	dlg.DoModal();
+	EndDialog(0);
 }
 
 void CgraduateDlg::OnBnClickedButton1()
 {
-	userInfoList.AddString(theApp.kStock.GetLoginInfo(_T("ACCOUNT_CNT")) + "\n");
-	userInfoList.AddString(theApp.kStock.GetLoginInfo(_T("ACCNO")) + "\n");
-	userInfoList.AddString(theApp.kStock.GetLoginInfo(_T("USER_ID")) + "\n");
-	userInfoList.AddString(theApp.kStock.GetLoginInfo(_T("USER_NAME")) + "\n");
-	userInfoList.AddString(theApp.kStock.GetLoginInfo(_T("KEY_BSECGB")) + "\n");
-	userInfoList.AddString(theApp.kStock.GetLoginInfo(_T("FIREW_SECGB")) + "\n");
-}BEGIN_EVENTSINK_MAP(CgraduateDlg, CDialogEx)
+	//int loginFlag;
+	//loginFlag = theApp.kStock.CommConnect();
+	//if (loginFlag == 0)
+	//	::AfxMessageBox(_T("log in"));
+	//else
+	//	::AfxMessageBox(_T("log in fail"));
+	GetDlgItem(IDC_BUTTON_RUN)->EnableWindow(TRUE);
+}
+BEGIN_EVENTSINK_MAP(CgraduateDlg, CDialogEx)
 ON_EVENT(CgraduateDlg, IDC_KHOPENAPICTRL1, 1, CgraduateDlg::OnReceiveTrDataKhopenapictrl1, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR)
 END_EVENTSINK_MAP()
 

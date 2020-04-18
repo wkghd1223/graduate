@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "CStock.h"
 
 
 // CgraduateDlg 대화 상자
@@ -24,8 +23,6 @@ public:
 
 
 // 구현입니다.
-private:
-	CStock* stock;
 protected:
 	HICON m_hIcon;
 
@@ -34,14 +31,13 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
-	DECLARE_MESSAGE_MAP()
+	DECLARE_MESSAGE_MAP();
+	DECLARE_EVENTSINK_MAP();
 public:
 	afx_msg void OnBnClickedButtonRun();
-	CListBox LISTBOX;
-	CListBox userInfoList;
 	afx_msg void OnBnClickedButton1();
-	DECLARE_EVENTSINK_MAP()
-	void OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LPCTSTR sTrCode, LPCTSTR sRecordName, LPCTSTR sPrevNext, long nDataLength, LPCTSTR sErrorCode, LPCTSTR sMessage, LPCTSTR sSplmMsg);
 	afx_msg void OnBnClickedSend();
+	void OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LPCTSTR sTrCode, LPCTSTR sRecordName, LPCTSTR sPrevNext, long nDataLength, LPCTSTR sErrorCode, LPCTSTR sMessage, LPCTSTR sSplmMsg);
 	CListBox stockList;
+	CListBox LISTBOX;
 };
