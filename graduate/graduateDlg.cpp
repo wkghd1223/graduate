@@ -61,16 +61,13 @@ void CgraduateDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_KHOPENAPICTRL1, theApp.kStock);
-	DDX_Control(pDX, IDC_STOCK_LIST, stockList);
 }
 
 BEGIN_MESSAGE_MAP(CgraduateDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON_RUN, &CgraduateDlg::OnBnClickedButtonRun)
-	ON_BN_CLICKED(IDC_BUTTON1, &CgraduateDlg::OnBnClickedButton1)
-	ON_BN_CLICKED(IDC_SEND, &CgraduateDlg::OnBnClickedSend)
+	ON_BN_CLICKED(IDOK, &CgraduateDlg::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 
@@ -161,20 +158,18 @@ HCURSOR CgraduateDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-
-void CgraduateDlg::OnBnClickedButtonRun()
+void CgraduateDlg::OnBnClickedOk()
 {
 	//ShowWindow(FALSE);
-	CMainDlg *mainDlg = new CMainDlg(this);
+	CMainDlg* mainDlg = new CMainDlg(this);
 	mainDlg->m_strScrNo.Format(_T("%04d"), m_nScrN0);
 	m_mapScreen.SetAt(mainDlg->m_strScrNo, mainDlg);
 
 	mainDlg->user = new CUser(theApp.kStock.GetLoginInfo(_T("USER_NAME"))
-		, theApp.kStock.GetLoginInfo(_T("ACCNO")) 
+		, theApp.kStock.GetLoginInfo(_T("ACCNO"))
 		, theApp.kStock.GetLoginInfo(_T("USER_ID"))
 		, theApp.kStock.GetLoginInfo(_T("GetServerGubun")));
-	
+
 	//dlg.user = new CUser(_T("USER_NAME")
 	//	, _T("ACCNO") 
 	//	, _T("USER_ID")
@@ -185,18 +180,9 @@ void CgraduateDlg::OnBnClickedButtonRun()
 
 	//ShowWindow(TRUE);
 	//EndDialog(0);
+	//CDialogEx::OnOK();
 }
 
-void CgraduateDlg::OnBnClickedButton1()
-{
-	int loginFlag;
-	
-	//if (loginFlag == 0)
-	//	::AfxMessageBox(_T("log in"));
-	//else
-	//	::AfxMessageBox(_T("log in fail"));
-	GetDlgItem(IDC_BUTTON_RUN)->EnableWindow(TRUE);
-}
 BEGIN_EVENTSINK_MAP(CgraduateDlg, CDialogEx)
 ON_EVENT(CgraduateDlg, IDC_KHOPENAPICTRL1, 1, CgraduateDlg::OnReceiveTrDataKhopenapictrl1, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR)
 END_EVENTSINK_MAP()
@@ -221,14 +207,6 @@ void CgraduateDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName
 
 }
 
-
-void CgraduateDlg::OnBnClickedSend()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CString test = _T("005930");
-	theApp.kStock.SetInputValue(_T("종목코드"), test);
-	theApp.kStock.CommRqData(_T("주식기본정보"), _T("OPT10001"), 0, _T("9999"));
-}
 //*******************************************************************/
 //! Function Name : GetNextScreenNum
 //! Function      : 다음 화면 번호 취득
@@ -267,3 +245,4 @@ BOOL CgraduateDlg::GetNextScreenNum(int nScreenType)
 	m_mapScreenNum.SetAt(strKey, strTemp);
 	return TRUE;
 }
+
