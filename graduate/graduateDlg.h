@@ -37,8 +37,8 @@ protected:
 public:
 
 	CMapStringToPtr m_mapScreen;
-	int m_nScrN0;
 	CMapStringToString m_mapScreenNum;
+	int m_nScrN0;
 	BOOL GetNextScreenNum(int nScreenType);
 	void OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LPCTSTR sTrCode, LPCTSTR sRecordName, LPCTSTR sPrevNext, long nDataLength, LPCTSTR sErrorCode, LPCTSTR sMessage, LPCTSTR sSplmMsg);
 	

@@ -160,6 +160,10 @@ HCURSOR CgraduateDlg::OnQueryDragIcon()
 
 void CgraduateDlg::OnBnClickedOk()
 {
+	if (!GetNextScreenNum(0))
+	{
+		return;
+	}
 	//ShowWindow(FALSE);
 	CMainDlg* mainDlg = new CMainDlg(this);
 	mainDlg->m_strScrNo.Format(_T("%04d"), m_nScrN0);
@@ -202,7 +206,7 @@ void CgraduateDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName
 	}
 
 	CWnd* pWnd = NULL;
-	if(m_mapScreen.Lookup(strKey, (void*&)pWnd))
+	if(m_mapScreen.Lookup(strKey, (void*&)pWnd) && pWnd)
 		((CMainDlg*)pWnd)->OnReceiveTrDataKhopenapictrl1(sScrNo, sRQName, sTrCode, sRecordName, sPrevNext, nDataLength, sErrorCode, sMessage, sSplmMsg);
 
 }
