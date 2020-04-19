@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#define UM_SCRENN_CLOSE		1000
 
 
 // CgraduateDlg 대화 상자
@@ -34,10 +35,16 @@ protected:
 	DECLARE_MESSAGE_MAP();
 	DECLARE_EVENTSINK_MAP();
 public:
+
+	CMapStringToPtr m_mapScreen;
+	int m_nScrN0;
+	CMapStringToString m_mapScreenNum;
+	BOOL GetNextScreenNum(int nScreenType);
 	afx_msg void OnBnClickedButtonRun();
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedSend();
 	void OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LPCTSTR sTrCode, LPCTSTR sRecordName, LPCTSTR sPrevNext, long nDataLength, LPCTSTR sErrorCode, LPCTSTR sMessage, LPCTSTR sSplmMsg);
 	CListBox stockList;
 	CListBox LISTBOX;
+	
 };

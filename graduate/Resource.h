@@ -35,7 +35,9 @@
 #define IDC_GRD_CURPRC                  1010
 #define IDC_GROUP_USER_INFO             1010
 #define IDC_KHOPENAPICTRL1              1011
+#define IDC_TEXT_STOCK_INFO             1011
 #define IDC_EDT_ACCNO                   1021
+#define IDC_EDIT_SEARCH                 1021
 #define IDC_COM_TRTP                    1022
 #define IDC_COM_SBTP                    1023
 #define IDC_EDT_QUANTITY                1024
@@ -53,9 +55,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        137
+#define _APS_NEXT_RESOURCE_VALUE        138
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1011
+#define _APS_NEXT_CONTROL_VALUE         1015
 #define _APS_NEXT_SYMED_VALUE           107
 #endif
 #endif

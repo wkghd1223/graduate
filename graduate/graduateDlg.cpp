@@ -53,8 +53,8 @@ END_MESSAGE_MAP()
 CgraduateDlg::CgraduateDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_GRADUATE_DIALOG, pParent)
 {
+	m_nScrN0 = 0;
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-
 }
 
 void CgraduateDlg::DoDataExchange(CDataExchange* pDX)
@@ -85,6 +85,8 @@ BOOL CgraduateDlg::OnInitDialog()
 	// IDM_ABOUTBOX는 시스템 명령 범위에 있어야 합니다.
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
+
+	theApp.kStock.CommConnect();
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
 	if (pSysMenu != nullptr)
@@ -163,26 +165,32 @@ HCURSOR CgraduateDlg::OnQueryDragIcon()
 
 void CgraduateDlg::OnBnClickedButtonRun()
 {
-	ShowWindow(FALSE);
-	CMainDlg dlg;
-	//dlg.user = new User(theApp.kStock.GetLoginInfo(_T("USER_NAME"))
-	//	, theApp.kStock.GetLoginInfo(_T("ACCNO")) 
-	//	, theApp.kStock.GetLoginInfo(_T("USER_ID"))
-	//	, theApp.kStock.GetLoginInfo(_T("GetServerGubun")));
-	
-	dlg.user = new CUser(_T("USER_NAME")
-		, _T("ACCNO") 
-		, _T("USER_ID")
-		, _T("GetServerGubun"));
+	//ShowWindow(FALSE);
+	CMainDlg *mainDlg = new CMainDlg(this);
+	mainDlg->m_strScrNo.Format(_T("%04d"), m_nScrN0);
+	m_mapScreen.SetAt(mainDlg->m_strScrNo, mainDlg);
 
-	dlg.DoModal();
-	EndDialog(0);
+	mainDlg->user = new CUser(theApp.kStock.GetLoginInfo(_T("USER_NAME"))
+		, theApp.kStock.GetLoginInfo(_T("ACCNO")) 
+		, theApp.kStock.GetLoginInfo(_T("USER_ID"))
+		, theApp.kStock.GetLoginInfo(_T("GetServerGubun")));
+	
+	//dlg.user = new CUser(_T("USER_NAME")
+	//	, _T("ACCNO") 
+	//	, _T("USER_ID")
+	//	, _T("GetServerGubun"));
+	mainDlg->Create(IDD_CMainDlg);
+	mainDlg->ShowWindow(SW_SHOW);
+
+
+	//ShowWindow(TRUE);
+	//EndDialog(0);
 }
 
 void CgraduateDlg::OnBnClickedButton1()
 {
-	//int loginFlag;
-	//loginFlag = theApp.kStock.CommConnect();
+	int loginFlag;
+	
 	//if (loginFlag == 0)
 	//	::AfxMessageBox(_T("log in"));
 	//else
@@ -197,37 +205,65 @@ END_EVENTSINK_MAP()
 void CgraduateDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LPCTSTR sTrCode, LPCTSTR sRecordName, LPCTSTR sPrevNext, long nDataLength, LPCTSTR sErrorCode, LPCTSTR sMessage, LPCTSTR sSplmMsg)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
-	CString out = sRQName;
-
-	if (out == _T("주식기본정보")) {
-		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("종목명"));
-		out.Trim();
-		stockList.AddString(_T("종목명") + out);
-		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("시가총액"));
-		out.Trim();
-		stockList.AddString(_T("시가총액\t") + out);
-		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("현재가"));
-		out.Trim();
-		stockList.AddString(_T("현재가\t") + out);
-		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("거래량"));
-		out.Trim();
-		stockList.AddString(_T("거래량\t") + out);
-		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("PER"));
-		out.Trim();
-		stockList.AddString(_T("PER\t") + out);
-		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("PBR"));
-		out.Trim();
-		stockList.AddString(_T("PBR\t") + out);
-		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("ROE"));
-		out.Trim();
-		stockList.AddString(_T("ROE\t") + out);
+	if (!theApp.kStock.GetSafeHwnd())
+	{
+		return;
 	}
+	CString strScrType, strKey = sScrNo;
+	if (!m_mapScreenNum.Lookup(strKey, strScrType))
+	{
+		return;
+	}
+
+	CWnd* pWnd = NULL;
+	if(m_mapScreen.Lookup(strKey, (void*&)pWnd))
+		((CMainDlg*)pWnd)->OnReceiveTrDataKhopenapictrl1(sScrNo, sRQName, sTrCode, sRecordName, sPrevNext, nDataLength, sErrorCode, sMessage, sSplmMsg);
+
 }
 
 
 void CgraduateDlg::OnBnClickedSend()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	theApp.kStock.SetInputValue(_T("종목코드"), _T("005930"));
-	theApp.kStock.CommRqData(_T("주식기본정보"), _T("OPT10001"), 0, _T("0101"));
+	CString test = _T("005930");
+	theApp.kStock.SetInputValue(_T("종목코드"), test);
+	theApp.kStock.CommRqData(_T("주식기본정보"), _T("OPT10001"), 0, _T("9999"));
+}
+//*******************************************************************/
+//! Function Name : GetNextScreenNum
+//! Function      : 다음 화면 번호 취득
+//! Param         : int nScreenType
+//! Return        : BOOL
+//! Create        : , 2014/06/02
+//! Comment       : 
+//******************************************************************/
+BOOL CgraduateDlg::GetNextScreenNum(int nScreenType)
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	static int nRepeat = 0;
+	m_nScrN0++;
+	if (m_nScrN0 > 9999)
+	{
+		nRepeat++;
+		m_nScrN0 = 1;
+	}
+
+	if (nRepeat > 1)
+	{
+		nRepeat = 0;
+		::AfxMessageBox(_T("더 이상 화면을 열수 없습니다.다른 화면을 닫고 실행 해 주세요~!"));
+		return FALSE;
+	}
+
+	CString strKey, strTemp;
+	strKey.Format(_T("%04d"), m_nScrN0);
+	if (m_mapScreenNum.Lookup(strKey, strTemp))
+	{
+		return GetNextScreenNum(nScreenType);
+	}
+
+	nRepeat = 0;
+	strTemp.Format(_T("%d"), nScreenType);
+	m_mapScreenNum.SetAt(strKey, strTemp);
+	return TRUE;
 }
