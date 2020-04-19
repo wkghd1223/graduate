@@ -187,8 +187,11 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CDayChart.h" />
     <ClInclude Include="CMainDlg.h" />
+    <ClInclude Include="CMonthChart.h" />
     <ClInclude Include="CStock.h" />
+    <ClInclude Include="CWeekChart.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="graduate.h" />
     <ClInclude Include="graduateDlg.h" />
@@ -200,8 +203,11 @@
     <ClInclude Include="CUser.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CDayChart.cpp" />
     <ClCompile Include="CMainDlg.cpp" />
+    <ClCompile Include="CMonthChart.cpp" />
     <ClCompile Include="CStock.cpp" />
+    <ClCompile Include="CWeekChart.cpp" />
     <ClCompile Include="graduate.cpp" />
     <ClCompile Include="graduateDlg.cpp" />
     <ClCompile Include="khopenapictrl1.cpp" />

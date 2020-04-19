@@ -19,6 +19,8 @@ CMainDlg::CMainDlg(CWnd* pParent /*=nullptr*/)
 	m_strScrNo = "7777";
 	m_strJongCode = "";
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+
+	pwndShow = NULL;
 }
 
 CMainDlg::~CMainDlg()
@@ -36,6 +38,23 @@ BOOL CMainDlg::OnInitDialog() {
 	str += user->getUserId();
 	str += _T("\n");
 	userInfo.SetWindowTextW(str);
+
+	CString tabName[3] = { _T("일"), _T("주"),_T("월") };
+	for (int i = 0; i < (sizeof(tabName) / sizeof(*tabName));i++) {
+		candleChart.InsertItem(i + 1, tabName[i]);
+	}
+	CRect Rect;
+	candleChart.GetClientRect(&Rect);
+
+	cDayChart.Create(IDD_DIALOG_DAY_CHART, &candleChart);
+	cDayChart.SetWindowPos(NULL, 5, 25, Rect.Width() - 12, Rect.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
+	pwndShow = &cDayChart;
+
+	cWeekChart.Create(IDD_DIALOG_WEEK_CHART, &candleChart);
+	cWeekChart.SetWindowPos(NULL, 5, 25, Rect.Width() - 12, Rect.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
+
+	cMonthChart.Create(IDD_DIALOG_MONTH_CHART, &candleChart);
+	cMonthChart.SetWindowPos(NULL, 5, 25, Rect.Width() - 12, Rect.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
 
 
 	return TRUE;
@@ -70,6 +89,7 @@ void CMainDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TEXT_STATIC, userInfoFormat);
 	DDX_Control(pDX, IDC_EDIT_SEARCH, editSearch);
 	DDX_Control(pDX, IDC_TEXT_STOCK_INFO, stockInfo);
+	DDX_Control(pDX, IDC_TAB_CANDLE_CHART, candleChart);
 }
 //BEGIN_EVENTSINK_MAP(CMainDlg, CDialogEx)
 //ON_EVENT(CMainDlg, IDC_KHOPENAPICTRL1, 1, CMainDlg::OnReceiveTrDataKhopenapictrl1, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR)
@@ -77,7 +97,7 @@ void CMainDlg::DoDataExchange(CDataExchange* pDX)
 void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LPCTSTR sTrCode, LPCTSTR sRecordName, LPCTSTR sPrevNext, long nDataLength, LPCTSTR sErrorCode, LPCTSTR sMessage, LPCTSTR sSplmMsg)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
-	userInfo.SetWindowTextW(_T("asdf"));
+	//userInfo.SetWindowTextW(_T("asdf"));
 	CString out = sRQName;
 	CString str = _T("");
 	if (out == _T("주식기본정보")) {
@@ -113,6 +133,7 @@ void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LP
 BEGIN_MESSAGE_MAP(CMainDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_SEARCH, &CMainDlg::OnEnChangeEditSearch)
 	ON_BN_CLICKED(IDOK, &CMainDlg::OnBnClickedOk)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB_CANDLE_CHART, &CMainDlg::OnTcnSelchangeTabCandleChart)
 END_MESSAGE_MAP()
 
 
@@ -137,4 +158,33 @@ void CMainDlg::OnBnClickedOk()
 	theApp.kStock.SetInputValue(_T("종목코드"), code);
 	theApp.kStock.CommRqData(_T("주식기본정보"), _T("OPT10001"), 0, m_strScrNo);
 	//CDialogEx::OnOK();
+}
+
+
+void CMainDlg::OnTcnSelchangeTabCandleChart(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (pwndShow != NULL) {
+		pwndShow->ShowWindow(SW_HIDE);
+		pwndShow = NULL;
+	}
+	int pos = candleChart.GetCurSel();
+	switch (pos)
+	{
+	case 0:
+		cDayChart.ShowWindow(SW_SHOW);
+		pwndShow = &cDayChart;
+		break;
+	case 1:
+		cWeekChart.ShowWindow(SW_SHOW);
+		pwndShow = &cWeekChart;
+		break;
+	case 2:
+		cMonthChart.ShowWindow(SW_SHOW);
+		pwndShow = &cMonthChart;
+		break;
+	default:
+		break;
+	}
+	*pResult = 0;
 }

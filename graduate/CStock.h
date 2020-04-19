@@ -14,6 +14,7 @@ private:
 	double base;			// 기준가
 	double current;			// 현재가
 	double volume;			// 거래량
+	double marketCap;		// 시가총액
 	double marketCapRatio;	// 시가총액비중
 	double foreignMaxRatio;	// 외인소진률
 };
@@ -28,7 +29,6 @@ private:
 	CString creditRatio;	// 신용비율
 	int numOfStock;			// 상장주식
 	double capital;			// 자본금
-	double marketCap;		// 시가총액
 	double faceValue;		// 액면가
 	double sales;			// 매출액
 	double operatingIncome;	// 영업이익
