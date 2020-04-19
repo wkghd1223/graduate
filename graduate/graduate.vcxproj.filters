@@ -48,6 +48,15 @@
     <ClInclude Include="CUser.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="CDayChart.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CMonthChart.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CWeekChart.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="graduate.cpp">
@@ -72,6 +81,15 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CUser.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CDayChart.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CMonthChart.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CWeekChart.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

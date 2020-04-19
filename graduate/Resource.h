@@ -14,6 +14,9 @@
 #define IDD_FO_ORDER_DLG                105
 #define IDD_CMainDlg                    106
 #define IDR_MAINFRAME                   128
+#define IDD_DIALOG_DAY_CHART            138
+#define IDD_DIALOG_MONTH_CHART          140
+#define IDD_DIALOG_WEEK_CHART           142
 #define IDC_BUTTON_RUN                  1000
 #define IDC_BTN_CURRENTPRICE            1001
 #define IDC_BTN_ORDER                   1002
@@ -36,6 +39,10 @@
 #define IDC_GROUP_USER_INFO             1010
 #define IDC_KHOPENAPICTRL1              1011
 #define IDC_TEXT_STOCK_INFO             1011
+#define IDC_TAB_CANDLE_CHART            1015
+#define IDC_TEST_DAY                    1016
+#define IDC_TEST_MONTH                  1017
+#define IDC_TEST_WEEK                   1018
 #define IDC_EDT_ACCNO                   1021
 #define IDC_EDIT_SEARCH                 1021
 #define IDC_COM_TRTP                    1022
@@ -55,9 +62,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        138
+#define _APS_NEXT_RESOURCE_VALUE        144
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1015
+#define _APS_NEXT_CONTROL_VALUE         1019
 #define _APS_NEXT_SYMED_VALUE           107
 #endif
 #endif

@@ -1,6 +1,9 @@
 ﻿#pragma once
 #include "CUser.h"
 #include "graduate.h"
+#include "CDayChart.h"
+#include "CWeekChart.h"
+#include "CMonthChart.h"
 
 // CMainDlg 대화 상자
 
@@ -16,6 +19,10 @@ public:
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_CMainDlg };
 #endif
+	CDayChart cDayChart;
+	CWeekChart cWeekChart;
+	CMonthChart cMonthChart;
+	CWnd* pwndShow;
 
 protected:
 	HICON m_hIcon;
@@ -38,4 +45,6 @@ public:
 	CStatic stockInfo;
 	afx_msg void OnBnClickedOk();
 	
+	CTabCtrl candleChart;
+	afx_msg void OnTcnSelchangeTabCandleChart(NMHDR* pNMHDR, LRESULT* pResult);
 };
