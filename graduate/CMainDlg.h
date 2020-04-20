@@ -1,11 +1,11 @@
 ﻿#pragma once
 #include "CUser.h"
 #include "graduate.h"
-#include "CDayChart.h"
-#include "CWeekChart.h"
-#include "CMonthChart.h"
 
 // CMainDlg 대화 상자
+class CDayChartDlg;
+class CWeekChartDlg;
+class CMonthChartDlg;
 
 class CMainDlg : public CDialogEx
 {
@@ -19,32 +19,34 @@ public:
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_CMainDlg };
 #endif
-	CDayChart cDayChart;
-	CWeekChart cWeekChart;
-	CMonthChart cMonthChart;
-	CWnd* pwndShow;
+	CDayChartDlg* cDayChart;
+	CWeekChartDlg* cWeekChart;
+	CMonthChartDlg* cMonthChart;
+	//CWnd* pwndShow;
 
 protected:
 	HICON m_hIcon;
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 	virtual BOOL OnInitDialog();
-	virtual void OnClose();
+	afx_msg void OnClose();
+	afx_msg void OnPaint();
 	DECLARE_MESSAGE_MAP()
 public:
 	CString		m_strScrNo;
 	CWnd*		m_pParent;
 	CString		m_strJongCode;
 
+	afx_msg void OnEnChangeEditSearch();
+	afx_msg void OnBnClickedOk();
+	afx_msg void OnTcnSelchangeTabCandleChart(NMHDR* pNMHDR, LRESULT* pResult);
 	void OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LPCTSTR sTrCode, LPCTSTR sRecordName, LPCTSTR sPrevNext, long nDataLength, LPCTSTR sErrorCode, LPCTSTR sMessage, LPCTSTR sSplmMsg);
 	CUser* user = new CUser();
 	CStatic userInfo;
 	CStatic userInfoFormat;
-	afx_msg void OnEnChangeEditSearch();
 	CEdit editSearch;
 	CStatic stockInfo;
-	afx_msg void OnBnClickedOk();
 	
 	CTabCtrl candleChart;
-	afx_msg void OnTcnSelchangeTabCandleChart(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBnClickedCancel();
 };
