@@ -14,15 +14,20 @@ IMPLEMENT_DYNAMIC(CDayChartDlg, CDialogEx)
 CDayChartDlg::CDayChartDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG_DAY_CHART, pParent)
 {
-
+	this->m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 CDayChartDlg::~CDayChartDlg()
 {
 }
 BOOL CDayChartDlg::OnInitDialog()
 {
-	parent = (CMainDlg*)AfxGetMainWnd();
-	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	//parent = (CMainDlg*)AfxGetMainWnd();
+
+	dayChart.EnableRefresh(true);
+	this->pSeries = new CChartLineSerie(&dayChart);
+	this->pCandle = new CChartCandlestickSerie(&dayChart);	
+
+	ShowGraph(_T(""));
 	return TRUE;
 }
 void CDayChartDlg::DoDataExchange(CDataExchange* pDX)
@@ -33,8 +38,6 @@ void CDayChartDlg::DoDataExchange(CDataExchange* pDX)
 
 void CDayChartDlg::ShowGraph(CString code)
 {
-	
-	((CStatic*)GetDlgItem(IDC_STATIC_TEST))->SetWindowTextW(code);
 	
 	CChartDateTimeAxis* pBottomAxis = dayChart.CreateDateTimeAxis(CChartCtrl::BottomAxis);
 	CChartStandardAxis* pLeftAxis = dayChart.CreateStandardAxis(CChartCtrl::LeftAxis);
@@ -74,9 +77,15 @@ void CDayChartDlg::ShowGraph(CString code)
 
 	ReadData(pCandlePoint);
 	pCandle->SetPoints(pCandlePoint, 600);
-	pCandle->SetColor(RGB(0, 255, 255));
+	pCandle->SetColor(RGB(0, 0, 255));
 	pCandle->CreateBalloonLabel(5, _T("this is a candle"));
-	//pCandle->SetVisible(true);
+	
+	pCandle->SetVisible(true);
+
+	// 이미지로 저장했을 때 이미지가 보여지는 것으로 보아 
+	//RECT rect;
+	//GetClientRect(&rect);
+	//dayChart.SaveAsImage(_T("asf.png"), rect,32);
 }
 
 void CDayChartDlg::ReadData(SChartCandlestickPoint(&pCandlePoint)[600])
@@ -120,8 +129,8 @@ END_MESSAGE_MAP()
 void CDayChartDlg::PostNcDestroy()
 {
 	// TODO: Add your specialized code here and/or call the base class
-	parent->cDayChart = NULL;
-	delete this;
+	/*parent->cDayChart = NULL;
+	delete this;*/
 	CDialogEx::PostNcDestroy();
 }
 
@@ -160,30 +169,32 @@ void CDayChartDlg::OnIdcancel()
 }
 
 
-void CDayChartDlg::OnPaint()
-{
-	if (IsIconic())
-	{
-		CPaintDC dc(this); // 그리기를 위한 디바이스 컨텍스트입니다.
-
-		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
-
-		// 클라이언트 사각형에서 아이콘을 가운데에 맞춥니다.
-		int cxIcon = GetSystemMetrics(SM_CXICON);
-		int cyIcon = GetSystemMetrics(SM_CYICON);
-		CRect rect;
-		GetClientRect(&rect);
-		int x = (rect.Width() - cxIcon + 1) / 2;
-		int y = (rect.Height() - cyIcon + 1) / 2;
-
-		// 아이콘을 그립니다.
-		dc.DrawIcon(x, y, m_hIcon);
-	}
-	else
-	{
-		CDialogEx::OnPaint();
-	}
-}
+//void CDayChartDlg::OnPaint()
+//{
+//
+//	;
+//	if (IsIconic())
+//	{
+//		CPaintDC dc(this); // 그리기를 위한 디바이스 컨텍스트입니다.
+//
+//		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
+//
+//		// 클라이언트 사각형에서 아이콘을 가운데에 맞춥니다.
+//		int cxIcon = GetSystemMetrics(SM_CXICON);
+//		int cyIcon = GetSystemMetrics(SM_CYICON);
+//		CRect rect;
+//		GetClientRect(&rect);
+//		int x = (rect.Width() - cxIcon + 1) / 2;
+//		int y = (rect.Height() - cyIcon + 1) / 2;
+//
+//		// 아이콘을 그립니다.
+//		dc.DrawIcon(x, y, m_hIcon);
+//	}
+//	else
+//	{
+//		CDialogEx::OnPaint();
+//	}
+//}
 
 
 void CDayChartDlg::OnDestroy()

@@ -1,7 +1,6 @@
 ﻿#pragma once
-#include "CMainDlg.h"
 
-class CMainDlg;
+//class CMainDlg;
 // CWeekChartDlg 대화 상자
 
 class CWeekChartDlg : public CDialogEx
@@ -11,7 +10,7 @@ class CWeekChartDlg : public CDialogEx
 public:
 	CWeekChartDlg(CWnd* pParent = nullptr);   // 표준 생성자입니다.
 	virtual ~CWeekChartDlg();
-	CMainDlg* parent;
+	//CMainDlg* parent;
 // 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DIALOG_WEEK_CHART };

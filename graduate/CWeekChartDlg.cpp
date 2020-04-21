@@ -39,8 +39,8 @@ END_MESSAGE_MAP()
 void CWeekChartDlg::PostNcDestroy()
 {
 	// TODO: Add your specialized code here and/or call the base class
-	parent->cWeekChart = NULL;
-	delete this;
+	//parent->cWeekChart = NULL;
+	//delete this;
 	CDialogEx::PostNcDestroy();
 }
 
@@ -48,7 +48,7 @@ void CWeekChartDlg::PostNcDestroy()
 BOOL CWeekChartDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-	parent = (CMainDlg*)AfxGetMainWnd();
+	//parent = (CMainDlg*)AfxGetMainWnd();
 
 	// TODO:  Add extra initialization here
 

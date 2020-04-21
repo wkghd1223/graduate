@@ -48,6 +48,8 @@
 #define IDC_EDIT_SEARCH                 1021
 #define IDC_STATIC_TEST                 1021
 #define IDC_COM_TRTP                    1022
+#define IDC_CUSTOM1                     1022
+#define IDC_CUSTOM_TEST                 1022
 #define IDC_COM_SBTP                    1023
 #define IDC_EDT_QUANTITY                1024
 #define IDC_EDT_PRICE                   1025
@@ -66,7 +68,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        144
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1022
+#define _APS_NEXT_CONTROL_VALUE         1023
 #define _APS_NEXT_SYMED_VALUE           107
 #endif
 #endif

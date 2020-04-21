@@ -2,7 +2,6 @@
 #include "ChartCtrl_source/ChartCtrl.h"
 #include "ChartCtrl_source/ChartLineSerie.h"
 #include "ChartCtrl_source/ChartCandlestickSerie.h"
-#include "CMainDlg.h"
 
 class CMainDlg;
 // CDayChartDlg 대화 상자
@@ -15,7 +14,7 @@ public:
 	CDayChartDlg(CWnd* pParent = nullptr);   // 표준 생성자입니다.
 	virtual ~CDayChartDlg();
 
-	CMainDlg* parent;
+	//CMainDlg* parent;
 // 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DIALOG_DAY_CHART };
@@ -39,9 +38,8 @@ public:
 	CChartCandlestickSerie* pCandle;
 	void ShowGraph(CString code);
 	void ReadData(SChartCandlestickPoint (&pCandlePoint)[600]);
-	BOOL turn = TRUE;
 	afx_msg void OnIdok();
 	afx_msg void OnIdcancel();
-	afx_msg void OnPaint();
+	//afx_msg void OnPaint();
 	afx_msg void OnDestroy();
 };

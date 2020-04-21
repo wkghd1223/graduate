@@ -7,9 +7,9 @@
 #include "afxdialogex.h"
 #include "graduateDlg.h"
 
-#include "CDayChartDlg.h"
-#include "CWeekChartDlg.h"
-#include "CMonthChartDlg.h"
+//#include "CDayChartDlg.h"
+//#include "CWeekChartDlg.h"
+//#include "CMonthChartDlg.h"
 // CMainDlg 대화 상자
 
 IMPLEMENT_DYNAMIC(CMainDlg, CDialogEx)
@@ -22,7 +22,7 @@ CMainDlg::CMainDlg(CWnd* pParent /*=nullptr*/)
 	m_strJongCode = "";
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
-	//pwndShow = NULL;
+	pwndShow = NULL;
 }
 
 CMainDlg::~CMainDlg()
@@ -46,29 +46,25 @@ BOOL CMainDlg::OnInitDialog() {
 		candleChart.InsertItem(i , tabName[i]);
 	}
 	candleChart.SetCurSel(0);
-	CRect Rect;
-	candleChart.GetWindowRect(&Rect);
+	CRect rect;
+	candleChart.GetWindowRect(&rect);
 	//candleChart.GetClientRect(&Rect);
 	
-	cDayChart = new CDayChartDlg;
-	cWeekChart = new CWeekChartDlg;
-	cMonthChart = new CMonthChartDlg;
+	//cDayChart = new CDayChartDlg;
+	//cWeekChart = new CWeekChartDlg;
+	//cMonthChart = new CMonthChartDlg;
 
 
-	cDayChart->Create(IDD_DIALOG_DAY_CHART, &candleChart);
-	cDayChart->MoveWindow(0, 25, Rect.Width(), Rect.Height());
-	//pwndShow = cDayChart;
-	cDayChart->ShowWindow(SW_SHOW);
+	cDayChart.Create(IDD_DIALOG_DAY_CHART, &candleChart);
+	cDayChart.SetWindowPos(NULL, 5, 25, rect.Width() - 10, rect.Height() - 30, SWP_SHOWWINDOW | SWP_NOZORDER);
+	pwndShow = &cDayChart;
 
-	cWeekChart->Create(IDD_DIALOG_WEEK_CHART, &candleChart);
-	cWeekChart->MoveWindow(0, 25, Rect.Width(), Rect.Height());
-	cWeekChart->ShowWindow(SW_HIDE);
+	cWeekChart.Create(IDD_DIALOG_WEEK_CHART, &candleChart);
+	cWeekChart.SetWindowPos(NULL, 5, 25, rect.Width() - 10, rect.Height() - 30, SWP_NOZORDER);
 
-	cMonthChart->Create(IDD_DIALOG_MONTH_CHART, &candleChart);
-	cMonthChart->MoveWindow(0, 25, Rect.Width(), Rect.Height());
-	cMonthChart->ShowWindow(SW_HIDE);
+	cMonthChart.Create(IDD_DIALOG_MONTH_CHART, &candleChart);
+	cMonthChart.SetWindowPos(NULL, 5, 25, rect.Width() - 10, rect.Height() - 30, SWP_NOZORDER);
 
-	
 	return TRUE;
 }
 
@@ -198,7 +194,7 @@ void CMainDlg::OnBnClickedOk()
 	switch (pos)
 	{
 	case 0:
-		cDayChart->ShowGraph(code);
+		cDayChart.ShowGraph(code);
 		break;
 	case 1:
 		break;
@@ -214,32 +210,24 @@ void CMainDlg::OnBnClickedOk()
 void CMainDlg::OnTcnSelchangeTabCandleChart(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	//if (pwndShow != NULL) {
-	//	pwndShow->ShowWindow(SW_HIDE);
-	//	pwndShow = NULL;
-	//}
+	if (pwndShow != NULL) {
+		pwndShow->ShowWindow(SW_HIDE);
+		pwndShow = NULL;
+	}
 	int pos = candleChart.GetCurSel();
 	switch (pos)
 	{
 	case 0:
-		cDayChart->ShowWindow(SW_SHOW);
-		cWeekChart->ShowWindow(SW_HIDE);
-		cMonthChart->ShowWindow(SW_HIDE);
-
-		//pwndShow = cDayChart;
+		cDayChart.ShowWindow(SW_SHOW);
+		pwndShow = &cDayChart;
 		break;
 	case 1:
-		cWeekChart->ShowWindow(SW_SHOW);
-		cDayChart->ShowWindow(SW_HIDE);
-		cMonthChart->ShowWindow(SW_HIDE);
-
-		//pwndShow = cWeekChart;
+		cWeekChart.ShowWindow(SW_SHOW);
+		pwndShow = &cWeekChart;
 		break;
 	case 2:
-		cMonthChart->ShowWindow(SW_SHOW);
-		cWeekChart->ShowWindow(SW_HIDE);
-		cDayChart->ShowWindow(SW_HIDE);
-		//pwndShow = cMonthChart;
+		cMonthChart.ShowWindow(SW_SHOW);
+		pwndShow = &cMonthChart;
 		break;
 	default:
 		break;
@@ -252,4 +240,12 @@ void CMainDlg::OnBnClickedCancel()
 {
 	// TODO: Add your control notification handler code here
 	CDialogEx::OnCancel();
+}
+
+
+void CMainDlg::PostNcDestroy()
+{
+	m_pParent = NULL;
+	delete this;
+	CDialogEx::PostNcDestroy();
 }

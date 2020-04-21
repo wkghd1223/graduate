@@ -39,8 +39,8 @@ END_MESSAGE_MAP()
 void CMonthChartDlg::PostNcDestroy()
 {
 	// TODO: Add your specialized code here and/or call the base class
-	parent->cMonthChart = NULL;
-	delete this;
+	//parent->cMonthChart = NULL;
+	//delete this;
 	CDialogEx::PostNcDestroy();
 }
 
@@ -48,7 +48,7 @@ void CMonthChartDlg::PostNcDestroy()
 BOOL CMonthChartDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-	parent = (CMainDlg*)AfxGetMainWnd();
+	//parent = (CMainDlg*)AfxGetMainWnd();
 
 	// TODO:  Add extra initialization here
 

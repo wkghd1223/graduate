@@ -1,11 +1,16 @@
 ﻿#pragma once
 #include "CUser.h"
 #include "graduate.h"
+#include "ChartCtrl_source/ChartCtrl.h"
+#include "ChartCtrl_source/ChartLineSerie.h"
+#include "CDayChartDlg.h"
+#include "CWeekChartDlg.h"
+#include "CMonthChartDlg.h"
 
 // CMainDlg 대화 상자
-class CDayChartDlg;
-class CWeekChartDlg;
-class CMonthChartDlg;
+//class CDayChartDlg;
+//class CWeekChartDlg;
+//class CMonthChartDlg;
 
 class CMainDlg : public CDialogEx
 {
@@ -19,10 +24,10 @@ public:
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_CMainDlg };
 #endif
-	CDayChartDlg* cDayChart;
-	CWeekChartDlg* cWeekChart;
-	CMonthChartDlg* cMonthChart;
-	//CWnd* pwndShow;
+	CDayChartDlg cDayChart;
+	CWeekChartDlg cWeekChart;
+	CMonthChartDlg cMonthChart;
+	CWnd* pwndShow;
 
 protected:
 	HICON m_hIcon;
@@ -49,4 +54,6 @@ public:
 	
 	CTabCtrl candleChart;
 	afx_msg void OnBnClickedCancel();
+
+	virtual void PostNcDestroy();
 };

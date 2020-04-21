@@ -231,7 +231,7 @@ public:
 			The Id of the series to retrieve
 		@return The series or NULL if uSerieId is not attributed.
 	**/
-	CChartSerie* GetSerie(unsigned uSerieId) const;
+	CChartSerie* GetSerie(size_t uSerieId) const;
 	//! Removes a specific series from the chart
 	/**
 		@param uSerieId
