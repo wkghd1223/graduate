@@ -1,6 +1,6 @@
 ﻿//{{NO_DEPENDENCIES}}
-// Microsoft Visual C++에서 생성한 포함 파일입니다.
-// graduate.rc에서 사용되고 있습니다.
+// Microsoft Visual C++ generated include file.
+// Used by graduate.rc
 //
 #define IDM_ABOUTBOX                    0x0010
 #define IDD_ABOUTBOX                    100
@@ -47,11 +47,18 @@
 #define IDC_TEST_DAY                    1016
 #define IDC_TEST_MONTH                  1017
 #define IDC_TEST_WEEK                   1018
+<<<<<<< HEAD
 #define IDC_TAB2                        1020
 #define IDC_CURRENTPRICE                1020
+=======
+#define IDC_CUSTOM_CHART_DAY            1019
+>>>>>>> a2be0a5b03e5a23ce56ab39ac2edde5ffa5011a9
 #define IDC_EDT_ACCNO                   1021
 #define IDC_EDIT_SEARCH                 1021
+#define IDC_STATIC_TEST                 1021
 #define IDC_COM_TRTP                    1022
+#define IDC_CUSTOM1                     1022
+#define IDC_CUSTOM_TEST                 1022
 #define IDC_COM_SBTP                    1023
 #define IDC_EDT_QUANTITY                1024
 #define IDC_EDT_PRICE                   1025

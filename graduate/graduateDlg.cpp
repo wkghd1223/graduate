@@ -66,6 +66,8 @@ void CgraduateDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CgraduateDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
+	ON_WM_DESTROY()
+	ON_MESSAGE(UM_SCRENN_CLOSE, OnScreenClose)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDOK, &CgraduateDlg::OnBnClickedOk)
 END_MESSAGE_MAP()
@@ -149,6 +151,63 @@ void CgraduateDlg::OnPaint()
 	{
 		CDialogEx::OnPaint();
 	}
+}
+
+void CgraduateDlg::OnDestroy()
+{
+	CString strKey;
+	CWnd* pWnd = NULL;
+	POSITION pos = m_mapScreen.GetStartPosition();
+	while (pos != NULL)
+	{
+		pWnd = NULL;
+		m_mapScreen.GetNextAssoc(pos, strKey, (void*&)pWnd);
+		if (pWnd)
+		{
+			delete pWnd;
+			pWnd = NULL;
+		}
+	}
+	m_mapScreen.RemoveAll();
+	m_mapScreenNum.RemoveAll();
+
+	// 통신 종료 처리
+	theApp.kStock.CommTerminate();
+}
+
+LRESULT CgraduateDlg::OnScreenClose(WPARAM wParam, LPARAM lParam)
+{
+	switch (wParam)
+	{
+	case 0:
+	{
+		char* cScrNo = (char*)lParam;
+		CString strKey, strScrType;
+		strKey.Format(_T("%s"), cScrNo);
+		delete cScrNo;
+
+		if (m_mapScreenNum.Lookup(strKey, strScrType))
+		{
+			m_mapScreenNum.RemoveKey(strKey);
+		}
+
+		CWnd* pWnd = NULL;
+		if (m_mapScreen.Lookup(strKey, (void*&)pWnd) && pWnd)
+		{
+			delete pWnd;
+			pWnd = NULL;
+		}
+		m_mapScreen.RemoveKey(strKey);
+
+		if (theApp.kStock.GetSafeHwnd())
+		{
+			theApp.kStock.DisconnectRealData(strKey);
+		}
+	}
+	break;
+	}
+
+	return 0L;
 }
 
 // 사용자가 최소화된 창을 끄는 동안에 커서가 표시되도록 시스템에서

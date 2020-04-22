@@ -187,14 +187,49 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CDayChart.h" />
+    <ClInclude Include="CDayChartDlg.h" />
+    <ClInclude Include="ChartCtrl_source\ChartAxis.h" />
+    <ClInclude Include="ChartCtrl_source\ChartAxisLabel.h" />
+    <ClInclude Include="ChartCtrl_source\ChartBalloonLabel.h" />
+    <ClInclude Include="ChartCtrl_source\ChartBarSerie.h" />
+    <ClInclude Include="ChartCtrl_source\ChartCandlestickSerie.h" />
+    <ClInclude Include="ChartCtrl_source\ChartCrossHairCursor.h" />
+    <ClInclude Include="ChartCtrl_source\ChartCtrl.h" />
+    <ClInclude Include="ChartCtrl_source\ChartCursor.h" />
+    <ClInclude Include="ChartCtrl_source\ChartDateTimeAxis.h" />
+    <ClInclude Include="ChartCtrl_source\ChartDragLineCursor.h" />
+    <ClInclude Include="ChartCtrl_source\ChartFont.h" />
+    <ClInclude Include="ChartCtrl_source\ChartGanttSerie.h" />
+    <ClInclude Include="ChartCtrl_source\ChartGradient.h" />
+    <ClInclude Include="ChartCtrl_source\ChartGrid.h" />
+    <ClInclude Include="ChartCtrl_source\ChartLabel.h" />
+    <ClInclude Include="ChartCtrl_source\ChartLegend.h" />
+    <ClInclude Include="ChartCtrl_source\ChartLineSerie.h" />
+    <ClInclude Include="ChartCtrl_source\ChartLogarithmicAxis.h" />
+    <ClInclude Include="ChartCtrl_source\ChartMouseListener.h" />
+    <ClInclude Include="ChartCtrl_source\ChartPointsArray.h" />
+    <ClInclude Include="ChartCtrl_source\ChartPointsSerie.h" />
+    <ClInclude Include="ChartCtrl_source\ChartScrollBar.h" />
+    <ClInclude Include="ChartCtrl_source\ChartSerie.h" />
+    <ClInclude Include="ChartCtrl_source\ChartSerieBase.h" />
+    <ClInclude Include="ChartCtrl_source\ChartSeriesMouseListener.h" />
+    <ClInclude Include="ChartCtrl_source\ChartStandardAxis.h" />
+    <ClInclude Include="ChartCtrl_source\ChartString.h" />
+    <ClInclude Include="ChartCtrl_source\ChartSurfaceSerie.h" />
+    <ClInclude Include="ChartCtrl_source\ChartTitle.h" />
+    <ClInclude Include="ChartCtrl_source\ChartXYSerie.h" />
+    <ClInclude Include="ChartCtrl_source\PointsOrdering.h" />
     <ClInclude Include="CMainDlg.h" />
-    <ClInclude Include="CMonthChart.h" />
+    <ClInclude Include="CMonthChartDlg.h" />
     <ClInclude Include="CStock.h" />
+<<<<<<< HEAD
     <ClInclude Include="CurrentPrice_chaegyul.h" />
     <ClInclude Include="CurrentPrice_day_chaegyul.h" />
     <ClInclude Include="CurrentPrice_hoga.h" />
     <ClInclude Include="CWeekChart.h" />
+=======
+    <ClInclude Include="CWeekChartDlg.h" />
+>>>>>>> a2be0a5b03e5a23ce56ab39ac2edde5ffa5011a9
     <ClInclude Include="framework.h" />
     <ClInclude Include="graduate.h" />
     <ClInclude Include="graduateDlg.h" />
@@ -206,14 +241,41 @@
     <ClInclude Include="CUser.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CDayChart.cpp" />
+    <ClCompile Include="CDayChartDlg.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartAxis.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartAxisLabel.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartBarSerie.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartCandlestickSerie.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartCrossHairCursor.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartCtrl.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartCursor.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartDateTimeAxis.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartDragLineCursor.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartFont.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartGanttSerie.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartGradient.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartGrid.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartLegend.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartLineSerie.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartLogarithmicAxis.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartPointsSerie.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartScrollBar.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartSerie.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartStandardAxis.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartSurfaceSerie.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartTitle.cpp" />
+    <ClCompile Include="ChartCtrl_source\ChartXYSerie.cpp" />
     <ClCompile Include="CMainDlg.cpp" />
-    <ClCompile Include="CMonthChart.cpp" />
+    <ClCompile Include="CMonthChartDlg.cpp" />
     <ClCompile Include="CStock.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="CurrentPrice_chaegyul.cpp" />
     <ClCompile Include="CurrentPrice_day_chaegyul.cpp" />
     <ClCompile Include="CurrentPrice_hoga.cpp" />
     <ClCompile Include="CWeekChart.cpp" />
+=======
+    <ClCompile Include="CWeekChartDlg.cpp" />
+>>>>>>> a2be0a5b03e5a23ce56ab39ac2edde5ffa5011a9
     <ClCompile Include="graduate.cpp" />
     <ClCompile Include="graduateDlg.cpp" />
     <ClCompile Include="khopenapictrl1.cpp" />
@@ -230,6 +292,10 @@
     <ResourceCompile Include="graduate.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ChartCtrl_source\ChartBalloonLabel.inl" />
+    <None Include="ChartCtrl_source\ChartLabel.inl" />
+    <None Include="ChartCtrl_source\ChartPointsArray.inl" />
+    <None Include="ChartCtrl_source\ChartSerieBase.inl" />
     <None Include="res\graduate.rc2" />
   </ItemGroup>
   <ItemGroup>

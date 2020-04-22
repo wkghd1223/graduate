@@ -7,7 +7,9 @@
 #include "afxdialogex.h"
 #include "graduateDlg.h"
 
-
+//#include "CDayChartDlg.h"
+//#include "CWeekChartDlg.h"
+//#include "CMonthChartDlg.h"
 // CMainDlg 대화 상자
 
 IMPLEMENT_DYNAMIC(CMainDlg, CDialogEx)
@@ -41,21 +43,32 @@ BOOL CMainDlg::OnInitDialog() {
 
 	CString tabName[3] = { _T("일"), _T("주"),_T("월") };
 	for (int i = 0; i < (sizeof(tabName) / sizeof(*tabName));i++) {
-		candleChart.InsertItem(i + 1, tabName[i]);
+		candleChart.InsertItem(i , tabName[i]);
 	}
+<<<<<<< HEAD
 	CRect Rect,Rect2;
 	candleChart.GetClientRect(&Rect);
+=======
+	candleChart.SetCurSel(0);
+	CRect rect;
+	candleChart.GetWindowRect(&rect);
+	//candleChart.GetClientRect(&Rect);
+	
+	//cDayChart = new CDayChartDlg;
+	//cWeekChart = new CWeekChartDlg;
+	//cMonthChart = new CMonthChartDlg;
+
+>>>>>>> a2be0a5b03e5a23ce56ab39ac2edde5ffa5011a9
 
 	cDayChart.Create(IDD_DIALOG_DAY_CHART, &candleChart);
-	cDayChart.SetWindowPos(NULL, 5, 25, Rect.Width() - 12, Rect.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
+	cDayChart.SetWindowPos(NULL, 5, 25, rect.Width() - 10, rect.Height() - 30, SWP_SHOWWINDOW | SWP_NOZORDER);
 	pwndShow = &cDayChart;
 
 	cWeekChart.Create(IDD_DIALOG_WEEK_CHART, &candleChart);
-	cWeekChart.SetWindowPos(NULL, 5, 25, Rect.Width() - 12, Rect.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
+	cWeekChart.SetWindowPos(NULL, 5, 25, rect.Width() - 10, rect.Height() - 30, SWP_NOZORDER);
 
 	cMonthChart.Create(IDD_DIALOG_MONTH_CHART, &candleChart);
-	cMonthChart.SetWindowPos(NULL, 5, 25, Rect.Width() - 12, Rect.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
-
+	cMonthChart.SetWindowPos(NULL, 5, 25, rect.Width() - 10, rect.Height() - 30, SWP_NOZORDER);
 
 	//현재가격(호가,체결,일별 체결)
 	CString currentPrice_tabName[3] = { _T("호가"), _T("체결"),_T("일별") };
@@ -97,6 +110,30 @@ void CMainDlg::OnClose()
 	}
 
 	CDialogEx::OnClose();
+}
+void CMainDlg::OnPaint()
+{
+	if (IsIconic())
+	{
+		CPaintDC dc(this); // 그리기를 위한 디바이스 컨텍스트입니다.
+
+		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
+
+		// 클라이언트 사각형에서 아이콘을 가운데에 맞춥니다.
+		int cxIcon = GetSystemMetrics(SM_CXICON);
+		int cyIcon = GetSystemMetrics(SM_CYICON);
+		CRect rect;
+		GetClientRect(&rect);
+		int x = (rect.Width() - cxIcon + 1) / 2;
+		int y = (rect.Height() - cyIcon + 1) / 2;
+
+		// 아이콘을 그립니다.
+		dc.DrawIcon(x, y, m_hIcon);
+	}
+	else
+	{
+		CDialogEx::OnPaint();
+	}
 }
 void CMainDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -151,7 +188,11 @@ BEGIN_MESSAGE_MAP(CMainDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_SEARCH, &CMainDlg::OnEnChangeEditSearch)
 	ON_BN_CLICKED(IDOK, &CMainDlg::OnBnClickedOk)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB_CANDLE_CHART, &CMainDlg::OnTcnSelchangeTabCandleChart)
+<<<<<<< HEAD
 	ON_NOTIFY(TCN_SELCHANGE, IDC_CURRENTPRICE, &CMainDlg::OnTcnSelchangeCurrentprice)
+=======
+	ON_BN_CLICKED(IDCANCEL, &CMainDlg::OnBnClickedCancel)
+>>>>>>> a2be0a5b03e5a23ce56ab39ac2edde5ffa5011a9
 END_MESSAGE_MAP()
 
 
@@ -176,12 +217,28 @@ void CMainDlg::OnBnClickedOk()
 	theApp.kStock.SetInputValue(_T("종목코드"), code);
 
 	theApp.kStock.CommRqData(_T("주식기본정보"), _T("OPT10001"), 0, m_strScrNo);
+<<<<<<< HEAD
 	//주식일봉차트에 관한 정보 받아오기
 	theApp.kStock.CommRqData(_T("주식일봉차트조회"), _T("opt10081"), 2, _T("0290"));
 	//code : 종목입력 변수
 
 
 
+=======
+	int pos = candleChart.GetCurSel();
+	switch (pos)
+	{
+	case 0:
+		cDayChart.ShowGraph(code);
+		break;
+	case 1:
+		break;
+	case 2:
+		break;
+	default:
+		break;
+	}
+>>>>>>> a2be0a5b03e5a23ce56ab39ac2edde5ffa5011a9
 	//CDialogEx::OnOK();
 }
 
@@ -215,6 +272,7 @@ void CMainDlg::OnTcnSelchangeTabCandleChart(NMHDR* pNMHDR, LRESULT* pResult)
 }
 
 
+<<<<<<< HEAD
 void CMainDlg::OnTcnSelchangeCurrentprice(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
@@ -238,4 +296,18 @@ void CMainDlg::OnTcnSelchangeCurrentprice(NMHDR* pNMHDR, LRESULT* pResult)
 		break;
 	}
 	*pResult = 0;
+=======
+void CMainDlg::OnBnClickedCancel()
+{
+	// TODO: Add your control notification handler code here
+	CDialogEx::OnCancel();
+}
+
+
+void CMainDlg::PostNcDestroy()
+{
+	m_pParent = NULL;
+	delete this;
+	CDialogEx::PostNcDestroy();
+>>>>>>> a2be0a5b03e5a23ce56ab39ac2edde5ffa5011a9
 }
