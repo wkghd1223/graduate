@@ -57,6 +57,15 @@
     <ClInclude Include="CWeekChart.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="CurrentPrice_hoga.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CurrentPrice_chaegyul.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CurrentPrice_day_chaegyul.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="graduate.cpp">
@@ -90,6 +99,15 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CWeekChart.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CurrentPrice_hoga.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CurrentPrice_chaegyul.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CurrentPrice_day_chaegyul.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

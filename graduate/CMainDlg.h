@@ -4,6 +4,9 @@
 #include "CDayChart.h"
 #include "CWeekChart.h"
 #include "CMonthChart.h"
+#include "CurrentPrice_chaegyul.h"
+#include "CurrentPrice_day_chaegyul.h"
+#include "CurrentPrice_hoga.h"
 
 // CMainDlg 대화 상자
 
@@ -23,6 +26,10 @@ public:
 	CWeekChart cWeekChart;
 	CMonthChart cMonthChart;
 	CWnd* pwndShow;
+
+	CurrentPrice_hoga cPrice_Hoga;
+	CurrentPrice_chaegyul cPrice_Chaegyul;
+	CurrentPrice_day_chaegyul cPrice_dChaegyul;
 
 protected:
 	HICON m_hIcon;
@@ -47,4 +54,7 @@ public:
 	
 	CTabCtrl candleChart;
 	afx_msg void OnTcnSelchangeTabCandleChart(NMHDR* pNMHDR, LRESULT* pResult);
+	CTabCtrl currentPrice;
+	afx_msg void OnTcnSelchangeCurrentprice(NMHDR* pNMHDR, LRESULT* pResult);
+	
 };

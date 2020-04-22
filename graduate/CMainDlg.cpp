@@ -43,7 +43,7 @@ BOOL CMainDlg::OnInitDialog() {
 	for (int i = 0; i < (sizeof(tabName) / sizeof(*tabName));i++) {
 		candleChart.InsertItem(i + 1, tabName[i]);
 	}
-	CRect Rect;
+	CRect Rect,Rect2;
 	candleChart.GetClientRect(&Rect);
 
 	cDayChart.Create(IDD_DIALOG_DAY_CHART, &candleChart);
@@ -56,6 +56,22 @@ BOOL CMainDlg::OnInitDialog() {
 	cMonthChart.Create(IDD_DIALOG_MONTH_CHART, &candleChart);
 	cMonthChart.SetWindowPos(NULL, 5, 25, Rect.Width() - 12, Rect.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
 
+
+	//현재가격(호가,체결,일별 체결)
+	CString currentPrice_tabName[3] = { _T("호가"), _T("체결"),_T("일별") };
+	for (int i = 0; i < (sizeof(currentPrice_tabName) / sizeof(*currentPrice_tabName)); i++) {
+		currentPrice.InsertItem(i + 1, currentPrice_tabName[i]);
+	}
+	currentPrice.GetClientRect(&Rect2);
+
+	cPrice_Hoga.Create(IDD_PRICE_HOGA, &currentPrice);
+	cPrice_Hoga.SetWindowPos(NULL, 5, 25, Rect2.Width()+10, Rect2.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
+
+	cPrice_Chaegyul.Create(IDD_PRICE_CHAEGYUL, &currentPrice);
+	cPrice_Chaegyul.SetWindowPos(NULL, 5, 25, Rect2.Width()+10, Rect2.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
+
+	cPrice_dChaegyul.Create(IDD_PRICE_D_CHAEGYUL, &currentPrice);
+	cPrice_dChaegyul.SetWindowPos(NULL, 5, 25, Rect2.Width()+10, Rect2.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
 
 	return TRUE;
 }
@@ -90,6 +106,7 @@ void CMainDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_SEARCH, editSearch);
 	DDX_Control(pDX, IDC_TEXT_STOCK_INFO, stockInfo);
 	DDX_Control(pDX, IDC_TAB_CANDLE_CHART, candleChart);
+	DDX_Control(pDX, IDC_CURRENTPRICE, currentPrice);
 }
 //BEGIN_EVENTSINK_MAP(CMainDlg, CDialogEx)
 //ON_EVENT(CMainDlg, IDC_KHOPENAPICTRL1, 1, CMainDlg::OnReceiveTrDataKhopenapictrl1, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR)
@@ -134,6 +151,7 @@ BEGIN_MESSAGE_MAP(CMainDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_SEARCH, &CMainDlg::OnEnChangeEditSearch)
 	ON_BN_CLICKED(IDOK, &CMainDlg::OnBnClickedOk)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB_CANDLE_CHART, &CMainDlg::OnTcnSelchangeTabCandleChart)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_CURRENTPRICE, &CMainDlg::OnTcnSelchangeCurrentprice)
 END_MESSAGE_MAP()
 
 
@@ -154,9 +172,16 @@ void CMainDlg::OnBnClickedOk()
 	CString code = _T("");
 
 	editSearch.GetWindowText(code);
-
+	//날짜 선정 해줘야 함
 	theApp.kStock.SetInputValue(_T("종목코드"), code);
+
 	theApp.kStock.CommRqData(_T("주식기본정보"), _T("OPT10001"), 0, m_strScrNo);
+	//주식일봉차트에 관한 정보 받아오기
+	theApp.kStock.CommRqData(_T("주식일봉차트조회"), _T("opt10081"), 2, _T("0290"));
+	//code : 종목입력 변수
+
+
+
 	//CDialogEx::OnOK();
 }
 
@@ -184,6 +209,32 @@ void CMainDlg::OnTcnSelchangeTabCandleChart(NMHDR* pNMHDR, LRESULT* pResult)
 		pwndShow = &cMonthChart;
 		break;
 	default:
+		break;
+	}
+	*pResult = 0;
+}
+
+
+void CMainDlg::OnTcnSelchangeCurrentprice(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (pwndShow != NULL) {
+		pwndShow->ShowWindow(SW_HIDE);
+		pwndShow = NULL;
+	}
+	int pos = currentPrice.GetCurSel();
+	switch (pos) {
+	case 0:
+		cPrice_Hoga.ShowWindow(SW_SHOW);
+		pwndShow = &cPrice_Hoga;
+		break;
+	case 1:
+		cPrice_Chaegyul.ShowWindow(SW_SHOW);
+		pwndShow = &cPrice_Chaegyul;
+		break;
+	case 2:
+		cPrice_dChaegyul.ShowWindow(SW_SHOW);
+		pwndShow = &cPrice_dChaegyul;
 		break;
 	}
 	*pResult = 0;
