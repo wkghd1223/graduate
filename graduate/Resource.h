@@ -14,6 +14,10 @@
 #define IDD_FO_ORDER_DLG                105
 #define IDD_CMainDlg                    106
 #define IDR_MAINFRAME                   128
+#define IDD_PRICE_HOGA                  144
+#define IDD_PRICE_CHAEGYUL              146
+#define IDD_DIALOG1                     148
+#define IDD_PRICE_D_CHAEGYUL            148
 #define IDC_BUTTON_RUN                  1000
 #define IDC_BTN_CURRENTPRICE            1001
 #define IDC_BTN_ORDER                   1002
@@ -40,6 +44,8 @@
 #define IDC_TEST_DAY                    1016
 #define IDC_TEST_MONTH                  1017
 #define IDC_TEST_WEEK                   1018
+#define IDC_CURRENTPRICE                1020
+
 #define IDC_EDT_ACCNO                   1021
 #define IDC_EDIT_SEARCH                 1021
 #define IDC_STATIC_TEST                 1021
@@ -63,7 +69,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        144
+#define _APS_NEXT_RESOURCE_VALUE        150
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1027
 #define _APS_NEXT_SYMED_VALUE           107
