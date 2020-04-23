@@ -7,6 +7,8 @@ class CStock
 	CStock() {}
 	~CStock() {}
 private:
+	long code;				// 종목코드
+
 	double open;			// 시가
 	double close;			// 종가
 	double high;			// 고가
@@ -17,14 +19,7 @@ private:
 	double marketCap;		// 시가총액
 	double marketCapRatio;	// 시가총액비중
 	double foreignMaxRatio;	// 외인소진률
-};
 
-class CCompany {
-	CCompany() {}
-	~CCompany(){}
-private:
-	CStock* stock;
-	long code;				// 종목코드
 	CString stockName;		// 종목명
 	CString creditRatio;	// 신용비율
 	int numOfStock;			// 상장주식
@@ -42,5 +37,12 @@ private:
 	double pbr;				// PBR
 	double ev;				// EV
 	double bps;				// BPS
+};
+
+class CCompany {
+	CCompany() {}
+	~CCompany(){}
+private:
+	CStock* stock;
 
 };

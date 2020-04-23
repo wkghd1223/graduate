@@ -38,7 +38,6 @@ protected:
 	afx_msg void OnClose();
 	afx_msg void OnPaint();
 	DECLARE_MESSAGE_MAP()
-	DECLARE_EVENTSINK_MAP()
 public:
 	CString		m_strScrNo;
 	CWnd*		m_pParent;
@@ -53,11 +52,13 @@ public:
 	CStatic userInfo;
 	CStatic userInfoFormat;
 	CEdit editSearch;
+	CString search = L"";
 	CStatic stockInfo;
 	CTabCtrl currentPrice;
-
-	void ShowGraph(CString code);
-	void ReadData(SChartCandlestickPoint(&pCandlePoint)[600]);
+	SChartCandlestickPoint pCandlePoint[1000];
+	int pointNum;
+	void InitGraph();
+	void ShowGraph();
 	int period = DAY;
 
 

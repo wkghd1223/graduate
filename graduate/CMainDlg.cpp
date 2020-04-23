@@ -14,6 +14,13 @@
 
 IMPLEMENT_DYNAMIC(CMainDlg, CDialogEx)
 
+const CString listOPT10001[] = {
+	L"종목명", L"시가", L"종가", L"저가", L"고가", L"현재가", L"거래량"
+};
+const CString listOPT10081[] = {
+	L"종목코드", L"현재가", L"거래량", L"거래대금", L"일자", L"시가", L"고가", L"저가", L"수정주가구분", L"수정비율", L"대업종구분", L"소업종구분", L"종목정보", L"수정주가이벤트", L"전일종가"
+};
+
 CMainDlg::CMainDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_CMainDlg, pParent)
 {
@@ -46,6 +53,7 @@ BOOL CMainDlg::OnInitDialog() {
 	chartPeriod.AddString(_T("월"));
 	chartPeriod.SetCurSel(DAY);
 
+	InitGraph();
 
 	CRect rect;
 	//현재가격(호가,체결,일별 체결)
@@ -124,9 +132,6 @@ void CMainDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_CHART_PERIOD, chartPeriod);
 	DDX_Control(pDX, IDC_CURRENTPRICE, currentPrice);
 }
-BEGIN_EVENTSINK_MAP(CMainDlg, CDialogEx)
-ON_EVENT(CMainDlg, IDC_KHOPENAPICTRL1, 1, CMainDlg::OnReceiveTrDataKhopenapictrl1, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR)
-END_EVENTSINK_MAP()
 void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LPCTSTR sTrCode, LPCTSTR sRecordName, LPCTSTR sPrevNext, long nDataLength, LPCTSTR sErrorCode, LPCTSTR sMessage, LPCTSTR sSplmMsg)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
@@ -162,6 +167,38 @@ void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LP
 		out.Trim();
 		stockInfo.SetWindowTextW(str);
 	}
+	else if (out == L"주식일봉차트조회" || _T("주식주봉차트조회") || _T("주식월봉차트조회")) {
+		pointNum = theApp.kStock.GetRepeatCnt(sTrCode, sRQName);
+		for (int i = 0; i < pointNum; i++) {
+			CString date;
+			int year, month, day;
+			date = theApp.kStock.GetCommData(sTrCode, sRQName, i, listOPT10081[4]); date.Trim();
+			year = _ttoi(date.Left(4));
+			month = _ttoi(date.Mid(4, 2));
+			day = _ttoi(date.Right(2));
+
+			COleDateTime oDate(year, month, day, 0, 0, 0);
+			pCandlePoint[i].XVal = CChartCtrl::DateToValue(oDate);
+
+			pCandlePoint[i].Open = _tstof(theApp.kStock.GetCommData(sTrCode, sRQName, i, listOPT10081[5])); 
+			pCandlePoint[i].Close = _tstof(theApp.kStock.GetCommData(sTrCode, sRQName, i, listOPT10081[1]));
+			pCandlePoint[i].High = _tstof(theApp.kStock.GetCommData(sTrCode, sRQName, i, listOPT10081[6]));
+			pCandlePoint[i].Low = _tstof(theApp.kStock.GetCommData(sTrCode, sRQName, i, listOPT10081[7]));
+			//theApp.kStock.
+
+			//theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10081[0]); // 종목코드
+			//theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10081[2]); // 거래량
+			//theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10081[3]); // 거래대금
+			//theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10081[8]); // 수정주가구분
+			//theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10081[9]); // 수정비율
+			//theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10081[10]); // 대업종구분
+			//theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10081[11]); // 소업종구분
+			//theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10081[12]); // 종목정보
+			//theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10081[13]); // 수정주가이벤트
+			//theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10081[14]); // 전일종가
+		}
+		ShowGraph();
+	}
 }
 BEGIN_MESSAGE_MAP(CMainDlg, CDialogEx)
 	ON_BN_CLICKED(IDOK, &CMainDlg::OnBnClickedOk)
@@ -176,16 +213,44 @@ END_MESSAGE_MAP()
 void CMainDlg::OnBnClickedOk()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CString code = _T("");
 
-	editSearch.GetWindowText(code);
+	editSearch.GetWindowText(search);
+	search.Trim();
+
 	//날짜 선정 해줘야 함
-	theApp.kStock.SetInputValue(_T("종목코드"), code);
+	
+	// combobox 값 별 분기
+	int pos = chartPeriod.GetCurSel();
+	switch (pos)
+	{
 
-	theApp.kStock.CommRqData(_T("주식기본정보"), _T("OPT10001"), 0, m_strScrNo);
-	ShowGraph(code);
+	case DAY:
+		theApp.kStock.SetInputValue(L"종목코드", search);
+		theApp.kStock.SetInputValue(L"기준일자", L"20200423");
+		theApp.kStock.SetInputValue(L"수정주가구분", L"0");
+		theApp.kStock.CommRqData(_T("주식일봉차트조회"), _T("opt10081"), 0, m_strScrNo);
+		break;
+
+	case WEEK:
+		theApp.kStock.SetInputValue(L"종목코드", search);
+		theApp.kStock.SetInputValue(L"기준일자", L"20200423");
+		theApp.kStock.SetInputValue(L"수정주가구분", L"0");
+		theApp.kStock.CommRqData(_T("주식주봉차트조회"), _T("opt10082"), 0, m_strScrNo);
+		break;
+
+	case MONTH:
+		theApp.kStock.SetInputValue(L"종목코드", search);
+		theApp.kStock.SetInputValue(L"기준일자", L"20200423");
+		theApp.kStock.SetInputValue(L"수정주가구분", L"0");
+		theApp.kStock.CommRqData(_T("주식월봉차트조회"), _T("opt10083"), 0, m_strScrNo);
+		break;
+	default:
+		break;
+	}
+
+	//theApp.kStock.CommRqData(_T("주식기본정보"), _T("OPT10081"), 0, m_strScrNo);
+
 	//주식일봉차트에 관한 정보 받아오기
-	theApp.kStock.CommRqData(_T("주식일봉차트조회"), _T("opt10081"), 2, _T("0290"));
 	//code : 종목입력 변수
 
 	//CDialogEx::OnOK();
@@ -204,26 +269,42 @@ void CMainDlg::OnBnClickedCancel()
 
 void CMainDlg::OnCbnSelchangeComboChartPeriod()
 {
+
+	if (search.GetLength() != 6 ) {
+
+		return;
+	}
+	// 종목을 선택하지 않고 눌렀을 경우 예외 처리
 	// TODO: Add your control notification handler code here
 	int pos = chartPeriod.GetCurSel();
 	switch (pos)
 	{
-
 	case DAY:
-
+		theApp.kStock.SetInputValue(L"종목코드", search);
+		theApp.kStock.SetInputValue(L"기준일자", L"20200423");
+		theApp.kStock.SetInputValue(L"수정주가구분", L"0");
+		theApp.kStock.CommRqData(_T("주식일봉차트조회"), _T("opt10081"), 0, m_strScrNo);
 		break;
 
 	case WEEK:
+		theApp.kStock.SetInputValue(L"종목코드", search);
+		theApp.kStock.SetInputValue(L"기준일자", L"20200423");
+		theApp.kStock.SetInputValue(L"수정주가구분", L"0");
+		theApp.kStock.CommRqData(_T("주식주봉차트조회"), _T("opt10082"), 0, m_strScrNo);
 		break;
 
 	case MONTH:
+		theApp.kStock.SetInputValue(L"종목코드", search);
+		theApp.kStock.SetInputValue(L"기준일자", L"20200423");
+		theApp.kStock.SetInputValue(L"수정주가구분", L"0");
+		theApp.kStock.CommRqData(_T("주식월봉차트조회"), _T("opt10083"), 0, m_strScrNo);
 		break;
 	default:
 		break;
 	}
 
 }
-void CMainDlg::ShowGraph(CString code) {
+void CMainDlg::InitGraph() {
 	CChartDateTimeAxis* pBottomAxis = chart.CreateDateTimeAxis(CChartCtrl::BottomAxis);
 	CChartStandardAxis* pLeftAxis = chart.CreateStandardAxis(CChartCtrl::LeftAxis);
 
@@ -241,36 +322,18 @@ void CMainDlg::ShowGraph(CString code) {
 	pBottomAxis->SetDiscrete(false);
 	chart.ShowMouseCursor(false);
 	CChartCrossHairCursor* pCrossHair = chart.CreateCrossHairCursor();
-
-	CChartXYSerie* pSeries = nullptr;
-	pSeries = chart.CreateLineSerie();
-
-	double XVal[50];
-	double YVal[50];
-	for (int i = 0; i < 50; i++) {
-		COleDateTime date(2017, 6, 1, 0, 0, 0);
-		XVal[i] = CChartCtrl::DateToValue(date) + (double)i * 16;
-		YVal[i] = sin(i) * 5000 + 47000;
-	}
-	pSeries->SetPoints(XVal, YVal, 50);
-	pSeries->SetColor(RGB(255, 0, 0));
-	pSeries->CreateBalloonLabel(5, _T("this is sin curve"));
+}
+void CMainDlg::ShowGraph() {
+	chart.RemoveAllSeries();
 
 	CChartCandlestickSerie* pCandle = nullptr;
 	pCandle = chart.CreateCandlestickSerie();
-	SChartCandlestickPoint pCandlePoint[600];
 
-	ReadData(pCandlePoint);
-	pCandle->SetPoints(pCandlePoint, 600);
+	pCandle->SetPoints(pCandlePoint, pointNum);
 	pCandle->SetColor(RGB(0, 0, 255));
-	pCandle->CreateBalloonLabel(5, _T("this is a candle"));
 
-	pCandle->SetVisible(true);
 }
-	// 이미지로 저장했을 때 이미지가 보여지는 것으로 보아 
-	//RECT rect;
-	//GetClientRect(&rect);
-	//chart.SaveAsImage(_T("asf.png"), rect,32);
+
 
 void CMainDlg::OnTcnSelchangeCurrentprice(NMHDR* pNMHDR, LRESULT* pResult)
 {
@@ -295,29 +358,4 @@ void CMainDlg::OnTcnSelchangeCurrentprice(NMHDR* pNMHDR, LRESULT* pResult)
 		break;
 	}
 	*pResult = 0;
-}
-
-void CMainDlg::ReadData(SChartCandlestickPoint(&pCandlePoint)[600])
-{
-	//UpdateData(TRUE);
-
-	int year = 2017, month = 4, day = 6;
-	for (int i = 0; i < 600; i++) {
-		pCandlePoint[i].Open = 46000.0;
-		pCandlePoint[i].Close = 53234.0;
-		pCandlePoint[i].High = 54300.0;
-		pCandlePoint[i].Low = 43542.0;
-
-		COleDateTime date(year, month, day, 0, 0, 0);
-		pCandlePoint[i].XVal = CChartCtrl::DateToValue(date);
-		day++;
-		if (day > 28) {
-			day = 1;
-			month++;
-			if (month > 12) {
-				month = 1;
-				year++;
-			}
-		}
-	}
 }
