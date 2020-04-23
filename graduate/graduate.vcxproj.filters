@@ -144,15 +144,6 @@
     <ClInclude Include="ChartCtrl_source\ChartPointsSerie.h">
       <Filter>ChartCrl</Filter>
     </ClInclude>
-    <ClInclude Include="CDayChartDlg.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CWeekChartDlg.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CMonthChartDlg.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="graduate.cpp">
@@ -247,15 +238,6 @@
     </ClCompile>
     <ClCompile Include="ChartCtrl_source\ChartScrollBar.cpp">
       <Filter>ChartCrl</Filter>
-    </ClCompile>
-    <ClCompile Include="CDayChartDlg.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CMonthChartDlg.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CWeekChartDlg.cpp">
-      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

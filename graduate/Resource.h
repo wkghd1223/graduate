@@ -14,9 +14,6 @@
 #define IDD_FO_ORDER_DLG                105
 #define IDD_CMainDlg                    106
 #define IDR_MAINFRAME                   128
-#define IDD_DIALOG_DAY_CHART            138
-#define IDD_DIALOG_MONTH_CHART          140
-#define IDD_DIALOG_WEEK_CHART           142
 #define IDC_BUTTON_RUN                  1000
 #define IDC_BTN_CURRENTPRICE            1001
 #define IDC_BTN_ORDER                   1002
@@ -43,17 +40,17 @@
 #define IDC_TEST_DAY                    1016
 #define IDC_TEST_MONTH                  1017
 #define IDC_TEST_WEEK                   1018
-#define IDC_CUSTOM_CHART_DAY            1019
 #define IDC_EDT_ACCNO                   1021
 #define IDC_EDIT_SEARCH                 1021
 #define IDC_STATIC_TEST                 1021
 #define IDC_COM_TRTP                    1022
-#define IDC_CUSTOM1                     1022
-#define IDC_CUSTOM_TEST                 1022
 #define IDC_COM_SBTP                    1023
+#define IDC_CUSTOM_CHART                1023
 #define IDC_EDT_QUANTITY                1024
 #define IDC_EDT_PRICE                   1025
 #define IDC_EDT_ORGNO                   1026
+#define IDC_COMBO2                      1026
+#define IDC_COMBO_CHART_PERIOD          1026
 #define IDC_STC_MSGBAR                  1027
 #define IDC_BTN_FO_ORDER                1028
 #define IDC_LIST_USER                   1029
@@ -68,7 +65,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        144
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1023
+#define _APS_NEXT_CONTROL_VALUE         1027
 #define _APS_NEXT_SYMED_VALUE           107
 #endif
 #endif

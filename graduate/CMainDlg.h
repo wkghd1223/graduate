@@ -3,14 +3,10 @@
 #include "graduate.h"
 #include "ChartCtrl_source/ChartCtrl.h"
 #include "ChartCtrl_source/ChartLineSerie.h"
-#include "CDayChartDlg.h"
-#include "CWeekChartDlg.h"
-#include "CMonthChartDlg.h"
+#include "ChartCtrl_source/ChartCandlestickSerie.h"
 
 // CMainDlg 대화 상자
-//class CDayChartDlg;
-//class CWeekChartDlg;
-//class CMonthChartDlg;
+
 
 class CMainDlg : public CDialogEx
 {
@@ -24,11 +20,8 @@ public:
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_CMainDlg };
 #endif
-	CDayChartDlg cDayChart;
-	CWeekChartDlg cWeekChart;
-	CMonthChartDlg cMonthChart;
-	CWnd* pwndShow;
 
+	enum {DAY = 0, WEEK = 1, MONTH = 2};
 protected:
 	HICON m_hIcon;
 
@@ -44,16 +37,21 @@ public:
 
 	afx_msg void OnEnChangeEditSearch();
 	afx_msg void OnBnClickedOk();
-	afx_msg void OnTcnSelchangeTabCandleChart(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnCbnSelchangeComboChartPeriod();
+	afx_msg void OnBnClickedCancel();
 	void OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LPCTSTR sTrCode, LPCTSTR sRecordName, LPCTSTR sPrevNext, long nDataLength, LPCTSTR sErrorCode, LPCTSTR sMessage, LPCTSTR sSplmMsg);
 	CUser* user = new CUser();
 	CStatic userInfo;
 	CStatic userInfoFormat;
 	CEdit editSearch;
 	CStatic stockInfo;
-	
-	CTabCtrl candleChart;
-	afx_msg void OnBnClickedCancel();
+	void ShowGraph(CString code);
+	void ReadData(SChartCandlestickPoint(&pCandlePoint)[600]);
+	int period = DAY;
 
-	virtual void PostNcDestroy();
+
+	// this is chart
+	CChartCtrl chart;
+	// day | week | month
+	CComboBox chartPeriod;
 };

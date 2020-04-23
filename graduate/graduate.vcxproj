@@ -187,7 +187,6 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CDayChartDlg.h" />
     <ClInclude Include="ChartCtrl_source\ChartAxis.h" />
     <ClInclude Include="ChartCtrl_source\ChartAxisLabel.h" />
     <ClInclude Include="ChartCtrl_source\ChartBalloonLabel.h" />
@@ -220,9 +219,7 @@
     <ClInclude Include="ChartCtrl_source\ChartXYSerie.h" />
     <ClInclude Include="ChartCtrl_source\PointsOrdering.h" />
     <ClInclude Include="CMainDlg.h" />
-    <ClInclude Include="CMonthChartDlg.h" />
     <ClInclude Include="CStock.h" />
-    <ClInclude Include="CWeekChartDlg.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="graduate.h" />
     <ClInclude Include="graduateDlg.h" />
@@ -234,7 +231,6 @@
     <ClInclude Include="CUser.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CDayChartDlg.cpp" />
     <ClCompile Include="ChartCtrl_source\ChartAxis.cpp" />
     <ClCompile Include="ChartCtrl_source\ChartAxisLabel.cpp" />
     <ClCompile Include="ChartCtrl_source\ChartBarSerie.cpp" />
@@ -259,9 +255,7 @@
     <ClCompile Include="ChartCtrl_source\ChartTitle.cpp" />
     <ClCompile Include="ChartCtrl_source\ChartXYSerie.cpp" />
     <ClCompile Include="CMainDlg.cpp" />
-    <ClCompile Include="CMonthChartDlg.cpp" />
     <ClCompile Include="CStock.cpp" />
-    <ClCompile Include="CWeekChartDlg.cpp" />
     <ClCompile Include="graduate.cpp" />
     <ClCompile Include="graduateDlg.cpp" />
     <ClCompile Include="khopenapictrl1.cpp" />

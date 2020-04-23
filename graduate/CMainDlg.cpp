@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 #include "graduateDlg.h"
 
-//#include "CDayChartDlg.h"
+//#include "CchartDlg.h"
 //#include "CWeekChartDlg.h"
 //#include "CMonthChartDlg.h"
 // CMainDlg 대화 상자
@@ -22,7 +22,6 @@ CMainDlg::CMainDlg(CWnd* pParent /*=nullptr*/)
 	m_strJongCode = "";
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
-	pwndShow = NULL;
 }
 
 CMainDlg::~CMainDlg()
@@ -41,29 +40,11 @@ BOOL CMainDlg::OnInitDialog() {
 	str += _T("\n");
 	userInfo.SetWindowTextW(str);
 
-	CString tabName[3] = { _T("일"), _T("주"),_T("월") };
-	for (int i = 0; i < (sizeof(tabName) / sizeof(*tabName));i++) {
-		candleChart.InsertItem(i , tabName[i]);
-	}
-	candleChart.SetCurSel(0);
-	CRect rect;
-	candleChart.GetWindowRect(&rect);
-	//candleChart.GetClientRect(&Rect);
-	
-	//cDayChart = new CDayChartDlg;
-	//cWeekChart = new CWeekChartDlg;
-	//cMonthChart = new CMonthChartDlg;
+	chartPeriod.AddString(_T("일"));
+	chartPeriod.AddString(_T("주"));
+	chartPeriod.AddString(_T("월"));
+	chartPeriod.SetCurSel(DAY);
 
-
-	cDayChart.Create(IDD_DIALOG_DAY_CHART, &candleChart);
-	cDayChart.SetWindowPos(NULL, 5, 25, rect.Width() - 10, rect.Height() - 30, SWP_SHOWWINDOW | SWP_NOZORDER);
-	pwndShow = &cDayChart;
-
-	cWeekChart.Create(IDD_DIALOG_WEEK_CHART, &candleChart);
-	cWeekChart.SetWindowPos(NULL, 5, 25, rect.Width() - 10, rect.Height() - 30, SWP_NOZORDER);
-
-	cMonthChart.Create(IDD_DIALOG_MONTH_CHART, &candleChart);
-	cMonthChart.SetWindowPos(NULL, 5, 25, rect.Width() - 10, rect.Height() - 30, SWP_NOZORDER);
 
 	return TRUE;
 }
@@ -121,7 +102,8 @@ void CMainDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TEXT_STATIC, userInfoFormat);
 	DDX_Control(pDX, IDC_EDIT_SEARCH, editSearch);
 	DDX_Control(pDX, IDC_TEXT_STOCK_INFO, stockInfo);
-	DDX_Control(pDX, IDC_TAB_CANDLE_CHART, candleChart);
+	DDX_Control(pDX, IDC_CUSTOM_CHART, chart);
+	DDX_Control(pDX, IDC_COMBO_CHART_PERIOD, chartPeriod);
 }
 //BEGIN_EVENTSINK_MAP(CMainDlg, CDialogEx)
 //ON_EVENT(CMainDlg, IDC_KHOPENAPICTRL1, 1, CMainDlg::OnReceiveTrDataKhopenapictrl1, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR)
@@ -165,8 +147,8 @@ void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LP
 BEGIN_MESSAGE_MAP(CMainDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_SEARCH, &CMainDlg::OnEnChangeEditSearch)
 	ON_BN_CLICKED(IDOK, &CMainDlg::OnBnClickedOk)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB_CANDLE_CHART, &CMainDlg::OnTcnSelchangeTabCandleChart)
 	ON_BN_CLICKED(IDCANCEL, &CMainDlg::OnBnClickedCancel)
+	ON_CBN_SELCHANGE(IDC_COMBO_CHART_PERIOD, &CMainDlg::OnCbnSelchangeComboChartPeriod)
 END_MESSAGE_MAP()
 
 
@@ -190,49 +172,9 @@ void CMainDlg::OnBnClickedOk()
 
 	theApp.kStock.SetInputValue(_T("종목코드"), code);
 	theApp.kStock.CommRqData(_T("주식기본정보"), _T("OPT10001"), 0, m_strScrNo);
-	int pos = candleChart.GetCurSel();
-	switch (pos)
-	{
-	case 0:
-		cDayChart.ShowGraph(code);
-		break;
-	case 1:
-		break;
-	case 2:
-		break;
-	default:
-		break;
-	}
+
+	ShowGraph(code);
 	//CDialogEx::OnOK();
-}
-
-
-void CMainDlg::OnTcnSelchangeTabCandleChart(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	if (pwndShow != NULL) {
-		pwndShow->ShowWindow(SW_HIDE);
-		pwndShow = NULL;
-	}
-	int pos = candleChart.GetCurSel();
-	switch (pos)
-	{
-	case 0:
-		cDayChart.ShowWindow(SW_SHOW);
-		pwndShow = &cDayChart;
-		break;
-	case 1:
-		cWeekChart.ShowWindow(SW_SHOW);
-		pwndShow = &cWeekChart;
-		break;
-	case 2:
-		cMonthChart.ShowWindow(SW_SHOW);
-		pwndShow = &cMonthChart;
-		break;
-	default:
-		break;
-	}
-	*pResult = 0;
 }
 
 
@@ -243,9 +185,95 @@ void CMainDlg::OnBnClickedCancel()
 }
 
 
-void CMainDlg::PostNcDestroy()
+
+void CMainDlg::OnCbnSelchangeComboChartPeriod()
 {
-	m_pParent = NULL;
-	delete this;
-	CDialogEx::PostNcDestroy();
+	// TODO: Add your control notification handler code here
+	int pos = chartPeriod.GetCurSel();
+	switch (pos)
+	{
+	case DAY:
+
+		break;
+	case WEEK:
+		break;
+	case MONTH:
+		break;
+	default:
+		break;
+	}
+}
+void CMainDlg::ShowGraph(CString code) {
+	CChartDateTimeAxis* pBottomAxis = chart.CreateDateTimeAxis(CChartCtrl::BottomAxis);
+	CChartStandardAxis* pLeftAxis = chart.CreateStandardAxis(CChartCtrl::LeftAxis);
+
+	// 축 자동설정
+	pBottomAxis->SetAutomaticMode(CChartAxis::FullAutomatic);
+	pLeftAxis->SetAutomaticMode(CChartAxis::FullAutomatic);
+	// 축 수동설정
+	//COleDateTime minValue(2019, 1, 1, 0, 0, 0);
+	//COleDateTime maxValue(2019, 9, 30, 0, 0, 0);
+	//pBottomAxis->SetMinMax(CChartCtrl::DateToValue(minValue), CChartCtrl::DateToValue(maxValue));
+	//pBottomAxis->SetTickIncrement(false, CChartDateTimeAxis::tiMonth, 1);
+	//pBottomAxis->SetTickLabelFormat(false, _T("%b %Y"));
+
+
+	pBottomAxis->SetDiscrete(false);
+	chart.ShowMouseCursor(false);
+	CChartCrossHairCursor* pCrossHair = chart.CreateCrossHairCursor();
+
+	CChartXYSerie* pSeries = nullptr;
+	pSeries = chart.CreateLineSerie();
+
+	double XVal[50];
+	double YVal[50];
+	for (int i = 0; i < 50; i++) {
+		COleDateTime date(2017, 6, 1, 0, 0, 0);
+		XVal[i] = CChartCtrl::DateToValue(date) + (double)i * 16;
+		YVal[i] = sin(i) * 5000 + 47000;
+	}
+	pSeries->SetPoints(XVal, YVal, 50);
+	pSeries->SetColor(RGB(255, 0, 0));
+	pSeries->CreateBalloonLabel(5, _T("this is sin curve"));
+
+	CChartCandlestickSerie* pCandle = nullptr;
+	pCandle = chart.CreateCandlestickSerie();
+	SChartCandlestickPoint pCandlePoint[600];
+
+	ReadData(pCandlePoint);
+	pCandle->SetPoints(pCandlePoint, 600);
+	pCandle->SetColor(RGB(0, 0, 255));
+	pCandle->CreateBalloonLabel(5, _T("this is a candle"));
+
+	pCandle->SetVisible(true);
+
+	// 이미지로 저장했을 때 이미지가 보여지는 것으로 보아 
+	//RECT rect;
+	//GetClientRect(&rect);
+	//chart.SaveAsImage(_T("asf.png"), rect,32);
+}
+
+void CMainDlg::ReadData(SChartCandlestickPoint(&pCandlePoint)[600])
+{
+	//UpdateData(TRUE);
+
+	int year = 2017, month = 4, day = 6;
+	for (int i = 0; i < 600; i++) {
+		pCandlePoint[i].Open = 46000.0;
+		pCandlePoint[i].Close = 53234.0;
+		pCandlePoint[i].High = 54300.0;
+		pCandlePoint[i].Low = 43542.0;
+
+		COleDateTime date(year, month, day, 0, 0, 0);
+		pCandlePoint[i].XVal = CChartCtrl::DateToValue(date);
+		day++;
+		if (day > 28) {
+			day = 1;
+			month++;
+			if (month > 12) {
+				month = 1;
+				year++;
+			}
+		}
+	}
 }
