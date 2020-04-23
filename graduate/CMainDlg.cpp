@@ -46,23 +46,23 @@ BOOL CMainDlg::OnInitDialog() {
 	chartPeriod.AddString(_T("월"));
 	chartPeriod.SetCurSel(DAY);
 
->>>>>>> a2be0a5b03e5a23ce56ab39ac2edde5ffa5011a9
 
+	CRect rect;
 	//현재가격(호가,체결,일별 체결)
 	CString currentPrice_tabName[3] = { _T("호가"), _T("체결"),_T("일별") };
 	for (int i = 0; i < (sizeof(currentPrice_tabName) / sizeof(*currentPrice_tabName)); i++) {
 		currentPrice.InsertItem(i + 1, currentPrice_tabName[i]);
 	}
-	currentPrice.GetClientRect(&Rect2);
+	currentPrice.GetClientRect(&rect);
 
 	cPrice_Hoga.Create(IDD_PRICE_HOGA, &currentPrice);
-	cPrice_Hoga.SetWindowPos(NULL, 5, 25, Rect2.Width()+10, Rect2.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
+	cPrice_Hoga.SetWindowPos(NULL, 5, 25, rect.Width()+10, rect.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
 
 	cPrice_Chaegyul.Create(IDD_PRICE_CHAEGYUL, &currentPrice);
-	cPrice_Chaegyul.SetWindowPos(NULL, 5, 25, Rect2.Width()+10, Rect2.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
+	cPrice_Chaegyul.SetWindowPos(NULL, 5, 25, rect.Width()+10, rect.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
 
 	cPrice_dChaegyul.Create(IDD_PRICE_D_CHAEGYUL, &currentPrice);
-	cPrice_dChaegyul.SetWindowPos(NULL, 5, 25, Rect2.Width()+10, Rect2.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
+	cPrice_dChaegyul.SetWindowPos(NULL, 5, 25, rect.Width()+10, rect.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
 
 	return TRUE;
 }
@@ -124,9 +124,9 @@ void CMainDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_CHART_PERIOD, chartPeriod);
 	DDX_Control(pDX, IDC_CURRENTPRICE, currentPrice);
 }
-//BEGIN_EVENTSINK_MAP(CMainDlg, CDialogEx)
-//ON_EVENT(CMainDlg, IDC_KHOPENAPICTRL1, 1, CMainDlg::OnReceiveTrDataKhopenapictrl1, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR)
-//END_EVENTSINK_MAP()
+BEGIN_EVENTSINK_MAP(CMainDlg, CDialogEx)
+ON_EVENT(CMainDlg, IDC_KHOPENAPICTRL1, 1, CMainDlg::OnReceiveTrDataKhopenapictrl1, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR)
+END_EVENTSINK_MAP()
 void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LPCTSTR sTrCode, LPCTSTR sRecordName, LPCTSTR sPrevNext, long nDataLength, LPCTSTR sErrorCode, LPCTSTR sMessage, LPCTSTR sSplmMsg)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
@@ -164,7 +164,6 @@ void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LP
 	}
 }
 BEGIN_MESSAGE_MAP(CMainDlg, CDialogEx)
-	ON_EN_CHANGE(IDC_EDIT_SEARCH, &CMainDlg::OnEnChangeEditSearch)
 	ON_BN_CLICKED(IDOK, &CMainDlg::OnBnClickedOk)
 
 	ON_NOTIFY(TCN_SELCHANGE, IDC_CURRENTPRICE, &CMainDlg::OnTcnSelchangeCurrentprice)
@@ -172,17 +171,6 @@ BEGIN_MESSAGE_MAP(CMainDlg, CDialogEx)
 	ON_BN_CLICKED(IDCANCEL, &CMainDlg::OnBnClickedCancel)
 	ON_CBN_SELCHANGE(IDC_COMBO_CHART_PERIOD, &CMainDlg::OnCbnSelchangeComboChartPeriod)
 END_MESSAGE_MAP()
-
-
-void CMainDlg::OnEnChangeEditSearch()
-{
-	// TODO:  RICHEDIT 컨트롤인 경우, 이 컨트롤은
-	// CDialogEx::OnInitDialog() 함수를 재지정 
-	//하고 마스크에 OR 연산하여 설정된 ENM_CHANGE 플래그를 지정하여 CRichEditCtrl().SetEventMask()를 호출하지 않으면
-	// 이 알림 메시지를 보내지 않습니다.
-
-	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
-}
 
 
 void CMainDlg::OnBnClickedOk()
@@ -278,7 +266,7 @@ void CMainDlg::ShowGraph(CString code) {
 	pCandle->CreateBalloonLabel(5, _T("this is a candle"));
 
 	pCandle->SetVisible(true);
-
+}
 	// 이미지로 저장했을 때 이미지가 보여지는 것으로 보아 
 	//RECT rect;
 	//GetClientRect(&rect);
@@ -307,11 +295,6 @@ void CMainDlg::OnTcnSelchangeCurrentprice(NMHDR* pNMHDR, LRESULT* pResult)
 		break;
 	}
 	*pResult = 0;
-=======
-void CMainDlg::OnBnClickedCancel()
-{
-	// TODO: Add your control notification handler code here
-	CDialogEx::OnCancel();
 }
 
 void CMainDlg::ReadData(SChartCandlestickPoint(&pCandlePoint)[600])
