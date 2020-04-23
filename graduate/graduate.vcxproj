@@ -221,6 +221,9 @@
     <ClInclude Include="CMainDlg.h" />
     <ClInclude Include="CStock.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="CurrentPrice_chaegyul.h" />
+    <ClInclude Include="CurrentPrice_day_chaegyul.h" />
+    <ClInclude Include="CurrentPrice_hoga.h" />
     <ClInclude Include="graduate.h" />
     <ClInclude Include="graduateDlg.h" />
     <ClInclude Include="khopenapictrl1.h" />
