@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "CUser.h"
 #include "graduate.h"
+#include "CStock.h"
 #include "CurrentPrice_chaegyul.h"
 #include "CurrentPrice_day_chaegyul.h"
 #include "CurrentPrice_hoga.h"
@@ -9,8 +10,18 @@
 #include "ChartCtrl_source/ChartCandlestickSerie.h"
 
 // CMainDlg 대화 상자
+#define NUM_DOUBLE 18
 
-
+const CString listOPT10001[] = {
+	 L"시가", L"종가", L"고가", L"저가", L"기준가", 
+	 L"현재가", L"거래량", L"시가총액",L"자본금",L"액면가",
+	L"매출액", L"영업이익", L"당기순이익", L"유통주식", L"ROE",
+	L"PER", L"PBR", L"EV", L"상장주식", L"종목코드", 
+	L"종목명", L"신용비율"
+};
+const CString listOPT10081[] = {
+	L"종목코드", L"현재가", L"거래량", L"거래대금", L"일자", L"시가", L"고가", L"저가", L"수정주가구분", L"수정비율", L"대업종구분", L"소업종구분", L"종목정보", L"수정주가이벤트", L"전일종가"
+};
 class CMainDlg : public CDialogEx
 {
 	DECLARE_DYNAMIC(CMainDlg)
@@ -56,6 +67,7 @@ public:
 	CStatic stockInfo;
 	CTabCtrl currentPrice;
 	SChartCandlestickPoint pCandlePoint[1000];
+	CChartCandlestickSerie* pCandle;
 	int pointNum;
 	void InitGraph();
 	void ShowGraph();
@@ -66,4 +78,5 @@ public:
 	CChartCtrl chart;
 	// day | week | month
 	CComboBox chartPeriod;
+	CStock *stock;
 };

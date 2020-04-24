@@ -14,12 +14,7 @@
 
 IMPLEMENT_DYNAMIC(CMainDlg, CDialogEx)
 
-const CString listOPT10001[] = {
-	L"종목명", L"시가", L"종가", L"저가", L"고가", L"현재가", L"거래량"
-};
-const CString listOPT10081[] = {
-	L"종목코드", L"현재가", L"거래량", L"거래대금", L"일자", L"시가", L"고가", L"저가", L"수정주가구분", L"수정비율", L"대업종구분", L"소업종구분", L"종목정보", L"수정주가이벤트", L"전일종가"
-};
+
 
 CMainDlg::CMainDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_CMainDlg, pParent)
@@ -137,37 +132,31 @@ void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LP
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
 	//userInfo.SetWindowTextW(_T("asdf"));
 	CString out = sRQName;
-	CString str = _T("");
-	if (out == _T("주식기본정보")) {
-		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("종목명"));
-		out.Trim();
-		str += out;
-		str += _T("\n");
-		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("시가총액"));
-		out.Trim();
-		str += out;
-		str += _T("\n");
-		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("현재가"));
-		out.Trim();
-		str += out;
-		str += _T("\n");
-		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("거래량"));
-		out.Trim();
-		str += out;
-		str += _T("\n");
-		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("PER"));
-		out.Trim();
-		str += out;
-		str += _T("\n");
-		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("PBR"));
-		out.Trim();
-		str += out;
-		str += _T("\n");
-		out = theApp.kStock.GetCommData(sTrCode, sRQName, 0, _T("ROE"));
-		out.Trim();
-		stockInfo.SetWindowTextW(str);
+	if (!out.Compare(L"주식기본정보")) {
+		int i;
+		double doubleTemp[NUM_DOUBLE] = {};
+		int intTemp[2] = {};
+		CString CStringTemp[2] = {};
+
+		for (i = 0; i < NUM_DOUBLE; i++) {
+			doubleTemp[i] = _tstof(theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10001[i]));
+		}
+		for (i = 0; i < 2; i++) {
+			intTemp[i] = _ttoi(theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10001[i+NUM_DOUBLE]));
+		}
+		for (i = 0; i < 2 ; i++) {
+			CStringTemp[i] = theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10001[i+NUM_DOUBLE+2]);
+			CStringTemp[i].Trim();
+		}
+		stock = new CStock(doubleTemp[0], doubleTemp[1], doubleTemp[2], doubleTemp[3], doubleTemp[4],
+			doubleTemp[5], doubleTemp[6], doubleTemp[7], doubleTemp[8], doubleTemp[9],
+			doubleTemp[10], doubleTemp[11], doubleTemp[12], doubleTemp[13], doubleTemp[14],
+			doubleTemp[15], doubleTemp[16], doubleTemp[17], intTemp[0], intTemp[1],
+			CStringTemp[0], CStringTemp[1]);
+		
+		stockInfo.SetWindowTextW(stock->GetStockName());
 	}
-	else if (out == L"주식일봉차트조회" || _T("주식주봉차트조회") || _T("주식월봉차트조회")) {
+	else if (!(out.Compare( L"주식일봉차트조회") && out.Compare(L"주식주봉차트조회" )&&out.Compare( L"주식월봉차트조회"))) {
 		pointNum = theApp.kStock.GetRepeatCnt(sTrCode, sRQName);
 		for (int i = 0; i < pointNum; i++) {
 			CString date;
@@ -198,6 +187,8 @@ void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LP
 			//theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10081[14]); // 전일종가
 		}
 		ShowGraph();
+	}
+	else {
 	}
 }
 BEGIN_MESSAGE_MAP(CMainDlg, CDialogEx)
@@ -248,7 +239,8 @@ void CMainDlg::OnBnClickedOk()
 		break;
 	}
 
-	//theApp.kStock.CommRqData(_T("주식기본정보"), _T("OPT10081"), 0, m_strScrNo);
+	theApp.kStock.SetInputValue(L"종목코드", search);
+	theApp.kStock.CommRqData(_T("주식기본정보"), _T("OPT10001"), 0, m_strScrNo);
 
 	//주식일봉차트에 관한 정보 받아오기
 	//code : 종목입력 변수
@@ -322,16 +314,16 @@ void CMainDlg::InitGraph() {
 	pBottomAxis->SetDiscrete(false);
 	chart.ShowMouseCursor(false);
 	CChartCrossHairCursor* pCrossHair = chart.CreateCrossHairCursor();
+	pCandle = nullptr;
 }
 void CMainDlg::ShowGraph() {
-	chart.RemoveAllSeries();
 
-	CChartCandlestickSerie* pCandle = nullptr;
-	pCandle = chart.CreateCandlestickSerie();
-
+	if (pCandle == nullptr) {
+		pCandle = chart.CreateCandlestickSerie();	
+	}
 	pCandle->SetPoints(pCandlePoint, pointNum);
+	//pCandle->SetShadowColor(RGB(255, 0, 0));
 	pCandle->SetColor(RGB(0, 0, 255));
-
 }
 
 
