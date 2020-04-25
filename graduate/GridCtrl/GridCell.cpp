@@ -5,8 +5,8 @@
 // Provides the implementation for the "default" cell type of the
 // grid control. Adds in cell editing.
 //
-// Written by Chris Maunder <cmaunder@mail.com>
-// Copyright (c) 1998-2002. All Rights Reserved.
+// Written by Chris Maunder <chris@codeproject.com>
+// Copyright (c) 1998-2005. All Rights Reserved.
 //
 // This code may be used in compiled form in any way you desire. This
 // file may be redistributed unmodified by any means PROVIDING it is 
@@ -223,9 +223,28 @@ CGridDefaultCell::CGridDefaultCell()
     GetObject(GetStockObject(SYSTEM_FONT), sizeof(LOGFONT), &lf);
     SetFont(&lf);
 #else // not CE
+
     NONCLIENTMETRICS ncm;
-    ncm.cbSize = sizeof(NONCLIENTMETRICS);
+#if defined(_MSC_VER) && (_MSC_VER < 1300)
+    ncm.cbSize = sizeof(NONCLIENTMETRICS); // NONCLIENTMETRICS has an extra element after VC6
+#else
+    // Check the operating system's version
+    OSVERSIONINFOEX osvi;
+    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+    if( !GetVersionEx((OSVERSIONINFO *) &osvi))
+    {
+    	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);	
+        GetVersionEx ((OSVERSIONINFO *)&osvi);
+    }
+    
+    if (osvi.dwMajorVersion > 5)
+    	ncm.cbSize = sizeof(NONCLIENTMETRICS);
+    else
+	    ncm.cbSize = sizeof(NONCLIENTMETRICS) - sizeof(ncm.iPaddedBorderWidth);
+#endif
     VERIFY(SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0));
+
     SetFont(&(ncm.lfMessageFont));
 #endif
 }

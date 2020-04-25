@@ -23,12 +23,12 @@
 //
 // This class implements a memory Device Context
 
-class _CMemDC : public CDC
+class CMemDC : public CDC
 {
 public:
 
     // constructor sets up the memory DC
-    _CMemDC(CDC* pDC) : CDC()
+    CMemDC(CDC* pDC) : CDC()
     {
         ASSERT(pDC != NULL);
 
@@ -66,7 +66,7 @@ public:
     }
 
     // Destructor copies the contents of the mem DC to the original DC
-    ~_CMemDC()
+    ~CMemDC()
     {
         if (m_bMemDC)
         {
@@ -85,10 +85,10 @@ public:
     }
 
     // Allow usage as a pointer
-    _CMemDC* operator->() {return this;}
+    CMemDC* operator->() {return this;}
         
     // Allow usage as a pointer
-    operator _CMemDC*() {return this;}
+    operator CMemDC*() {return this;}
 
 private:
     CBitmap  m_bitmap;      // Offscreen bitmap

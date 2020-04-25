@@ -7,8 +7,8 @@
 // implementations of drawing, printingetc provided. MUST be derived
 // from to be used.
 //
-// Written by Chris Maunder <cmaunder@mail.com>
-// Copyright (c) 1998-2002. All Rights Reserved.
+// Written by Chris Maunder <chris@codeproject.com>
+// Copyright (c) 1998-2005. All Rights Reserved.
 //
 // This code may be used in compiled form in any way you desire. This
 // file may be redistributed unmodified by any means PROVIDING it is 
@@ -547,7 +547,7 @@ CSize CGridCellBase::GetTextExtent(LPCTSTR szText, CDC* pDC /*= NULL*/)
         size = rect.Size();
     }
     else
-        size = pDC->GetTextExtent(szText, lstrlen(szText));
+        size = pDC->GetTextExtent(szText, (int)_tcslen(szText));
 
     // Removed by Yogurt
     //TEXTMETRIC tm;
