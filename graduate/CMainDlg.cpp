@@ -319,13 +319,12 @@ void CMainDlg::InitGraph() {
 void CMainDlg::ShowGraph() {
 
 	if (pCandle == nullptr) {
-		pCandle = chart.CreateCandlestickSerie();	
 	}
+		pCandle = chart.CreateCandlestickSerie();	
 	pCandle->SetPoints(pCandlePoint, pointNum);
 	//pCandle->SetShadowColor(RGB(255, 0, 0));
 	pCandle->SetColor(RGB(0, 0, 255));
 }
-
 
 void CMainDlg::OnTcnSelchangeCurrentprice(NMHDR* pNMHDR, LRESULT* pResult)
 {

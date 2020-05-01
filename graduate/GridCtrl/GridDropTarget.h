@@ -3,8 +3,8 @@
 //
 // MFC Grid Control - Drag/Drop target implementation
 //
-// Written by Chris Maunder <cmaunder@mail.com>
-// Copyright (c) 1998-2002. All Rights Reserved.
+// Written by Chris Maunder <chris@codeproject.com>
+// Copyright (c) 1998-2005. All Rights Reserved.
 //
 // This code may be used in compiled form in any way you desire. This
 // file may be redistributed unmodified by any means PROVIDING it is 
@@ -43,14 +43,14 @@ public:
     CGridDropTarget();
     virtual ~CGridDropTarget();
 
-// Attributes
+    // Attributes
 public:
     CGridCtrl* m_pGridCtrl;
     BOOL       m_bRegistered;
 
-// Operations
+    // Operations
 public:
-    BOOL Register(CGridCtrl *pGridCtrl);
+    BOOL Register(CGridCtrl* pGridCtrl);
     virtual void Revoke();
 
     BOOL        OnDrop(CWnd* pWnd, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point);
@@ -59,12 +59,12 @@ public:
     DROPEFFECT  OnDragOver(CWnd* pWnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
     DROPEFFECT  OnDragScroll(CWnd* pWnd, DWORD dwKeyState, CPoint point);
 
-// Overrides
-    // ClassWizard generated virtual function overrides
-    //{{AFX_VIRTUAL(CGridDropTarget)
-    //}}AFX_VIRTUAL
+    // Overrides
+        // ClassWizard generated virtual function overrides
+        //{{AFX_VIRTUAL(CGridDropTarget)
+        //}}AFX_VIRTUAL
 
-// Implementation
+    // Implementation
 protected:
 
     // Generated message map functions

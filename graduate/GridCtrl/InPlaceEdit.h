@@ -3,8 +3,8 @@
 //
 // MFC Grid Control - inplace editing class
 //
-// Written by Chris Maunder <cmaunder@mail.com>
-// Copyright (c) 1998-2002. All Rights Reserved.
+// Written by Chris Maunder <chris@codeproject.com>
+// Copyright (c) 1998-2005. All Rights Reserved.
 //
 // This code may be used in compiled form in any way you desire. This
 // file may be redistributed unmodified by any means PROVIDING it is 
@@ -31,39 +31,39 @@
 
 class CInPlaceEdit : public CEdit
 {
-// Construction
+    // Construction
 public:
     CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
-                 int nRow, int nColumn, CString sInitText, UINT nFirstChar);
+        int nRow, int nColumn, CString sInitText, UINT nFirstChar);
 
-// Attributes
+    // Attributes
 public:
- 
-// Operations
+
+    // Operations
 public:
-     void EndEdit();
- 
-// Overrides
-     // ClassWizard generated virtual function overrides
-     //{{AFX_VIRTUAL(CInPlaceEdit)
-	public:
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	protected:
-	virtual void PostNcDestroy();
-	//}}AFX_VIRTUAL
- 
+    void EndEdit();
+
+    // Overrides
+         // ClassWizard generated virtual function overrides
+         //{{AFX_VIRTUAL(CInPlaceEdit)
+public:
+    virtual BOOL PreTranslateMessage(MSG* pMsg);
+protected:
+    virtual void PostNcDestroy();
+    //}}AFX_VIRTUAL
+
 // Implementation
 public:
-     virtual ~CInPlaceEdit();
- 
-// Generated message map functions
+    virtual ~CInPlaceEdit();
+
+    // Generated message map functions
 protected:
     //{{AFX_MSG(CInPlaceEdit)
     afx_msg void OnKillFocus(CWnd* pNewWnd);
     afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
     afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg UINT OnGetDlgCode();
-	//}}AFX_MSG
+    afx_msg UINT OnGetDlgCode();
+    //}}AFX_MSG
     DECLARE_MESSAGE_MAP()
 
 private:
@@ -74,7 +74,7 @@ private:
     BOOL    m_bExitOnArrows;
     CRect   m_Rect;
 };
- 
+
 /////////////////////////////////////////////////////////////////////////////
 
 //{{AFX_INSERT_LOCATION}}

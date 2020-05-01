@@ -5,8 +5,8 @@
 // Provides the implementation for the "default" cell type of the
 // grid control. Adds in cell editing.
 //
-// Written by Chris Maunder <cmaunder@mail.com>
-// Copyright (c) 1998-2002. All Rights Reserved.
+// Written by Chris Maunder <chris@codeproject.com>
+// Copyright (c) 1998-2005. All Rights Reserved.
 //
 // This code may be used in compiled form in any way you desire. This
 // file may be redistributed unmodified by any means PROVIDING it is 
@@ -30,7 +30,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "pch.h"
 #include "GridCell.h"
 #include "InPlaceEdit.h"
 #include "GridCtrl.h"
@@ -50,7 +50,7 @@ IMPLEMENT_DYNCREATE(CGridDefaultCell, CGridCell)
 CGridCell::CGridCell()
 {
     m_plfFont = NULL;
-	CGridCell::Reset();
+    CGridCell::Reset();
 }
 
 CGridCell::~CGridCell()
@@ -71,9 +71,9 @@ void CGridCell::Reset()
     CGridCellBase::Reset();
 
     m_strText.Empty();
-    m_nImage   = -1;
-    m_lParam   = NULL;           // BUG FIX J. Bloggs 20/10/03
-    m_pGrid    = NULL;
+    m_nImage = -1;
+    m_lParam = NULL;           // BUG FIX J. Bloggs 20/10/03
+    m_pGrid = NULL;
     m_bEditing = FALSE;
     m_pEditWnd = NULL;
 
@@ -98,7 +98,7 @@ void CGridCell::SetFont(const LOGFONT* plf)
         if (!m_plfFont)
             m_plfFont = new LOGFONT;
         if (m_plfFont)
-            memcpy(m_plfFont, plf, sizeof(LOGFONT)); 
+            memcpy(m_plfFont, plf, sizeof(LOGFONT));
     }
 }
 
@@ -106,14 +106,14 @@ LOGFONT* CGridCell::GetFont() const
 {
     if (m_plfFont == NULL)
     {
-        CGridDefaultCell *pDefaultCell = (CGridDefaultCell*) GetDefaultCell();
+        CGridDefaultCell* pDefaultCell = (CGridDefaultCell*)GetDefaultCell();
         if (!pDefaultCell)
             return NULL;
 
         return pDefaultCell->GetFont();
     }
 
-    return m_plfFont; 
+    return m_plfFont;
 }
 
 CFont* CGridCell::GetFontObject() const
@@ -121,7 +121,7 @@ CFont* CGridCell::GetFontObject() const
     // If the default font is specified, use the default cell implementation
     if (m_plfFont == NULL)
     {
-        CGridDefaultCell *pDefaultCell = (CGridDefaultCell*) GetDefaultCell();
+        CGridDefaultCell* pDefaultCell = (CGridDefaultCell*)GetDefaultCell();
         if (!pDefaultCell)
             return NULL;
 
@@ -140,28 +140,28 @@ DWORD CGridCell::GetFormat() const
 {
     if (m_nFormat == (DWORD)-1)
     {
-        CGridDefaultCell *pDefaultCell = (CGridDefaultCell*) GetDefaultCell();
+        CGridDefaultCell* pDefaultCell = (CGridDefaultCell*)GetDefaultCell();
         if (!pDefaultCell)
             return 0;
 
         return pDefaultCell->GetFormat();
     }
 
-    return m_nFormat; 
+    return m_nFormat;
 }
 
-UINT CGridCell::GetMargin() const           
+UINT CGridCell::GetMargin() const
 {
     if (m_nMargin == (UINT)-1)
     {
-        CGridDefaultCell *pDefaultCell = (CGridDefaultCell*) GetDefaultCell();
+        CGridDefaultCell* pDefaultCell = (CGridDefaultCell*)GetDefaultCell();
         if (!pDefaultCell)
             return 0;
 
         return pDefaultCell->GetMargin();
     }
 
-    return m_nMargin; 
+    return m_nMargin;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -169,24 +169,24 @@ UINT CGridCell::GetMargin() const
 
 BOOL CGridCell::Edit(int nRow, int nCol, CRect rect, CPoint /* point */, UINT nID, UINT nChar)
 {
-    if ( m_bEditing )
-	{      
+    if (m_bEditing)
+    {
         if (m_pEditWnd)
-		    m_pEditWnd->SendMessage ( WM_CHAR, nChar );    
-    }  
-	else  
-	{   
-		DWORD dwStyle = ES_LEFT;
-		if (GetFormat() & DT_RIGHT) 
-			dwStyle = ES_RIGHT;
-		else if (GetFormat() & DT_CENTER) 
-			dwStyle = ES_CENTER;
-		
-		m_bEditing = TRUE;
-		
-		// InPlaceEdit auto-deletes itself
-		CGridCtrl* pGrid = GetGrid();
-		m_pEditWnd = new CInPlaceEdit(pGrid, rect, dwStyle, nID, nRow, nCol, GetText(), nChar);
+            m_pEditWnd->SendMessage(WM_CHAR, nChar);
+    }
+    else
+    {
+        DWORD dwStyle = ES_LEFT;
+        if (GetFormat() & DT_RIGHT)
+            dwStyle = ES_RIGHT;
+        else if (GetFormat() & DT_CENTER)
+            dwStyle = ES_CENTER;
+
+        m_bEditing = TRUE;
+
+        // InPlaceEdit auto-deletes itself
+        CGridCtrl* pGrid = GetGrid();
+        m_pEditWnd = new CInPlaceEdit(pGrid, rect, dwStyle, nID, nRow, nCol, GetText(), nChar);
     }
     return TRUE;
 }
@@ -206,16 +206,16 @@ void CGridCell::OnEndEdit()
 /////////////////////////////////////////////////////////////////////////////
 // CGridDefaultCell
 
-CGridDefaultCell::CGridDefaultCell() 
+CGridDefaultCell::CGridDefaultCell()
 {
 #ifdef _WIN32_WCE
-    m_nFormat = DT_LEFT|DT_VCENTER|DT_SINGLELINE|DT_NOPREFIX;
+    m_nFormat = DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX;
 #else
-    m_nFormat = DT_LEFT|DT_VCENTER|DT_SINGLELINE|DT_NOPREFIX | DT_END_ELLIPSIS;
+    m_nFormat = DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS;
 #endif
     m_crFgClr = CLR_DEFAULT;
     m_crBkClr = CLR_DEFAULT;
-    m_Size    = CSize(30,10);
+    m_Size = CSize(30, 10);
     m_dwStyle = 0;
 
 #ifdef _WIN32_WCE
@@ -223,16 +223,42 @@ CGridDefaultCell::CGridDefaultCell()
     GetObject(GetStockObject(SYSTEM_FONT), sizeof(LOGFONT), &lf);
     SetFont(&lf);
 #else // not CE
+
     NONCLIENTMETRICS ncm;
-    ncm.cbSize = sizeof(NONCLIENTMETRICS);
+#if defined(_MSC_VER) && (_MSC_VER < 1300)
+    ncm.cbSize = sizeof(NONCLIENTMETRICS); // NONCLIENTMETRICS has an extra element after VC6
+#else
+    // Check the operating system's version
+    OSVERSIONINFOEX osvi;
+    DWORDLONG dwlConditionMask = 0;
+    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+    osvi.dwMajorVersion = 6;
+    osvi.dwMinorVersion = 2;
+
+    VER_SET_CONDITION(dwlConditionMask, VER_MAJORVERSION, VER_GREATER_EQUAL);
+    VER_SET_CONDITION(dwlConditionMask, VER_MINORVERSION, VER_GREATER_EQUAL);
+
+    if (!VerifyVersionInfo(&osvi, VER_MAJORVERSION | VER_MINORVERSION, dwlConditionMask))
+    {
+        osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+        VerifyVersionInfo(&osvi, VER_MAJORVERSION | VER_MINORVERSION, dwlConditionMask);
+    }
+
+    if (osvi.dwMajorVersion > 5)
+        ncm.cbSize = sizeof(NONCLIENTMETRICS);
+    else
+        ncm.cbSize = sizeof(NONCLIENTMETRICS) - sizeof(ncm.iPaddedBorderWidth);
+#endif
     VERIFY(SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0));
+
     SetFont(&(ncm.lfMessageFont));
 #endif
 }
 
 CGridDefaultCell::~CGridDefaultCell()
 {
-    m_Font.DeleteObject(); 
+    m_Font.DeleteObject();
 }
 
 void CGridDefaultCell::SetFont(const LOGFONT* plf)
@@ -262,7 +288,7 @@ void CGridDefaultCell::SetFont(const LOGFONT* plf)
     else
     {
         SetMargin(3);
-        m_Size = CSize(40,16);
+        m_Size = CSize(40, 16);
     }
 }
 
@@ -275,5 +301,5 @@ LOGFONT* CGridDefaultCell::GetFont() const
 CFont* CGridDefaultCell::GetFontObject() const
 {
     ASSERT(m_Font.GetSafeHandle());
-    return (CFont*) &m_Font; 
+    return (CFont*)&m_Font;
 }

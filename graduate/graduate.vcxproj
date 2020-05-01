@@ -187,6 +187,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CellRange.h" />
     <ClInclude Include="ChartCtrl_source\ChartAxis.h" />
     <ClInclude Include="ChartCtrl_source\ChartAxisLabel.h" />
     <ClInclude Include="ChartCtrl_source\ChartBalloonLabel.h" />
@@ -226,12 +227,18 @@
     <ClInclude Include="CurrentPrice_hoga.h" />
     <ClInclude Include="graduate.h" />
     <ClInclude Include="graduateDlg.h" />
+    <ClInclude Include="GridCtrl\GridCell.h" />
+    <ClInclude Include="GridCtrl\GridCellBase.h" />
+    <ClInclude Include="GridCtrl\GridCtrl.h" />
+    <ClInclude Include="GridCtrl\GridDropTarget.h" />
+    <ClInclude Include="GridCtrl\InPlaceEdit.h" />
     <ClInclude Include="khopenapictrl1.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="CUser.h" />
+    <ClInclude Include="GridCtrl\TitleTip.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChartCtrl_source\ChartAxis.cpp" />
@@ -264,6 +271,11 @@
     <ClCompile Include="CurrentPrice_hoga.cpp" />
     <ClCompile Include="graduate.cpp" />
     <ClCompile Include="graduateDlg.cpp" />
+    <ClCompile Include="GridCtrl\GridCell.cpp" />
+    <ClCompile Include="GridCtrl\GridCellBase.cpp" />
+    <ClCompile Include="GridCtrl\GridCtrl.cpp" />
+    <ClCompile Include="GridCtrl\GridDropTarget.cpp" />
+    <ClCompile Include="GridCtrl\InPlaceEdit.cpp" />
     <ClCompile Include="khopenapictrl1.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -273,6 +285,7 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="CUser.cpp" />
+    <ClCompile Include="GridCtrl\TitleTip.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="graduate.rc" />

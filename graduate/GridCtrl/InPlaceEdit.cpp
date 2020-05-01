@@ -43,7 +43,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "pch.h"
 #include "TCHAR.h"
 #include "InPlaceEdit.h"
 
@@ -59,48 +59,48 @@ static char THIS_FILE[] = __FILE__;
 // CInPlaceEdit
 
 CInPlaceEdit::CInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
-                           int nRow, int nColumn, CString sInitText, 
-                           UINT nFirstChar)
+    int nRow, int nColumn, CString sInitText,
+    UINT nFirstChar)
 {
-    m_sInitText     = sInitText;
-    m_nRow          = nRow;
-    m_nColumn       = nColumn;
-    m_nLastChar     = 0; 
+    m_sInitText = sInitText;
+    m_nRow = nRow;
+    m_nColumn = nColumn;
+    m_nLastChar = 0;
     m_bExitOnArrows = (nFirstChar != VK_LBUTTON);    // If mouse click brought us here,
                                                      // then no exit on arrows
 
     m_Rect = rect;  // For bizarre CE bug.
-    
-    DWORD dwEditStyle = WS_BORDER|WS_CHILD|WS_VISIBLE| ES_AUTOHSCROLL //|ES_MULTILINE
+
+    DWORD dwEditStyle = WS_BORDER | WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL //|ES_MULTILINE
         | dwStyle;
     if (!Create(dwEditStyle, rect, pParent, nID)) return;
-    
+
     SetFont(pParent->GetFont());
-    
+
     SetWindowText(sInitText);
     SetFocus();
-    
-    switch (nFirstChar){
-        case VK_LBUTTON: 
-        case VK_RETURN:   SetSel((int)_tcslen(m_sInitText), -1); return;
-        case VK_BACK:     SetSel((int)_tcslen(m_sInitText), -1); break;
-        case VK_TAB:
-        case VK_DOWN: 
-        case VK_UP:   
-        case VK_RIGHT:
-        case VK_LEFT:  
-        case VK_NEXT:  
-        case VK_PRIOR: 
-        case VK_HOME:
-        case VK_SPACE:
-        case VK_END:      SetSel(0,-1); return;
-        default:          SetSel(0,-1);
+
+    switch (nFirstChar) {
+    case VK_LBUTTON:
+    case VK_RETURN:   SetSel((int)_tcslen(m_sInitText), -1); return;
+    case VK_BACK:     SetSel((int)_tcslen(m_sInitText), -1); break;
+    case VK_TAB:
+    case VK_DOWN:
+    case VK_UP:
+    case VK_RIGHT:
+    case VK_LEFT:
+    case VK_NEXT:
+    case VK_PRIOR:
+    case VK_HOME:
+    case VK_SPACE:
+    case VK_END:      SetSel(0, -1); return;
+    default:          SetSel(0, -1);
     }
 
     // Added by KiteFly. When entering DBCS chars into cells the first char was being lost
     // SenMessage changed to PostMessage (John Lagerquist)
-    if( nFirstChar < 0x80)
-        PostMessage(WM_CHAR, nFirstChar);   
+    if (nFirstChar < 0x80)
+        PostMessage(WM_CHAR, nFirstChar);
     else
         PostMessage(WM_IME_CHAR, nFirstChar);
 }
@@ -125,10 +125,10 @@ END_MESSAGE_MAP()
 // If an arrow key (or associated) is pressed, then exit if
 //  a) The Ctrl key was down, or
 //  b) m_bExitOnArrows == TRUE
-void CInPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CInPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
     if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
-        nChar == VK_DOWN  || nChar == VK_UP   ||
+        nChar == VK_DOWN || nChar == VK_UP ||
         nChar == VK_RIGHT || nChar == VK_LEFT) &&
         (m_bExitOnArrows || GetKeyState(VK_CONTROL) < 0))
     {
@@ -136,7 +136,7 @@ void CInPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
         GetParent()->SetFocus();
         return;
     }
-    
+
     CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
@@ -155,47 +155,47 @@ void CInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
         GetParent()->SetFocus();    // This will destroy this window
         return;
     }
-    if (nChar == VK_ESCAPE) 
+    if (nChar == VK_ESCAPE)
     {
         SetWindowText(m_sInitText);    // restore previous text
         m_nLastChar = nChar;
         GetParent()->SetFocus();
         return;
     }
-    
+
     CEdit::OnChar(nChar, nRepCnt, nFlags);
-    
+
     // Resize edit control if needed
-    
+
     // Get text extent
     CString str;
-    GetWindowText( str );
+    GetWindowText(str);
 
     // add some extra buffer
     str += _T("  ");
-    
+
     CWindowDC dc(this);
-    CFont *pFontDC = dc.SelectObject(GetFont());
-    CSize size = dc.GetTextExtent( str );
-    dc.SelectObject( pFontDC );
-       
+    CFont* pFontDC = dc.SelectObject(GetFont());
+    CSize size = dc.GetTextExtent(str);
+    dc.SelectObject(pFontDC);
+
     // Get client rect
     CRect ParentRect;
-    GetParent()->GetClientRect( &ParentRect );
-    
+    GetParent()->GetClientRect(&ParentRect);
+
     // Check whether control needs to be resized
     // and whether there is space to grow
     if (size.cx > m_Rect.Width())
     {
-        if( size.cx + m_Rect.left < ParentRect.right )
+        if (size.cx + m_Rect.left < ParentRect.right)
             m_Rect.right = m_Rect.left + size.cx;
         else
             m_Rect.right = ParentRect.right;
-        MoveWindow( &m_Rect );
+        MoveWindow(&m_Rect);
     }
 }
 
-UINT CInPlaceEdit::OnGetDlgCode() 
+UINT CInPlaceEdit::OnGetDlgCode()
 {
     return DLGC_WANTALLKEYS;
 }
@@ -204,21 +204,21 @@ UINT CInPlaceEdit::OnGetDlgCode()
 // CInPlaceEdit overrides
 
 // Stoopid win95 accelerator key problem workaround - Matt Weagle.
-BOOL CInPlaceEdit::PreTranslateMessage(MSG* pMsg) 
+BOOL CInPlaceEdit::PreTranslateMessage(MSG* pMsg)
 {
     // Catch the Alt key so we don't choke if focus is going to an owner drawn button
     if (pMsg->message == WM_SYSCHAR)
         return TRUE;
-    
+
     return CWnd::PreTranslateMessage(pMsg);
 }
 
 // Auto delete
-void CInPlaceEdit::PostNcDestroy() 
+void CInPlaceEdit::PostNcDestroy()
 {
     CEdit::PostNcDestroy();
-    
-    delete this;	
+
+    delete this;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -233,7 +233,7 @@ void CInPlaceEdit::EndEdit()
     // causing assertions because the edit control goes away the first time.
     static BOOL bAlreadyEnding = FALSE;
 
-    if(bAlreadyEnding)
+    if (bAlreadyEnding)
         return;
 
     bAlreadyEnding = TRUE;
@@ -243,18 +243,18 @@ void CInPlaceEdit::EndEdit()
     GV_DISPINFO dispinfo;
 
     dispinfo.hdr.hwndFrom = GetSafeHwnd();
-    dispinfo.hdr.idFrom   = GetDlgCtrlID();
-    dispinfo.hdr.code     = GVN_ENDLABELEDIT;
+    dispinfo.hdr.idFrom = GetDlgCtrlID();
+    dispinfo.hdr.code = GVN_ENDLABELEDIT;
 
-    dispinfo.item.mask    = LVIF_TEXT|LVIF_PARAM;
-    dispinfo.item.row     = m_nRow;
-    dispinfo.item.col     = m_nColumn;
-    dispinfo.item.strText  = str;
-    dispinfo.item.lParam  = (LPARAM) m_nLastChar;
+    dispinfo.item.mask = LVIF_TEXT | LVIF_PARAM;
+    dispinfo.item.row = m_nRow;
+    dispinfo.item.col = m_nColumn;
+    dispinfo.item.strText = str;
+    dispinfo.item.lParam = (LPARAM)m_nLastChar;
 
     CWnd* pOwner = GetOwner();
     if (pOwner)
-        pOwner->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo );
+        pOwner->SendMessage(WM_NOTIFY, GetDlgCtrlID(), (LPARAM)&dispinfo);
 
     // Close this window (PostNcDestroy will delete this)
     if (IsWindow(GetSafeHwnd()))

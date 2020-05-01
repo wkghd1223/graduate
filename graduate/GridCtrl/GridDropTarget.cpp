@@ -6,8 +6,8 @@
 // is handle the drag and drop windows messages and pass them
 // directly onto the grid control.
 //
-// Written by Chris Maunder <cmaunder@mail.com>
-// Copyright (c) 1998-2002. All Rights Reserved.
+// Written by Chris Maunder <chris@codeproject.com>
+// Copyright (c) 1998-2005. All Rights Reserved.
 //
 // This code may be used in compiled form in any way you desire. This
 // file may be redistributed unmodified by any means PROVIDING it is 
@@ -25,7 +25,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "pch.h"
 #include "GridCtrl.h"
 
 #ifndef GRIDCONTROL_NO_DRAGDROP
@@ -53,7 +53,7 @@ CGridDropTarget::~CGridDropTarget()
 // Overloaded Register() function performs the normal COleDropTarget::Register
 // but also serves to connect this COleDropTarget with the parent grid control,
 // where all drop messages will ultimately be forwarded.
-BOOL CGridDropTarget::Register(CGridCtrl *pGridCtrl)
+BOOL CGridDropTarget::Register(CGridCtrl* pGridCtrl)
 {
     if (m_bRegistered)
         return FALSE;
@@ -97,19 +97,20 @@ END_MESSAGE_MAP()
 
 DROPEFFECT CGridDropTarget::OnDragScroll(CWnd* pWnd, DWORD dwKeyState, CPoint /*point*/)
 {
-//    TRACE("In CGridDropTarget::OnDragScroll\n");
+    //    TRACE("In CGridDropTarget::OnDragScroll\n");
     if (pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd())
     {
         if (dwKeyState & MK_CONTROL)
             return DROPEFFECT_COPY;
         else
             return DROPEFFECT_MOVE;
-    } else
+    }
+    else
         return DROPEFFECT_NONE;
 }
 
-DROPEFFECT CGridDropTarget::OnDragEnter(CWnd* pWnd, COleDataObject* pDataObject, 
-                                        DWORD dwKeyState, CPoint point)
+DROPEFFECT CGridDropTarget::OnDragEnter(CWnd* pWnd, COleDataObject* pDataObject,
+    DWORD dwKeyState, CPoint point)
 {
     TRACE(_T("In CGridDropTarget::OnDragEnter\n"));
     ASSERT(m_pGridCtrl);
@@ -129,10 +130,10 @@ void CGridDropTarget::OnDragLeave(CWnd* pWnd)
         m_pGridCtrl->OnDragLeave();
 }
 
-DROPEFFECT CGridDropTarget::OnDragOver(CWnd* pWnd, COleDataObject* pDataObject, 
-                                       DWORD dwKeyState, CPoint point)
+DROPEFFECT CGridDropTarget::OnDragOver(CWnd* pWnd, COleDataObject* pDataObject,
+    DWORD dwKeyState, CPoint point)
 {
-//    TRACE("In CGridDropTarget::OnDragOver\n");
+    //    TRACE("In CGridDropTarget::OnDragOver\n");
     ASSERT(m_pGridCtrl);
 
     if (pWnd->GetSafeHwnd() == m_pGridCtrl->GetSafeHwnd())
@@ -142,7 +143,7 @@ DROPEFFECT CGridDropTarget::OnDragOver(CWnd* pWnd, COleDataObject* pDataObject,
 }
 
 BOOL CGridDropTarget::OnDrop(CWnd* pWnd, COleDataObject* pDataObject,
-                             DROPEFFECT dropEffect, CPoint point)
+    DROPEFFECT dropEffect, CPoint point)
 {
     TRACE(_T("In CGridDropTarget::OnDrop\n"));
     ASSERT(m_pGridCtrl);

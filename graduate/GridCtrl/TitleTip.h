@@ -1,10 +1,11 @@
+#pragma once
 /////////////////////////////////////////////////////////////////////////////
 // Titletip.h : header file
 //
 // MFC Grid Control - cell titletips
 //
-// Written by Chris Maunder <cmaunder@mail.com>
-// Copyright (c) 1998-2001. All Rights Reserved.
+// Written by Chris Maunder <chris@codeproject.com>
+// Copyright (c) 1998-2005. All Rights Reserved.
 //
 // This code may be used in compiled form in any way you desire. This
 // file may be redistributed unmodified by any means PROVIDING it is 
@@ -36,41 +37,41 @@
 
 class CTitleTip : public CWnd
 {
-// Construction
+	// Construction
 public:
 	CTitleTip();
 	virtual ~CTitleTip();
-	virtual BOOL Create( CWnd *pParentWnd);
+	virtual BOOL Create(CWnd* pParentWnd);
 
-// Attributes
+	// Attributes
 public:
-    void SetParentWnd(CWnd* pParentWnd)  { m_pParentWnd = pParentWnd; }
-    CWnd* GetParentWnd()                 { return m_pParentWnd;       }
+	void SetParentWnd(CWnd* pParentWnd) { m_pParentWnd = pParentWnd; }
+	CWnd* GetParentWnd() { return m_pParentWnd; }
 
-// Operations
+	// Operations
 public:
-	void Show(CRect rectTitle, LPCTSTR lpszTitleText, 
-              int xoffset = 0, LPRECT lpHoverRect = NULL, 
-              const LOGFONT* lpLogFont = NULL,
-              COLORREF crTextClr = CLR_DEFAULT, COLORREF crBackClr = CLR_DEFAULT);
-    void Hide();
+	void Show(CRect rectTitle, LPCTSTR lpszTitleText,
+		int xoffset = 0, LPRECT lpHoverRect = NULL,
+		const LOGFONT* lpLogFont = NULL,
+		COLORREF crTextClr = CLR_DEFAULT, COLORREF crBackClr = CLR_DEFAULT);
+	void Hide();
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CTitleTip)
-	public:
+	// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(CTitleTip)
+public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual BOOL DestroyWindow();
 	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
-	CWnd  *m_pParentWnd;
+	CWnd* m_pParentWnd;
 	CRect  m_rectTitle;
-    CRect  m_rectHover;
-    DWORD  m_dwLastLButtonDown;
-    DWORD  m_dwDblClickMsecs;
-    BOOL   m_bCreated;
+	CRect  m_rectHover;
+	DWORD  m_dwLastLButtonDown;
+	DWORD  m_dwDblClickMsecs;
+	BOOL   m_bCreated;
 
 	// Generated message map functions
 protected:
