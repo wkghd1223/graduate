@@ -69,6 +69,7 @@ public:
 	SChartCandlestickPoint pCandlePoint[1000];
 	CChartCandlestickSerie* pCandle;
 	int pointNum;
+	int showNum = 60;
 	void InitGraph();
 	void ShowGraph();
 	int period = DAY;
@@ -79,4 +80,5 @@ public:
 	// day | week | month
 	CComboBox chartPeriod;
 	CStock *stock;
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 };

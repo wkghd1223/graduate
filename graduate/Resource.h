@@ -45,7 +45,6 @@
 #define IDC_TEST_MONTH                  1017
 #define IDC_TEST_WEEK                   1018
 #define IDC_CURRENTPRICE                1020
-
 #define IDC_EDT_ACCNO                   1021
 #define IDC_EDIT_SEARCH                 1021
 #define IDC_STATIC_TEST                 1021

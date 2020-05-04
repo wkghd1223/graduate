@@ -24,7 +24,7 @@
 #include "ChartCtrl.h"
 
 CChartCandlestickSerie::CChartCandlestickSerie(CChartCtrl* pParent) 
-  : CChartSerieBase<SChartCandlestickPoint>(pParent), m_iCandlestickWidth(7)
+  : CChartSerieBase<SChartCandlestickPoint>(pParent), m_iCandlestickWidth(800)
 {
 	m_bShadow = true;
 }
@@ -172,8 +172,10 @@ void CChartCandlestickSerie::DrawAll(CDC *pDC)
 		ShadowBrush.CreateSolidBrush(m_ShadowColor);
 		NewPen.CreatePen(PS_SOLID,1,m_SerieColor);
 		ShadowPen.CreatePen(PS_SOLID,1,m_ShadowColor);
-		BrushFill.CreateSolidBrush(m_SerieColor);
-		BrushEmpty.CreateSolidBrush(RGB(255,255,255));
+		// 
+		BrushFill.CreateSolidBrush(RGB(0, 0, 255));
+		// 
+		BrushEmpty.CreateSolidBrush(RGB(255,0,0));
 
 		pDC->SetBkMode(TRANSPARENT);
 		//To have lines limited in the drawing rectangle :

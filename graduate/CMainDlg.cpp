@@ -198,12 +198,14 @@ BEGIN_MESSAGE_MAP(CMainDlg, CDialogEx)
 
 	ON_BN_CLICKED(IDCANCEL, &CMainDlg::OnBnClickedCancel)
 	ON_CBN_SELCHANGE(IDC_COMBO_CHART_PERIOD, &CMainDlg::OnCbnSelchangeComboChartPeriod)
+	ON_WM_MOUSEWHEEL()
 END_MESSAGE_MAP()
 
 
 void CMainDlg::OnBnClickedOk()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	showNum = 60;
 
 	editSearch.GetWindowText(search);
 	search.Trim();
@@ -261,6 +263,7 @@ void CMainDlg::OnBnClickedCancel()
 
 void CMainDlg::OnCbnSelchangeComboChartPeriod()
 {
+	showNum = 60;
 
 	if (search.GetLength() != 6 ) {
 
@@ -319,11 +322,15 @@ void CMainDlg::InitGraph() {
 void CMainDlg::ShowGraph() {
 
 	if (pCandle == nullptr) {
-	}
 		pCandle = chart.CreateCandlestickSerie();	
-	pCandle->SetPoints(pCandlePoint, pointNum);
+	}
+	pCandle->SetPoints(pCandlePoint, showNum);
 	//pCandle->SetShadowColor(RGB(255, 0, 0));
-	pCandle->SetColor(RGB(0, 0, 255));
+	pCandle->SetColor(RGB(0, 0, 0));
+	//chart.SetBackGradient(RGB(255, 0, 0), RGB(0, 0, 255), gtHorizontal);
+	RECT rect;
+	chart.GetClientRect(&rect);
+	pCandle->SetWidth(rect.bottom / (showNum+1));
 }
 
 void CMainDlg::OnTcnSelchangeCurrentprice(NMHDR* pNMHDR, LRESULT* pResult)
@@ -349,4 +356,27 @@ void CMainDlg::OnTcnSelchangeCurrentprice(NMHDR* pNMHDR, LRESULT* pResult)
 		break;
 	}
 	*pResult = 0;
+}
+
+
+BOOL CMainDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	// TODO: Add your message handler code here and/or call default
+	ScreenToClient(&pt);
+
+	if (zDelta > 1 && showNum < pointNum-1) {
+		showNum += 1;
+	}
+	else if (showNum > 0 && zDelta <= 0) {
+		showNum += -1;
+	}
+	double max, min;
+	RECT rect;
+	chart.GetClientRect(&rect);
+	pCandle->SetWidth(rect.bottom / (showNum+1));
+	pCandle->SetPoints(pCandlePoint, showNum);
+
+
+
+	return CDialogEx::OnMouseWheel(nFlags, zDelta, pt);
 }

@@ -110,7 +110,7 @@ void CChartSerie::SetVisible(bool bVisible)
 }
 
 void CChartSerie::SetColor(COLORREF NewColor)	   
-{ 
+{
 	m_SerieColor = NewColor; 
 	m_pParentCtrl->RefreshCtrl();
 }
