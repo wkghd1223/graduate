@@ -19,6 +19,9 @@
     <Filter Include="ChartCtrl">
       <UniqueIdentifier>{3a98f6fc-2c7f-48f3-886d-b233da2db040}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AutoComplete">
+      <UniqueIdentifier>{6b2a5b7d-bef5-44b3-8941-b7954b97615e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graduate.h">
@@ -180,6 +183,9 @@
     <ClInclude Include="CInterestDlg.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="AutoComplete\PGEnumString.h">
+      <Filter>AutoComplete</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="graduate.cpp">
@@ -304,6 +310,9 @@
     </ClCompile>
     <ClCompile Include="CInterestDlg.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoComplete\PGEnumString.cpp">
+      <Filter>AutoComplete</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

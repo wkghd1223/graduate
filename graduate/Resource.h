@@ -18,7 +18,6 @@
 #define IDD_PRICE_CHAEGYUL              146
 #define IDD_DIALOG1                     148
 #define IDD_PRICE_D_CHAEGYUL            148
-#define IDD_CCategoryDlg                150
 #define IDD_CInterestDlg                150
 #define IDC_BUTTON_RUN                  1000
 #define IDC_BTN_CURRENTPRICE            1001
@@ -73,7 +72,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        152
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1027
+#define _APS_NEXT_CONTROL_VALUE         1028
 #define _APS_NEXT_SYMED_VALUE           107
 #endif
 #endif

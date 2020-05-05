@@ -1,6 +1,6 @@
 #pragma once
 #include "CUser.h"
-
+#include "AutoComplete/PGEnumString.h"
 // CInterestDlg dialog
 
 class CInterestDlg : public CDialogEx
@@ -15,7 +15,9 @@ public:
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_CInterestDlg };
 #endif
-
+private:
+	CPGEnumString* m_pEum;
+	CComPtr<IAutoComplete> m_pac;
 protected:
 	HICON m_hIcon;
 
@@ -32,4 +34,6 @@ public:
 	virtual BOOL OnInitDialog();
 	CStatic userInfoFormat;
 	afx_msg void OnClose();
+	CEdit editSearch;
+	afx_msg void OnBnClickedOk();
 };

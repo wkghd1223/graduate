@@ -30,11 +30,13 @@ void CInterestDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_TEXT_USER, userInfo);
 	DDX_Control(pDX, IDC_TEXT_STATIC, userInfoFormat);
+	DDX_Control(pDX, IDC_EDIT_SEARCH, editSearch);
 }
 
 
 BEGIN_MESSAGE_MAP(CInterestDlg, CDialogEx)
 	ON_WM_CLOSE()
+	ON_BN_CLICKED(IDOK, &CInterestDlg::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 
@@ -56,6 +58,25 @@ BOOL CInterestDlg::OnInitDialog()
 
 	// TODO:  Add extra initialization here
 
+
+
+	HRESULT hr = m_pac.CoCreateInstance(CLSID_AutoComplete);
+	if (SUCCEEDED(hr)) {
+		CComQIPtr<IAutoComplete2> pAC2(m_pac);
+		hr = pAC2->SetOptions(ACO_UPDOWNKEYDROPSLIST | ACO_AUTOSUGGEST | ACO_AUTOAPPEND);
+		pAC2.Release();
+
+		std::vector<std::wstring> temp;
+		temp.push_back(std::wstring(L"000020"));
+		temp.push_back(std::wstring(L"005930"));
+		temp.push_back(std::wstring(L"»ï¼ºÀüÀÚ"));
+		temp.push_back(std::wstring(L"000040"));
+
+		m_pEum = new CPGEnumString(temp);
+		hr = m_pac->Init(editSearch.GetSafeHwnd(), m_pEum, NULL, NULL);
+
+	}
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -73,4 +94,11 @@ void CInterestDlg::OnClose()
 		m_pParent->PostMessage(UM_SCRENN_CLOSE, 0U, (LPARAM)cScrNo);
 	}
 	CDialogEx::OnClose();
+}
+
+
+void CInterestDlg::OnBnClickedOk()
+{
+	// TODO: Add your control notification handler code here
+	CDialogEx::OnOK();
 }
