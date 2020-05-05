@@ -11,6 +11,7 @@
 #define new DEBUG_NEW
 #endif
 #include "CMainDlg.h"
+#include "CInterestDlg.h"
 
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
@@ -62,6 +63,7 @@ void CgraduateDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_KHOPENAPICTRL1, theApp.kStock);
 	DDX_Control(pDX, IDOK, btnRun);
+	DDX_Control(pDX, IDC_INTEREST, btnInterest);
 }
 
 BEGIN_MESSAGE_MAP(CgraduateDlg, CDialogEx)
@@ -71,6 +73,7 @@ BEGIN_MESSAGE_MAP(CgraduateDlg, CDialogEx)
 	ON_MESSAGE(UM_SCRENN_CLOSE, OnScreenClose)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDOK, &CgraduateDlg::OnBnClickedOk)
+	ON_BN_CLICKED(IDC_INTEREST, &CgraduateDlg::OnBnClickedInterest)
 END_MESSAGE_MAP()
 
 
@@ -242,7 +245,7 @@ void CgraduateDlg::OnBnClickedOk()
 	mainDlg->ShowWindow(SW_SHOW);
 
 
-	//ShowWindow(TRUE);
+	//ShowWindow(FALSE);
 	//EndDialog(0);
 	//CDialogEx::OnOK();
 }
@@ -317,4 +320,35 @@ void CgraduateDlg::OnEventConnectKhopenapictrl1(long nErrCode)
 {
 	btnRun.EnableWindow(TRUE);
 	// TODO: Add your message handler code here
+}
+
+
+void CgraduateDlg::OnBnClickedInterest()
+{
+	if (!GetNextScreenNum(1))
+	{
+		return;
+	}
+	//ShowWindow(FALSE);
+	CInterestDlg* interestDlg = new CInterestDlg(this);
+	interestDlg->m_strScrNo.Format(_T("%04d"), m_nScrN0);
+	m_mapScreen.SetAt(interestDlg->m_strScrNo, interestDlg);
+
+	interestDlg->user = new CUser(theApp.kStock.GetLoginInfo(_T("USER_NAME"))
+		, theApp.kStock.GetLoginInfo(_T("ACCNO"))
+		, theApp.kStock.GetLoginInfo(_T("USER_ID"))
+		, theApp.kStock.GetLoginInfo(_T("GetServerGubun")));
+
+	//dlg.user = new CUser(_T("USER_NAME")
+	//	, _T("ACCNO") 
+	//	, _T("USER_ID")
+	//	, _T("GetServerGubun"));
+	interestDlg->Create(IDD_CInterestDlg);
+	interestDlg->ShowWindow(SW_SHOW);
+
+
+	//ShowWindow(FALSE);
+	//EndDialog(0);
+	//CDialogEx::OnOK();
+	// TODO: Add your control notification handler code here
 }

@@ -219,6 +219,7 @@
     <ClInclude Include="ChartCtrl_source\ChartTitle.h" />
     <ClInclude Include="ChartCtrl_source\ChartXYSerie.h" />
     <ClInclude Include="ChartCtrl_source\PointsOrdering.h" />
+    <ClInclude Include="CInterestDlg.h" />
     <ClInclude Include="CMainDlg.h" />
     <ClInclude Include="CStock.h" />
     <ClInclude Include="framework.h" />
@@ -264,6 +265,7 @@
     <ClCompile Include="ChartCtrl_source\ChartSurfaceSerie.cpp" />
     <ClCompile Include="ChartCtrl_source\ChartTitle.cpp" />
     <ClCompile Include="ChartCtrl_source\ChartXYSerie.cpp" />
+    <ClCompile Include="CInterestDlg.cpp" />
     <ClCompile Include="CMainDlg.cpp" />
     <ClCompile Include="CStock.cpp" />
     <ClCompile Include="CurrentPrice_chaegyul.cpp" />
