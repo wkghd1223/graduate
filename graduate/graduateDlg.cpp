@@ -12,6 +12,7 @@
 #endif
 #include "CMainDlg.h"
 #include "CInterestDlg.h"
+#include <locale.h>
 
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
@@ -90,6 +91,7 @@ BOOL CgraduateDlg::OnInitDialog()
 	ASSERT(IDM_ABOUTBOX < 0xF000);
 
 	theApp.kStock.CommConnect();
+	ReadStocks();
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
 	if (pSysMenu != nullptr)
@@ -351,4 +353,26 @@ void CgraduateDlg::OnBnClickedInterest()
 	//EndDialog(0);
 	//CDialogEx::OnOK();
 	// TODO: Add your control notification handler code here
+}
+void CgraduateDlg::ReadStocks()
+{
+	CString str;
+	CString filepath = _T("");
+	filepath.Format(L"C:\\Users\\pumkinjeon\\Desktop\\Pumpkin\\workspace\\graduate\\stock_list.csv");
+	setlocale(LC_ALL, "korean");
+	CStdioFile file(filepath, CFile::modeRead | CFile::typeText);
+
+	while (1) {
+		if (!file.ReadString(str))
+			break;
+		CString temp;
+		CString tok[2];
+		int n = 0;
+		while (::AfxExtractSubString(temp, str, n, ',')) {
+			stockData.push_back(std::wstring(temp));
+			tok[n % 2] = temp;
+			n++;
+		}
+		hashStock.insert(std::pair<LPCTSTR,CString>((LPCTSTR)tok[1], tok[0]));
+	}
 }

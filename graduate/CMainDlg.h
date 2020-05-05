@@ -8,6 +8,7 @@
 #include "ChartCtrl_source/ChartCtrl.h"
 #include "ChartCtrl_source/ChartLineSerie.h"
 #include "ChartCtrl_source/ChartCandlestickSerie.h"
+#include "AutoComplete/PGEnumString.h"
 
 // CMainDlg 대화 상자
 #define NUM_DOUBLE 18
@@ -40,7 +41,13 @@ public:
 	CurrentPrice_chaegyul cPrice_Chaegyul;
 	CurrentPrice_day_chaegyul cPrice_dChaegyul;
 
+	// 차트 일/주/월
 	enum {DAY = 0, WEEK = 1, MONTH = 2};
+
+	// 자동완성기능
+private:
+	CPGEnumString* m_pEum;
+	CComPtr<IAutoComplete> m_pac;
 protected:
 	HICON m_hIcon;
 

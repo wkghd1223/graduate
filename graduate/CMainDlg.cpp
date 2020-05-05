@@ -32,6 +32,8 @@ CMainDlg::~CMainDlg()
 }
 BOOL CMainDlg::OnInitDialog() {
 	CDialogEx::OnInitDialog();
+
+	// 사용자 정보
 	userInfoFormat.SetWindowTextW(_T("사용자\n 사용자 계정\n 사용자 ID"));
 
 	CString str = _T("");
@@ -43,6 +45,7 @@ BOOL CMainDlg::OnInitDialog() {
 	str += _T("\n");
 	userInfo.SetWindowTextW(str);
 
+	// 차트 combobox 일/주/월
 	chartPeriod.AddString(_T("일"));
 	chartPeriod.AddString(_T("주"));
 	chartPeriod.AddString(_T("월"));
@@ -50,12 +53,28 @@ BOOL CMainDlg::OnInitDialog() {
 
 	InitGraph();
 
-	CRect rect;
+	// 자동완성
+	HRESULT hr = m_pac.CoCreateInstance(CLSID_AutoComplete);
+	if (SUCCEEDED(hr)) {
+		CComQIPtr<IAutoComplete2> pAC2(m_pac);
+		hr = pAC2->SetOptions(ACO_UPDOWNKEYDROPSLIST | ACO_AUTOSUGGEST | ACO_AUTOAPPEND);
+		pAC2.Release();
+
+		std::vector<std::wstring> temp;
+		CgraduateDlg* parent = (CgraduateDlg*)m_pParent;
+		temp = parent->GetStockData();
+
+
+		m_pEum = new CPGEnumString(temp);
+		hr = m_pac->Init(editSearch.GetSafeHwnd(), m_pEum, NULL, NULL);
+	}
+
 	//현재가격(호가,체결,일별 체결)
 	CString currentPrice_tabName[3] = { _T("호가"), _T("체결"),_T("일별") };
 	for (int i = 0; i < (sizeof(currentPrice_tabName) / sizeof(*currentPrice_tabName)); i++) {
 		currentPrice.InsertItem(i + 1, currentPrice_tabName[i]);
 	}
+	CRect rect;
 	currentPrice.GetClientRect(&rect);
 
 	cPrice_Hoga.Create(IDD_PRICE_HOGA, &currentPrice);
@@ -148,13 +167,13 @@ void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LP
 			CStringTemp[i] = theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10001[i+NUM_DOUBLE+2]);
 			CStringTemp[i].Trim();
 		}
-		stock = new CStock(doubleTemp[0], doubleTemp[1], doubleTemp[2], doubleTemp[3], doubleTemp[4],
-			doubleTemp[5], doubleTemp[6], doubleTemp[7], doubleTemp[8], doubleTemp[9],
-			doubleTemp[10], doubleTemp[11], doubleTemp[12], doubleTemp[13], doubleTemp[14],
-			doubleTemp[15], doubleTemp[16], doubleTemp[17], intTemp[0], intTemp[1],
-			CStringTemp[0], CStringTemp[1]);
-		
-		stockInfo.SetWindowTextW(stock->GetStockName());
+		//stock = new CStock(doubleTemp[0], doubleTemp[1], doubleTemp[2], doubleTemp[3], doubleTemp[4],
+		//	doubleTemp[5], doubleTemp[6], doubleTemp[7], doubleTemp[8], doubleTemp[9],
+		//	doubleTemp[10], doubleTemp[11], doubleTemp[12], doubleTemp[13], doubleTemp[14],
+		//	doubleTemp[15], doubleTemp[16], doubleTemp[17], intTemp[0], intTemp[1],
+		//	CStringTemp[0], CStringTemp[1]);
+		//
+		stockInfo.SetWindowTextW(/*stock->GetStockName()*/CStringTemp[0]);
 	}
 	else if (!(out.Compare( L"주식일봉차트조회") && out.Compare(L"주식주봉차트조회" )&&out.Compare( L"주식월봉차트조회"))) {
 		pointNum = theApp.kStock.GetRepeatCnt(sTrCode, sRQName);
@@ -209,6 +228,13 @@ void CMainDlg::OnBnClickedOk()
 
 	editSearch.GetWindowText(search);
 	search.Trim();
+	CgraduateDlg* parent = (CgraduateDlg*)m_pParent;
+	std::unordered_map<LPCTSTR, CString> temp = parent->GetHashStock();
+	if (temp.count(search)) {
+		search = temp[search];
+	}
+
+
 
 	//날짜 선정 해줘야 함
 	
