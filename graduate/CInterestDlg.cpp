@@ -6,7 +6,7 @@
 #include "CInterestDlg.h"
 #include "afxdialogex.h"
 #include "graduateDlg.h"
-
+#include "CStock.h"
 
 // CInterestDlg dialog
 
@@ -66,11 +66,9 @@ BOOL CInterestDlg::OnInitDialog()
 		hr = pAC2->SetOptions(ACO_UPDOWNKEYDROPSLIST | ACO_AUTOSUGGEST | ACO_AUTOAPPEND);
 		pAC2.Release();
 
-		std::vector<std::wstring> temp = ReadStocks();
-		//temp.push_back(std::wstring(L"000020"));
-		//temp.push_back(std::wstring(L"005930"));
-		//temp.push_back(std::wstring(L"삼성전자"));
-		//temp.push_back(std::wstring(L"000040"));
+		std::vector<std::wstring> temp;
+		CgraduateDlg* parent = (CgraduateDlg*)m_pParent;
+		temp = parent->GetStockData();
 
 		m_pEum = new CPGEnumString(temp);
 		hr = m_pac->Init(editSearch.GetSafeHwnd(), m_pEum, NULL, NULL);
@@ -101,43 +99,4 @@ void CInterestDlg::OnBnClickedOk()
 {
 	// TODO: Add your control notification handler code here
 	CDialogEx::OnOK();
-}
-std::vector<std::wstring>  CInterestDlg::ReadStocks() {
-	std::vector<std::wstring> temp;
-
-	FILE* fp = NULL;
-	CString filepath = _T("");
-	filepath.Format(L"C:\\Users\\pumkinjeon\\Desktop\\Pumpkin\\workspace\\graduate\\stock_list.csv");
-	fopen_s(&fp, (CStringA)filepath, "r");
-	if (fp) {
-		char buf[2048] = { 0, };
-		memset(buf, NULL, 2048);
-		while (fgets(buf, 2048, fp)) {
-			CString strContent;
-			strContent.Format(L"%s", buf);
-			memset(buf, NULL, 2048);
-			if (strContent.Find(L"#") >= 0) {
-				continue;
-			}
-			strContent.Remove('\r');
-			strContent.Remove('\n');
-
-
-			CString rString;
-			int nSubString = 0;
-			while (::AfxExtractSubString(rString, strContent, nSubString++, ',')) {
-				switch (nSubString) {
-				case 1: // 종목 명
-					temp.push_back(std::wstring(rString));
-				case 2: // 종목 코드
-					temp.push_back(std::wstring(rString));
-				default:
-					break;
-				}
-			}
-		}
-	}
-	
-
-	return temp;
 }

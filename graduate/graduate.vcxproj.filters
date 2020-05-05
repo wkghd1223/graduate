@@ -177,14 +177,14 @@
     <ClInclude Include="GridCtrl\InPlaceEdit.h">
       <Filter>GridCtrl</Filter>
     </ClInclude>
-    <ClInclude Include="CellRange.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="CInterestDlg.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="AutoComplete\PGEnumString.h">
       <Filter>AutoComplete</Filter>
+    </ClInclude>
+    <ClInclude Include="CellRange.h">
+      <Filter>GridCtrl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
