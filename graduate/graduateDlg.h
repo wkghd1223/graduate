@@ -45,4 +45,6 @@ public:
 	void OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LPCTSTR sTrCode, LPCTSTR sRecordName, LPCTSTR sPrevNext, long nDataLength, LPCTSTR sErrorCode, LPCTSTR sMessage, LPCTSTR sSplmMsg);
 	
 	afx_msg void OnBnClickedOk();
+	void OnEventConnectKhopenapictrl1(long nErrCode);
+	CButton btnRun;
 };

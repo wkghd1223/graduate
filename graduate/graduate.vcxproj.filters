@@ -168,14 +168,14 @@
     <ClInclude Include="GridCtrl\GridCell.h">
       <Filter>GridCtrl</Filter>
     </ClInclude>
-    <ClInclude Include="GridCtrl\CellRange.h">
-      <Filter>GridCtrl</Filter>
-    </ClInclude>
     <ClInclude Include="GridCtrl\TitleTip.h">
       <Filter>GridCtrl</Filter>
     </ClInclude>
     <ClInclude Include="GridCtrl\InPlaceEdit.h">
       <Filter>GridCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="CellRange.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

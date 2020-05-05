@@ -61,6 +61,7 @@ void CgraduateDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_KHOPENAPICTRL1, theApp.kStock);
+	DDX_Control(pDX, IDOK, btnRun);
 }
 
 BEGIN_MESSAGE_MAP(CgraduateDlg, CDialogEx)
@@ -248,6 +249,7 @@ void CgraduateDlg::OnBnClickedOk()
 
 BEGIN_EVENTSINK_MAP(CgraduateDlg, CDialogEx)
 ON_EVENT(CgraduateDlg, IDC_KHOPENAPICTRL1, 1, CgraduateDlg::OnReceiveTrDataKhopenapictrl1, VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_BSTR VTS_I4 VTS_BSTR VTS_BSTR VTS_BSTR)
+ON_EVENT(CgraduateDlg, IDC_KHOPENAPICTRL1, 5, CgraduateDlg::OnEventConnectKhopenapictrl1, VTS_I4)
 END_EVENTSINK_MAP()
 
 
@@ -309,3 +311,10 @@ BOOL CgraduateDlg::GetNextScreenNum(int nScreenType)
 	return TRUE;
 }
 
+
+
+void CgraduateDlg::OnEventConnectKhopenapictrl1(long nErrCode)
+{
+	btnRun.EnableWindow(TRUE);
+	// TODO: Add your message handler code here
+}
