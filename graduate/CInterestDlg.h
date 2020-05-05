@@ -29,6 +29,7 @@ public:
 	CWnd*		m_pParent;
 	CString		m_strJongCode;
 	CUser* user = new CUser();
+	std::vector<std::wstring>  ReadStocks();
 
 	CStatic userInfo;
 	virtual BOOL OnInitDialog();
