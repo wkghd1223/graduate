@@ -1,6 +1,7 @@
 #pragma once
 #include "CUser.h"
 #include "AutoComplete/PGEnumString.h"
+#include "GridCtrl/GridCtrl.h"
 // CInterestDlg dialog
 
 class CInterestDlg : public CDialogEx
@@ -37,4 +38,5 @@ public:
 	afx_msg void OnClose();
 	CEdit editSearch;
 	afx_msg void OnBnClickedOk();
+	CGridCtrl interestGrid;
 };
