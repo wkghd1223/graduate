@@ -373,6 +373,9 @@ void CgraduateDlg::ReadStocks()
 			tok[n % 2] = temp;
 			n++;
 		}
-		hashStock.insert(std::pair<LPCTSTR,CString>((LPCTSTR)tok[1], tok[0]));
+		hashStock.insert({ tok[1], tok[0] });
+		//hashStock[tok[1]] = tok[0];
+		//hashStock.insert(std::pair<CString,CString>((LPCTSTR)tok[1], tok[0]));
 	}
+	 CString aa = hashStock[L"삼성전자"];
 }

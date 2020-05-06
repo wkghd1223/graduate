@@ -229,12 +229,10 @@ void CMainDlg::OnBnClickedOk()
 	editSearch.GetWindowText(search);
 	search.Trim();
 	CgraduateDlg* parent = (CgraduateDlg*)m_pParent;
-	std::unordered_map<LPCTSTR, CString> temp = parent->GetHashStock();
-	if (temp.count(search)) {
-		search = temp[search];
+	std::map<CString, CString> temp = parent->GetHashStock();
+	if (temp.count(search) != 0) {
+		search = temp.find(search)->second;
 	}
-
-
 
 	//날짜 선정 해줘야 함
 	

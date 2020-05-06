@@ -6,7 +6,7 @@
 #define UM_SCRENN_CLOSE		1000
 #include <vector>
 #include <string>
-#include <unordered_map>
+#include <map>
 
 // CgraduateDlg 대화 상자
 class CgraduateDlg : public CDialogEx
@@ -53,8 +53,8 @@ public:
 	afx_msg void OnBnClickedInterest();
 	void ReadStocks();
 
-	std::unordered_map<LPCTSTR, CString> hashStock;
-	std::unordered_map<LPCTSTR, CString> GetHashStock() { return hashStock; }
+	std::map<CString, CString> hashStock;
+	std::map<CString, CString> GetHashStock() { return hashStock; }
 	std::vector<std::wstring> stockData;
 	std::vector<std::wstring> GetStockData() { return stockData; }
 };
