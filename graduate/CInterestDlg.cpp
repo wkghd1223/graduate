@@ -32,6 +32,7 @@ void CInterestDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TEXT_STATIC, userInfoFormat);
 	DDX_Control(pDX, IDC_EDIT_SEARCH, editSearch);
 	DDX_Control(pDX, IDC_CUSTOM_GRID_INTEREST, interestGrid);
+	DDX_Control(pDX, IDC_LIST_INTEREST_SEARCH, interestList);
 }
 
 
@@ -60,51 +61,11 @@ BOOL CInterestDlg::OnInitDialog()
 	// TODO:  Add extra initialization here
 
 	// GridControl
-	int m_nRows = 9;
-	int m_nCols = 4;
-	int m_nFixRows = 1;
-	int m_nFixCols = 1;
+	initGrid(9, 5);
 
-	interestGrid.SetRowCount(m_nRows);
-	interestGrid.SetColumnCount(m_nCols);
-	interestGrid.SetFixedRowCount(m_nFixRows);
-	interestGrid.SetFixedColumnCount(m_nFixCols);
 
-	DWORD dwTextStyle = DT_RIGHT | DT_VCENTER | DT_SINGLELINE;
-
-	for (int row = 0; row < interestGrid.GetRowCount(); row++) {
-		for (int col = 0; col < interestGrid.GetColumnCount(); col++) {
-			GV_ITEM Item;
-			Item.mask = GVIF_TEXT | GVIF_FORMAT;
-			Item.row = row;
-			Item.col = col;
-
-			if (row < m_nFixRows) {
-				Item.nFormat = DT_LEFT | DT_WORDBREAK;
-				Item.strText.Format(_T("Column %d"), col);
-
-			}
-			else if (col < m_nFixCols) {
-				Item.nFormat = dwTextStyle;
-				Item.strText.Format(_T("Row %d"), row);
-
-			}
-			else {
-				Item.nFormat = dwTextStyle;
-				Item.strText.Format(_T("%d"), row * col);
-			}
-			interestGrid.SetItem(&Item);
-
-			if (rand() % 10 == 1) {
-				COLORREF clr = RGB(rand() % 128 + 128,
-					rand() % 128 + 128,
-					rand() % 128 + 128);
-				interestGrid.SetItemBkColour(row, col, clr);
-				interestGrid.SetItemFgColour(row, col, RGB(255, 0, 0));
-			}
-		}
-	}
-
+	// listControl
+	initList();
 
 	// autoComplete
 	HRESULT hr = m_pac.CoCreateInstance(CLSID_AutoComplete);
@@ -145,6 +106,104 @@ void CInterestDlg::OnClose()
 void CInterestDlg::OnBnClickedOk()
 {
 	// TODO: Add your control notification handler code here
+	editSearch.GetWindowText(search);
+	std::vector<CStock> v;
+	CgraduateDlg* parent = (CgraduateDlg*)m_pParent;
+	v = parent->GetStockList();
+	for (auto i : v) {
+		CString tempName = i.GetStockName();
+		CString tempCode = i.GetStockName();
+		if (tempName.Find(search) >= 0 || tempCode.Find(search) >= 0) {
+			searchedStock.push_back(i);
+		}
+	}
 
+	interestList.DeleteAllItems();
+	for (auto i : searchedStock) {
+		setList(i);
+	}
 	//CDialogEx::OnOK();
 }
+
+void CInterestDlg::setList(CStock st)
+{
+	int n = interestList.GetItemCount();
+	interestList.InsertItem(n, st.GetStockCode());
+	interestList.SetItem(n, 1, LVIF_TEXT, st.GetStockName(), NULL, NULL, NULL, NULL);
+	CString sectors = L"";
+	for (auto i : st.GetSectors())
+	{
+		sectors.Append(i+" ");
+	}
+	interestList.SetItem(n, 2, LVIF_TEXT, sectors, NULL, NULL, NULL, NULL);
+
+}
+
+void CInterestDlg::initList()
+{
+	CRect rect;
+	interestList.GetWindowRect(&rect);
+	interestList.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);
+
+	interestList.InsertColumn(0, L"종목코드", LVCFMT_CENTER, rect.Width() * 0.25);
+	interestList.InsertColumn(1, L"종목명", LVCFMT_CENTER, rect.Width() * 0.35);
+	interestList.InsertColumn(2, L"업종", LVCFMT_CENTER, rect.Width() * 0.4);
+}
+
+void CInterestDlg::initGrid(int nRow, int nCol)
+{
+	int m_nRows = nRow;
+	int m_nCols = nCol;
+	// 고정 행
+	int m_nFixRows = 1;
+	int m_nFixCols = 1;
+
+	interestGrid.SetRowCount(m_nRows);
+	interestGrid.SetColumnCount(m_nCols);
+	interestGrid.SetFixedRowCount(m_nFixRows);
+	interestGrid.SetFixedColumnCount(m_nFixCols);
+	
+	DWORD dwTextStyle = DT_RIGHT | DT_VCENTER | DT_SINGLELINE;
+
+	for (int row = 0; row < interestGrid.GetRowCount(); row++) {
+		for (int col = 0; col < interestGrid.GetColumnCount(); col++) {
+			GV_ITEM Item;
+			Item.mask = GVIF_TEXT | GVIF_FORMAT;
+			Item.row = row;
+			Item.col = col;
+
+			// (0,0)
+			if (row == 0 && col == 0) {
+				Item.nFormat = DT_LEFT | DT_WORDBREAK;
+				Item.strText.Format(_T("구분"));
+			}
+			// 맨 윗 행
+			else if (row < m_nFixRows) {
+				Item.nFormat = DT_LEFT | DT_WORDBREAK;
+				Item.strText.Format(_T("Column %d"), col);
+
+			}
+			// 맨 왼쪽 열
+			else if (col < m_nFixCols) {
+				Item.nFormat = dwTextStyle;
+				Item.strText.Format(_T("Row %d"), row);
+
+			}
+			// 내부 행렬
+			else {
+				Item.nFormat = dwTextStyle;
+				Item.strText.Format(_T("%d"), row * col);
+			}
+			interestGrid.SetItem(&Item);
+
+			if (rand() % 10 == 1) {
+				COLORREF clr = RGB(rand() % 128 + 128,
+					rand() % 128 + 128,
+					rand() % 128 + 128);
+				interestGrid.SetItemBkColour(row, col, clr);
+				interestGrid.SetItemFgColour(row, col, RGB(255, 0, 0));
+			}
+		}
+	}
+}
+

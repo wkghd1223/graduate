@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include "CStock.h"
 
 // CgraduateDlg 대화 상자
 class CgraduateDlg : public CDialogEx
@@ -53,6 +54,8 @@ public:
 	afx_msg void OnBnClickedInterest();
 	void ReadStocks();
 
+	std::vector<CStock> stockList;
+	std::vector<CStock> GetStockList() { return stockList; }
 	std::map<CString, CString> hashStock;
 	std::map<CString, CString> GetHashStock() { return hashStock; }
 	std::vector<std::wstring> stockData;

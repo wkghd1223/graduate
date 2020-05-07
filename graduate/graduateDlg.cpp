@@ -358,7 +358,7 @@ void CgraduateDlg::ReadStocks()
 {
 	CString str;
 	CString filepath = _T("");
-	filepath.Format(L"C:\\Users\\pumkinjeon\\Desktop\\Pumpkin\\workspace\\graduate\\stock_list.csv");
+	filepath.Format(L"..\\stock_list.csv");
 	setlocale(LC_ALL, "korean");
 	CStdioFile file(filepath, CFile::modeRead | CFile::typeText);
 
@@ -366,14 +366,16 @@ void CgraduateDlg::ReadStocks()
 		if (!file.ReadString(str))
 			break;
 		CString temp;
-		CString tok[2];
+		CString tok[5];
 		int n = 0;
-		while (::AfxExtractSubString(temp, str, n, ',')) {
-			stockData.push_back(std::wstring(temp));
-			tok[n % 2] = temp;
-			n++;
+		while (::AfxExtractSubString(temp, str, n++, ',')) {
+			if(n-1 < 2)
+				stockData.push_back(std::wstring(temp));
+			tok[n-1] = temp;
 		}
-		hashStock.insert({ tok[1], tok[0] });
+		hashStock.insert({ tok[0], tok[1] });
+		CStock tempStock(tok[0], tok[1], tok[2], tok[3], tok[4]);
+		stockList.push_back(tempStock);
 		//hashStock[tok[1]] = tok[0];
 		//hashStock.insert(std::pair<CString,CString>((LPCTSTR)tok[1], tok[0]));
 	}

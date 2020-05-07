@@ -2,6 +2,7 @@
 #include "CUser.h"
 #include "AutoComplete/PGEnumString.h"
 #include "GridCtrl/GridCtrl.h"
+#include "CStock.h"
 // CInterestDlg dialog
 
 class CInterestDlg : public CDialogEx
@@ -29,8 +30,10 @@ public:
 	CString		m_strScrNo;
 	CWnd*		m_pParent;
 	CString		m_strJongCode;
+
+	CString search;
+
 	CUser* user = new CUser();
-	std::vector<std::wstring>  ReadStocks();
 
 	CStatic userInfo;
 	virtual BOOL OnInitDialog();
@@ -39,4 +42,9 @@ public:
 	CEdit editSearch;
 	afx_msg void OnBnClickedOk();
 	CGridCtrl interestGrid;
+	void initGrid(int nRow, int nCol);
+	CListCtrl interestList;
+	void setList(CStock st);
+	void initList();
+	std::vector<CStock> searchedStock;
 };

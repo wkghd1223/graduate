@@ -60,9 +60,10 @@
 #define IDC_COMBO_CHART_PERIOD          1026
 #define IDC_STC_MSGBAR                  1027
 #define IDC_BTN_FO_ORDER                1028
-#define IDC_CUSTOM1                     1028
 #define IDC_CUSTOM_GRID_INTEREST        1028
 #define IDC_LIST_USER                   1029
+#define IDC_LIST1                       1029
+#define IDC_LIST_INTEREST_SEARCH        1029
 #define IDC_BTN_JONGADD                 1031
 #define IDC_GRD_KWANSIM                 1032
 #define IDC_BTN_JONGDELETE              1033
@@ -74,7 +75,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        152
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1029
+#define _APS_NEXT_CONTROL_VALUE         1030
 #define _APS_NEXT_SYMED_VALUE           107
 #endif
 #endif
