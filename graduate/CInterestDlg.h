@@ -4,7 +4,10 @@
 #include "GridCtrl/GridCtrl.h"
 #include "CStock.h"
 // CInterestDlg dialog
-
+typedef struct SectorVector {
+	CString sector;
+	std::vector<CString> stockNames;
+};
 class CInterestDlg : public CDialogEx
 {
 	DECLARE_DYNAMIC(CInterestDlg)
@@ -51,7 +54,8 @@ public:
 	CGridCtrl interestGrid;
 	// 그리드 컨트롤을 초기화한다.
 	void initGrid(int nRow, int nCol);
-	
+	std::vector<SectorVector> sv;
+
 	// 검색종목을 나열하는 리스트
 	CListCtrl interestList;
 	// 리스트에서 선택된 아이템의 인덱스를 저장
@@ -69,4 +73,5 @@ public:
 	CBitmapButton btnPlus;
 	afx_msg void OnNMClickListInterestSearch(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedButtonPlus();
+	
 };

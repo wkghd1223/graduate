@@ -255,16 +255,44 @@ void CInterestDlg::OnBnClickedButtonPlus()
 	CString TempCode = interestList.GetItemText(selectedNum, 0);
 	CString TempName = interestList.GetItemText(selectedNum, 1);
 	CString TempSector = interestList.GetItemText(selectedNum, 2);
-
-	int row = interestGrid.GetRowCount();
-	int col = interestGrid.GetColumnCount();
-
-	interestGrid.SetColumnCount(col+1);
-
-	TempCode.Append(L"|");
+	TempCode.Append(L" | ");
 	TempCode.Append(TempName);
+
+	int col = -1;
+	int row = -1;
+	int j=0;
+	for (auto i : sv) {
+		if (!i.sector.Compare(TempSector)) {
+			col = j;
+		}
+		if (i.stockNames.size() < row) {
+			row = i.stockNames.size();
+		}
+		j++;
+	}
+
+	if (col < 0) {
+		SectorVector item;
+		item.sector = TempSector;
+		item.stockNames.push_back(TempCode);
+		sv.push_back(item);
+
+		interestGrid.SetColumnCount(sv.size());
+		interestGrid.SetItemText(0, sv.size()-1, TempSector);
+		interestGrid.SetItemBkColour(0, sv.size() - 1, RGB(100,100,100));
+		interestGrid.SetItemText(1, sv.size()-1, TempCode);
+	}
+	else {
+		sv[col].stockNames;
+		std::vector<CString>::iterator nit = std::find(sv[col].stockNames.begin(), sv[col].stockNames.end(), TempCode);
+		if (nit == sv[col].stockNames.end()) {
+			sv[col].stockNames.push_back(TempCode);
+			if(sv[col].stockNames.size() > row)
+				interestGrid.SetRowCount(sv[col].stockNames.size() + 1);
+			interestGrid.SetItemText(sv[col].stockNames.size(), col, TempCode);
+		}
+	}
 	
-	interestGrid.SetItemText(0, 0, TempSector);
-	interestGrid.SetItemText(1, 0, TempCode);
+
 	interestGrid.AutoSize();
 }
