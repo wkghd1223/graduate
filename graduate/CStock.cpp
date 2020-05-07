@@ -5,17 +5,18 @@ CStock::CStock(CString name, CString code, CString sectors, CString listingDate,
 {
 	// 이름
 	this->name = name;
+
 	// 코드
 	this->code = code;
+
 	// 업종
-	CString temp;
-	int n = 0;
-	while (::AfxExtractSubString(temp, sectors, n++, '|')) {
-		this->sectors.push_back(temp.Trim());
-	}
+	sectors.Replace('|', ',');
+	this->sectors = sectors;
+
 	// 상장일
 	int date[3];
-	n = 0;
+	CString temp;
+	int n = 0;
 	while (::AfxExtractSubString(temp, listingDate, n++, '-')) {
 		date[n-1] = _ttoi(temp.Trim());
 	}

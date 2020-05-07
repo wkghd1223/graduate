@@ -34,16 +34,7 @@ BOOL CMainDlg::OnInitDialog() {
 	CDialogEx::OnInitDialog();
 
 	// 사용자 정보
-	userInfoFormat.SetWindowTextW(_T("사용자\n 사용자 계정\n 사용자 ID"));
-
-	CString str = _T("");
-	str += user->getName();
-	str += _T("\n");
-	str += user->getAccount();
-	str += _T("\n");
-	str += user->getUserId();
-	str += _T("\n");
-	userInfo.SetWindowTextW(str);
+	initUserInfo();
 
 	// 차트 combobox 일/주/월
 	chartPeriod.AddString(_T("일"));
@@ -167,12 +158,7 @@ void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LP
 			CStringTemp[i] = theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10001[i+NUM_DOUBLE+2]);
 			CStringTemp[i].Trim();
 		}
-		//stock = new CStock(doubleTemp[0], doubleTemp[1], doubleTemp[2], doubleTemp[3], doubleTemp[4],
-		//	doubleTemp[5], doubleTemp[6], doubleTemp[7], doubleTemp[8], doubleTemp[9],
-		//	doubleTemp[10], doubleTemp[11], doubleTemp[12], doubleTemp[13], doubleTemp[14],
-		//	doubleTemp[15], doubleTemp[16], doubleTemp[17], intTemp[0], intTemp[1],
-		//	CStringTemp[0], CStringTemp[1]);
-		//
+
 		stockInfo.SetWindowTextW(/*stock->GetStockName()*/CStringTemp[0]);
 	}
 	else if (!(out.Compare( L"주식일봉차트조회") && out.Compare(L"주식주봉차트조회" )&&out.Compare( L"주식월봉차트조회"))) {
@@ -192,7 +178,6 @@ void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LP
 			pCandlePoint[i].Close = _tstof(theApp.kStock.GetCommData(sTrCode, sRQName, i, listOPT10081[1]));
 			pCandlePoint[i].High = _tstof(theApp.kStock.GetCommData(sTrCode, sRQName, i, listOPT10081[6]));
 			pCandlePoint[i].Low = _tstof(theApp.kStock.GetCommData(sTrCode, sRQName, i, listOPT10081[7]));
-			//theApp.kStock.
 
 			//theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10081[0]); // 종목코드
 			//theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10081[2]); // 거래량
@@ -209,6 +194,20 @@ void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LP
 	}
 	else {
 	}
+}
+void CMainDlg::initUserInfo()
+{
+	userInfoFormat.SetWindowTextW(_T("사용자\n 사용자 계정\n 사용자 ID"));
+	CgraduateDlg* parent = (CgraduateDlg*)m_pParent;
+	CUser user = parent->GetUser();
+	CString str = _T("");
+	str += user.getName();
+	str += _T("\n");
+	str += user.getAccount();
+	str += _T("\n");
+	str += user.getUserId();
+	str += _T("\n");
+	userInfo.SetWindowTextW(str);
 }
 BEGIN_MESSAGE_MAP(CMainDlg, CDialogEx)
 	ON_BN_CLICKED(IDOK, &CMainDlg::OnBnClickedOk)

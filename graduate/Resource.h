@@ -19,6 +19,8 @@
 #define IDD_DIALOG1                     148
 #define IDD_PRICE_D_CHAEGYUL            148
 #define IDD_CInterestDlg                150
+#define IDB_BITMAP_PLUS                 155
+#define IDB_BITMAP_PLUS_ON              156
 #define IDC_BUTTON_RUN                  1000
 #define IDC_BTN_CURRENTPRICE            1001
 #define IDC_BTN_ORDER                   1002
@@ -26,6 +28,7 @@
 #define IDC_BTN_KWANSIM                 1003
 #define IDC_BUTTON1                     1003
 #define IDC_INTEREST                    1003
+#define IDC_BUTTON_PLUS                 1003
 #define IDC_EDT_JONGCODE                1004
 #define IDC_STOCK_GROUP                 1004
 #define IDC_STC_JONGNAME                1005
@@ -62,7 +65,6 @@
 #define IDC_BTN_FO_ORDER                1028
 #define IDC_CUSTOM_GRID_INTEREST        1028
 #define IDC_LIST_USER                   1029
-#define IDC_LIST1                       1029
 #define IDC_LIST_INTEREST_SEARCH        1029
 #define IDC_BTN_JONGADD                 1031
 #define IDC_GRD_KWANSIM                 1032
@@ -73,9 +75,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        152
+#define _APS_NEXT_RESOURCE_VALUE        157
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1030
+#define _APS_NEXT_CONTROL_VALUE         1031
 #define _APS_NEXT_SYMED_VALUE           107
 #endif
 #endif

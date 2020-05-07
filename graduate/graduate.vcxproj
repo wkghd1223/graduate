@@ -303,6 +303,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\graduate.ico" />
+    <Image Include="res\plus.bmp" />
+    <Image Include="res\plus_on.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

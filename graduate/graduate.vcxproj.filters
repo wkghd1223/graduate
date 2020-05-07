@@ -341,5 +341,11 @@
     <Image Include="res\graduate.ico">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="res\plus.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\plus_on.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>

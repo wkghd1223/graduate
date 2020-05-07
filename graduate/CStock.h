@@ -12,14 +12,20 @@ public:
 	CStock(CString name, CString code, CString sectors, CString listingDate, CString settlementMonth);
 	~CStock() {}
 private:
-	CString name;	// 주식 이름
-	CString code;	// 종목코드
-	std::vector<CString> sectors; // 업종
-	double listingDate; // 상장일
-	int settlementMonth;	// 결산일
-	//CChartCandlestickSerie* price;	// 날짜별 가격
+	// 주식 이름
+	CString name;	
+	// 종목코드
+	CString code;	
+	// 업종
+	CString sectors; 
+	// 상장일
+	double listingDate; 
+	// 결산일
+	int settlementMonth;	
+	// 날짜별 가격
+	//CChartCandlestickSerie* price;	
 public: 
 	CString GetStockName() { return name; }
 	CString GetStockCode() { return code; }
-	std::vector<CString> GetSectors() { return sectors; }
+	CString GetSectors() { return sectors; }
 };

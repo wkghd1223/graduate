@@ -33,12 +33,14 @@ void CInterestDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_SEARCH, editSearch);
 	DDX_Control(pDX, IDC_CUSTOM_GRID_INTEREST, interestGrid);
 	DDX_Control(pDX, IDC_LIST_INTEREST_SEARCH, interestList);
+	DDX_Control(pDX, IDC_BUTTON_PLUS, btnPlus);
 }
 
 
 BEGIN_MESSAGE_MAP(CInterestDlg, CDialogEx)
 	ON_WM_CLOSE()
 	ON_BN_CLICKED(IDOK, &CInterestDlg::OnBnClickedOk)
+//	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 
@@ -47,22 +49,17 @@ END_MESSAGE_MAP()
 BOOL CInterestDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-	userInfoFormat.SetWindowTextW(_T("사용자\n 사용자 계정\n 사용자 ID"));
 
-	CString str = _T("");
-	str += user->getName();
-	str += _T("\n");
-	str += user->getAccount();
-	str += _T("\n");
-	str += user->getUserId();
-	str += _T("\n");
-	userInfo.SetWindowTextW(str);
+	// plus button
+	initimageButton();
+	btnPlus.LoadBitmaps(IDB_BITMAP_PLUS, IDB_BITMAP_PLUS_ON);
+	btnPlus.SizeToContent();
 
-	// TODO:  Add extra initialization here
+	// userInfo
+	initUserInfo();
 
 	// GridControl
 	initGrid(9, 5);
-
 
 	// listControl
 	initList();
@@ -103,40 +100,46 @@ void CInterestDlg::OnClose()
 }
 
 
+
 void CInterestDlg::OnBnClickedOk()
 {
-	// TODO: Add your control notification handler code here
+	searchedStock.clear();
+	interestList.DeleteAllItems();
+
 	editSearch.GetWindowText(search);
+	search = search.Trim();
 	std::vector<CStock> v;
 	CgraduateDlg* parent = (CgraduateDlg*)m_pParent;
 	v = parent->GetStockList();
 	for (auto i : v) {
 		CString tempName = i.GetStockName();
-		CString tempCode = i.GetStockName();
-		if (tempName.Find(search) >= 0 || tempCode.Find(search) >= 0) {
+		CString tempCode = i.GetStockCode();
+		CString tempSector = i.GetSectors();
+		if (tempName.Find(search) >= 0 || tempCode.Find(search) >= 0 || tempSector.Find(search) >= 0) {
 			searchedStock.push_back(i);
 		}
 	}
 
-	interestList.DeleteAllItems();
+
 	for (auto i : searchedStock) {
 		setList(i);
 	}
 	//CDialogEx::OnOK();
 }
 
-void CInterestDlg::setList(CStock st)
+void CInterestDlg::initUserInfo()
 {
-	int n = interestList.GetItemCount();
-	interestList.InsertItem(n, st.GetStockCode());
-	interestList.SetItem(n, 1, LVIF_TEXT, st.GetStockName(), NULL, NULL, NULL, NULL);
-	CString sectors = L"";
-	for (auto i : st.GetSectors())
-	{
-		sectors.Append(i+" ");
-	}
-	interestList.SetItem(n, 2, LVIF_TEXT, sectors, NULL, NULL, NULL, NULL);
-
+	userInfoFormat.SetWindowTextW(_T("사용자\n 사용자 계정\n 사용자 ID"));
+	CgraduateDlg* parent = (CgraduateDlg*)m_pParent;
+	CUser user = parent->GetUser();
+	CString str = _T("");
+	str += user.getName();
+	str += _T("\n");
+	str += user.getAccount();
+	str += _T("\n");
+	str += user.getUserId();
+	str += _T("\n");
+	userInfo.SetWindowTextW(str);
 }
 
 void CInterestDlg::initList()
@@ -148,6 +151,21 @@ void CInterestDlg::initList()
 	interestList.InsertColumn(0, L"종목코드", LVCFMT_CENTER, rect.Width() * 0.25);
 	interestList.InsertColumn(1, L"종목명", LVCFMT_CENTER, rect.Width() * 0.35);
 	interestList.InsertColumn(2, L"업종", LVCFMT_CENTER, rect.Width() * 0.4);
+}
+
+void CInterestDlg::setList(CStock st)
+{
+	int n = interestList.GetItemCount();
+	interestList.InsertItem(n, st.GetStockCode());
+	interestList.SetItem(n, 1, LVIF_TEXT, st.GetStockName(), NULL, NULL, NULL, NULL);
+	interestList.SetItem(n, 2, LVIF_TEXT, st.GetSectors(), NULL, NULL, NULL, NULL);
+
+}
+
+void CInterestDlg::initimageButton()
+{
+	m_hBitmap = LoadBitmap(::AfxGetApp()->m_hInstance, MAKEINTRESOURCE(IDB_BITMAP_PLUS));
+	GetObject(m_hBitmap, sizeof(BITMAP), &m_bitmap);
 }
 
 void CInterestDlg::initGrid(int nRow, int nCol)
@@ -206,4 +224,3 @@ void CInterestDlg::initGrid(int nRow, int nCol)
 		}
 	}
 }
-

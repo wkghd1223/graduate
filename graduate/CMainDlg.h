@@ -66,9 +66,11 @@ public:
 	afx_msg void OnBnClickedCancel();
 	afx_msg void OnTcnSelchangeCurrentprice(NMHDR* pNMHDR, LRESULT* pResult);
 	void OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LPCTSTR sTrCode, LPCTSTR sRecordName, LPCTSTR sPrevNext, long nDataLength, LPCTSTR sErrorCode, LPCTSTR sMessage, LPCTSTR sSplmMsg);
-	CUser* user = new CUser();
+	
 	CStatic userInfo;
 	CStatic userInfoFormat;
+	void initUserInfo();
+	
 	CEdit editSearch;
 	CString search = L"";
 	CStatic stockInfo;

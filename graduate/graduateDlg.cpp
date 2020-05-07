@@ -234,10 +234,11 @@ void CgraduateDlg::OnBnClickedOk()
 	mainDlg->m_strScrNo.Format(_T("%04d"), m_nScrN0);
 	m_mapScreen.SetAt(mainDlg->m_strScrNo, mainDlg);
 
-	mainDlg->user = new CUser(theApp.kStock.GetLoginInfo(_T("USER_NAME"))
-		, theApp.kStock.GetLoginInfo(_T("ACCNO"))
-		, theApp.kStock.GetLoginInfo(_T("USER_ID"))
-		, theApp.kStock.GetLoginInfo(_T("GetServerGubun")));
+
+	//mainDlg->user = new CUser(theApp.kStock.GetLoginInfo(_T("USER_NAME"))
+	//	, theApp.kStock.GetLoginInfo(_T("ACCNO"))
+	//	, theApp.kStock.GetLoginInfo(_T("USER_ID"))
+	//	, theApp.kStock.GetLoginInfo(_T("GetServerGubun")));
 
 	//dlg.user = new CUser(_T("USER_NAME")
 	//	, _T("ACCNO") 
@@ -321,7 +322,13 @@ BOOL CgraduateDlg::GetNextScreenNum(int nScreenType)
 void CgraduateDlg::OnEventConnectKhopenapictrl1(long nErrCode)
 {
 	btnRun.EnableWindow(TRUE);
-	// TODO: Add your message handler code here
+
+	user =  CUser(
+		theApp.kStock.GetLoginInfo(_T("USER_NAME"))
+		, theApp.kStock.GetLoginInfo(_T("ACCNO"))
+		, theApp.kStock.GetLoginInfo(_T("USER_ID"))
+		, theApp.kStock.GetLoginInfo(_T("GetServerGubun"))
+	);
 }
 
 
@@ -335,11 +342,6 @@ void CgraduateDlg::OnBnClickedInterest()
 	CInterestDlg* interestDlg = new CInterestDlg(this);
 	interestDlg->m_strScrNo.Format(_T("%04d"), m_nScrN0);
 	m_mapScreen.SetAt(interestDlg->m_strScrNo, interestDlg);
-
-	interestDlg->user = new CUser(theApp.kStock.GetLoginInfo(_T("USER_NAME"))
-		, theApp.kStock.GetLoginInfo(_T("ACCNO"))
-		, theApp.kStock.GetLoginInfo(_T("USER_ID"))
-		, theApp.kStock.GetLoginInfo(_T("GetServerGubun")));
 
 	//dlg.user = new CUser(_T("USER_NAME")
 	//	, _T("ACCNO") 
@@ -358,7 +360,7 @@ void CgraduateDlg::ReadStocks()
 {
 	CString str;
 	CString filepath = _T("");
-	filepath.Format(L"..\\stock_list.csv");
+	filepath.Format(L".\\res\\stock_list.csv");
 	setlocale(LC_ALL, "korean");
 	CStdioFile file(filepath, CFile::modeRead | CFile::typeText);
 
@@ -373,11 +375,11 @@ void CgraduateDlg::ReadStocks()
 				stockData.push_back(std::wstring(temp));
 			tok[n-1] = temp;
 		}
+		// 종목 명으로 code 검색을 하기 위함
 		hashStock.insert({ tok[0], tok[1] });
+		
+		// 각 종목의 상장일, 업종, 등을 저장
 		CStock tempStock(tok[0], tok[1], tok[2], tok[3], tok[4]);
 		stockList.push_back(tempStock);
-		//hashStock[tok[1]] = tok[0];
-		//hashStock.insert(std::pair<CString,CString>((LPCTSTR)tok[1], tok[0]));
 	}
-	 CString aa = hashStock[L"삼성전자"];
 }

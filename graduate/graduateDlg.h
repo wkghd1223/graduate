@@ -8,6 +8,7 @@
 #include <string>
 #include <map>
 #include "CStock.h"
+#include "CUser.h"
 
 // CgraduateDlg 대화 상자
 class CgraduateDlg : public CDialogEx
@@ -40,7 +41,8 @@ protected:
 	DECLARE_MESSAGE_MAP();
 	DECLARE_EVENTSINK_MAP();
 public:
-
+	CUser user;
+	CUser GetUser() { return user; }
 	CMapStringToPtr m_mapScreen;
 	CMapStringToString m_mapScreenNum;
 	int m_nScrN0;
@@ -52,6 +54,8 @@ public:
 	CButton btnRun;
 	CButton btnInterest;
 	afx_msg void OnBnClickedInterest();
+	
+	
 	void ReadStocks();
 
 	std::vector<CStock> stockList;
