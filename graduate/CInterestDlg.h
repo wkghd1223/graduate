@@ -54,6 +54,8 @@ public:
 	
 	// 검색종목을 나열하는 리스트
 	CListCtrl interestList;
+	// 리스트에서 선택된 아이템의 인덱스를 저장
+	int selectedNum = -1;
 	// 리스트 컨트롤를 초기화한다.
 	void initList();
 	// 리스트 컨트롤의 값을 부여한다.
@@ -65,5 +67,6 @@ public:
 	BITMAP m_bitmap;
 	void initimageButton();
 	CBitmapButton btnPlus;
-//	afx_msg void OnPaint();
+	afx_msg void OnNMClickListInterestSearch(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBnClickedButtonPlus();
 };

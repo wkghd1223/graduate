@@ -41,6 +41,8 @@ BEGIN_MESSAGE_MAP(CInterestDlg, CDialogEx)
 	ON_WM_CLOSE()
 	ON_BN_CLICKED(IDOK, &CInterestDlg::OnBnClickedOk)
 //	ON_WM_PAINT()
+ON_NOTIFY(NM_CLICK, IDC_LIST_INTEREST_SEARCH, &CInterestDlg::OnNMClickListInterestSearch)
+ON_BN_CLICKED(IDC_BUTTON_PLUS, &CInterestDlg::OnBnClickedButtonPlus)
 END_MESSAGE_MAP()
 
 
@@ -59,7 +61,7 @@ BOOL CInterestDlg::OnInitDialog()
 	initUserInfo();
 
 	// GridControl
-	initGrid(9, 5);
+	initGrid(2, 0);
 
 	// listControl
 	initList();
@@ -174,7 +176,13 @@ void CInterestDlg::initGrid(int nRow, int nCol)
 	int m_nCols = nCol;
 	// 고정 행
 	int m_nFixRows = 1;
-	int m_nFixCols = 1;
+	int m_nFixCols = 0;
+	
+	interestGrid.AutoSize();
+
+	interestGrid.SetEditable(FALSE);
+	interestGrid.SetListMode(TRUE);
+	interestGrid.EnableDragAndDrop(TRUE);
 
 	interestGrid.SetRowCount(m_nRows);
 	interestGrid.SetColumnCount(m_nCols);
@@ -183,44 +191,80 @@ void CInterestDlg::initGrid(int nRow, int nCol)
 	
 	DWORD dwTextStyle = DT_RIGHT | DT_VCENTER | DT_SINGLELINE;
 
-	for (int row = 0; row < interestGrid.GetRowCount(); row++) {
-		for (int col = 0; col < interestGrid.GetColumnCount(); col++) {
-			GV_ITEM Item;
-			Item.mask = GVIF_TEXT | GVIF_FORMAT;
-			Item.row = row;
-			Item.col = col;
+//	for (int row = 0; row < interestGrid.GetRowCount(); row++) {
+//		for (int col = 0; col < interestGrid.GetColumnCount(); col++) {
+//			GV_ITEM Item;
+//			Item.mask = GVIF_TEXT | GVIF_FORMAT;
+//			Item.row = row;
+//			Item.col = col;
+//
+//			// (0,0)
+//			if (row == 0 && col == 0) {
+//				Item.nFormat = DT_LEFT | DT_WORDBREAK;
+//				Item.strText.Format(_T("구분"));
+//			}
+//			// 맨 윗 행
+//			else if (row < m_nFixRows) {
+//				Item.nFormat = DT_LEFT | DT_WORDBREAK;
+//				Item.strText.Format(_T("Column %d"), col);
+//
+//			}
+//			// 맨 왼쪽 열
+//			else if (col < m_nFixCols) {
+//				Item.nFormat = dwTextStyle;
+//				Item.strText.Format(_T("Row %d"), row);
+//
+//			}
+//			// 내부 행렬
+//			else {
+//				Item.nFormat = dwTextStyle;
+//				Item.strText.Format(_T("%d"), row * col);
+//			}
+//			interestGrid.SetItem(&Item);
+//
+//			if (rand() % 10 == 1) {
+//				COLORREF clr = RGB(rand() % 128 + 128,
+//					rand() % 128 + 128,
+//					rand() % 128 + 128);
+//				interestGrid.SetItemBkColour(row, col, clr);
+//				interestGrid.SetItemFgColour(row, col, RGB(255, 0, 0));
+//			}
+//		}
+//	}
+}
 
-			// (0,0)
-			if (row == 0 && col == 0) {
-				Item.nFormat = DT_LEFT | DT_WORDBREAK;
-				Item.strText.Format(_T("구분"));
-			}
-			// 맨 윗 행
-			else if (row < m_nFixRows) {
-				Item.nFormat = DT_LEFT | DT_WORDBREAK;
-				Item.strText.Format(_T("Column %d"), col);
+void CInterestDlg::OnNMClickListInterestSearch(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: Add your control notification handler code here
+	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+	selectedNum = pNMListView->iItem;//
 
-			}
-			// 맨 왼쪽 열
-			else if (col < m_nFixCols) {
-				Item.nFormat = dwTextStyle;
-				Item.strText.Format(_T("Row %d"), row);
+	//int idx = pNMListView -> iItem;// 선택된 아이템값의 아이템을 (0,1 ... n 번째 인덱스) 한개 가져온다.
+	//CString sIndexValue;sIndexValue = m_listDataTable.GetItemText(idx, 1);
 
-			}
-			// 내부 행렬
-			else {
-				Item.nFormat = dwTextStyle;
-				Item.strText.Format(_T("%d"), row * col);
-			}
-			interestGrid.SetItem(&Item);
+	*pResult = 0;
+}
 
-			if (rand() % 10 == 1) {
-				COLORREF clr = RGB(rand() % 128 + 128,
-					rand() % 128 + 128,
-					rand() % 128 + 128);
-				interestGrid.SetItemBkColour(row, col, clr);
-				interestGrid.SetItemFgColour(row, col, RGB(255, 0, 0));
-			}
-		}
+
+void CInterestDlg::OnBnClickedButtonPlus()
+{
+	if (selectedNum < 0) {
+		return;
 	}
+	CString TempCode = interestList.GetItemText(selectedNum, 0);
+	CString TempName = interestList.GetItemText(selectedNum, 1);
+	CString TempSector = interestList.GetItemText(selectedNum, 2);
+
+	int row = interestGrid.GetRowCount();
+	int col = interestGrid.GetColumnCount();
+
+	interestGrid.SetColumnCount(col+1);
+
+	TempCode.Append(L"|");
+	TempCode.Append(TempName);
+	
+	interestGrid.SetItemText(0, 0, TempSector);
+	interestGrid.SetItemText(1, 0, TempCode);
+	interestGrid.AutoSize();
 }
