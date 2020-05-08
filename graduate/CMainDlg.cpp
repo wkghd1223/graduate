@@ -273,31 +273,32 @@ void CMainDlg::OnCbnSelchangeComboChartPeriod()
 {
 	showNum = 60;
 
-	if (search.GetLength() != 6 ) {
-
+	if (listNum == -1 ) {
 		return;
 	}
+	CString TempCode = chartList.GetItemText(listNum, 0);
+
 	// 종목을 선택하지 않고 눌렀을 경우 예외 처리
 	// TODO: Add your control notification handler code here
 	int pos = chartPeriod.GetCurSel();
 	switch (pos)
 	{
 	case DAY:
-		theApp.kStock.SetInputValue(L"종목코드", search);
+		theApp.kStock.SetInputValue(L"종목코드", TempCode);
 		theApp.kStock.SetInputValue(L"기준일자", L"20200423");
 		theApp.kStock.SetInputValue(L"수정주가구분", L"0");
 		theApp.kStock.CommRqData(_T("주식일봉차트조회"), _T("opt10081"), 0, m_strScrNo);
 		break;
 
 	case WEEK:
-		theApp.kStock.SetInputValue(L"종목코드", search);
+		theApp.kStock.SetInputValue(L"종목코드", TempCode);
 		theApp.kStock.SetInputValue(L"기준일자", L"20200423");
 		theApp.kStock.SetInputValue(L"수정주가구분", L"0");
 		theApp.kStock.CommRqData(_T("주식주봉차트조회"), _T("opt10082"), 0, m_strScrNo);
 		break;
 
 	case MONTH:
-		theApp.kStock.SetInputValue(L"종목코드", search);
+		theApp.kStock.SetInputValue(L"종목코드", TempCode);
 		theApp.kStock.SetInputValue(L"기준일자", L"20200423");
 		theApp.kStock.SetInputValue(L"수정주가구분", L"0");
 		theApp.kStock.CommRqData(_T("주식월봉차트조회"), _T("opt10083"), 0, m_strScrNo);
@@ -413,17 +414,17 @@ void CMainDlg::OnNMClickListInterestSearch(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-	int searchNum = pNMListView->iItem;
-	CString TempCode = chartList.GetItemText(searchNum, 0);
+	listNum = pNMListView->iItem;
+	CString TempCode = chartList.GetItemText(listNum, 0);
 	showNum = 60;
 
-	editSearch.GetWindowText(search);
-	search.Trim();
-	CgraduateDlg* parent = (CgraduateDlg*)m_pParent;
-	std::map<CString, CString> temp = parent->GetHashStock();
-	if (temp.count(search) != 0) {
-		search = temp.find(search)->second;
-	}
+	//editSearch.GetWindowText(search);
+	//search.Trim();
+	//CgraduateDlg* parent = (CgraduateDlg*)m_pParent;
+	//std::map<CString, CString> temp = parent->GetHashStock();
+	//if (temp.count(search) != 0) {
+	//	search = temp.find(search)->second;
+	//}
 
 	//날짜 선정 해줘야 함
 

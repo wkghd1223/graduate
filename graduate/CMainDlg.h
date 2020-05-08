@@ -93,6 +93,8 @@ public:
 	CListCtrl chartList;
 	void initList();
 	void setList(CStock st);
+	int listNum = -1;
+
 	std::vector<CStock> searchedStock;
 	afx_msg void OnNMClickListInterestSearch(NMHDR* pNMHDR, LRESULT* pResult);
 };
