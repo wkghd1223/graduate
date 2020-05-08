@@ -90,4 +90,9 @@ public:
 	CComboBox chartPeriod;
 	CStock *stock;
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+	CListCtrl chartList;
+	void initList();
+	void setList(CStock st);
+	std::vector<CStock> searchedStock;
+	afx_msg void OnNMClickListInterestSearch(NMHDR* pNMHDR, LRESULT* pResult);
 };

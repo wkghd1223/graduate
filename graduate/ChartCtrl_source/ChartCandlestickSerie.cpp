@@ -145,6 +145,8 @@ void CChartCandlestickSerie::Draw(CDC* pDC)
 		for (m_uLastDrawnPoint;m_uLastDrawnPoint<GetPointsCount();m_uLastDrawnPoint++)
 		{
 			SChartCandlestickPoint Point = GetPoint(m_uLastDrawnPoint);
+			if (Point.GetX() == NULL)
+				continue;
 			DrawCandleStick(pDC, Point);
 		}
 
