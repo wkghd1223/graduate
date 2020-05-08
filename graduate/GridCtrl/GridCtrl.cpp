@@ -2689,6 +2689,7 @@ void CGridCtrl::OnDragLeave()
 }
 
 // Something has just been dropped onto the grid
+// 에러때문에 주석처리함
 BOOL CGridCtrl::OnDrop(COleDataObject* pDataObject, DROPEFFECT /*dropEffect*/,
     CPoint /* point */)
 {
@@ -2702,28 +2703,28 @@ BOOL CGridCtrl::OnDrop(COleDataObject* pDataObject, DROPEFFECT /*dropEffect*/,
     OnDragLeave();
     if (m_CurCol >= 0)
     {
-        if (m_LastDragOverCell.col == m_CurCol || m_LastDragOverCell.row >= GetFixedRowCount())
-            return FALSE;
-        else
-        {
-            int New = m_arColOrder[m_CurCol];
-            m_arColOrder.erase(m_arColOrder.begin() + m_CurCol);
-            m_arColOrder.insert(m_arColOrder.begin() + m_LastDragOverCell.col, New);
-            m_CurCol = -1;
-            Invalidate();
-            return TRUE;
-        }
+        //if (m_LastDragOverCell.col == m_CurCol || m_LastDragOverCell.row >= GetFixedRowCount())
+        //    return FALSE;
+        //else
+        //{
+        //    int New = m_arColOrder[m_CurCol];
+        //    m_arColOrder.erase(m_arColOrder.begin() + m_CurCol);
+        //    m_arColOrder.insert(m_arColOrder.begin() + m_LastDragOverCell.col, New);
+        //    m_CurCol = -1;
+        //    Invalidate();
+        //    return TRUE;
+        //}
     }
     else
     {
-        if (m_bDragRowMode)
-        {
-            Reorder(m_CurRow, m_LastDragOverCell.row);
-            Invalidate();
-            return TRUE;
-        }
-        else
-            return PasteTextToGrid(m_LastDragOverCell, pDataObject, FALSE);
+    //    if (m_bDragRowMode)
+    //    {
+    //        Reorder(m_CurRow, m_LastDragOverCell.row);
+    //        Invalidate();
+    //        return TRUE;
+    //    }
+    //    else
+    //        return PasteTextToGrid(m_LastDragOverCell, pDataObject, FALSE);
     }
 }
 #endif

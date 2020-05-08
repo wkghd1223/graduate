@@ -191,46 +191,6 @@ void CInterestDlg::initGrid(int nRow, int nCol)
 	
 	DWORD dwTextStyle = DT_RIGHT | DT_VCENTER | DT_SINGLELINE;
 
-//	for (int row = 0; row < interestGrid.GetRowCount(); row++) {
-//		for (int col = 0; col < interestGrid.GetColumnCount(); col++) {
-//			GV_ITEM Item;
-//			Item.mask = GVIF_TEXT | GVIF_FORMAT;
-//			Item.row = row;
-//			Item.col = col;
-//
-//			// (0,0)
-//			if (row == 0 && col == 0) {
-//				Item.nFormat = DT_LEFT | DT_WORDBREAK;
-//				Item.strText.Format(_T("备盒"));
-//			}
-//			// 盖 拉 青
-//			else if (row < m_nFixRows) {
-//				Item.nFormat = DT_LEFT | DT_WORDBREAK;
-//				Item.strText.Format(_T("Column %d"), col);
-//
-//			}
-//			// 盖 哭率 凯
-//			else if (col < m_nFixCols) {
-//				Item.nFormat = dwTextStyle;
-//				Item.strText.Format(_T("Row %d"), row);
-//
-//			}
-//			// 郴何 青纺
-//			else {
-//				Item.nFormat = dwTextStyle;
-//				Item.strText.Format(_T("%d"), row * col);
-//			}
-//			interestGrid.SetItem(&Item);
-//
-//			if (rand() % 10 == 1) {
-//				COLORREF clr = RGB(rand() % 128 + 128,
-//					rand() % 128 + 128,
-//					rand() % 128 + 128);
-//				interestGrid.SetItemBkColour(row, col, clr);
-//				interestGrid.SetItemFgColour(row, col, RGB(255, 0, 0));
-//			}
-//		}
-//	}
 }
 
 void CInterestDlg::OnNMClickListInterestSearch(NMHDR* pNMHDR, LRESULT* pResult)
@@ -279,7 +239,7 @@ void CInterestDlg::OnBnClickedButtonPlus()
 
 		interestGrid.SetColumnCount(sv.size());
 		interestGrid.SetItemText(0, sv.size()-1, TempSector);
-		interestGrid.SetItemBkColour(0, sv.size() - 1, RGB(100,100,100));
+		interestGrid.SetItemBkColour(0, sv.size() - 1, RGB(255,255,153, 0.7));
 		interestGrid.SetItemText(1, sv.size()-1, TempCode);
 	}
 	else {
@@ -293,6 +253,5 @@ void CInterestDlg::OnBnClickedButtonPlus()
 		}
 	}
 	
-
 	interestGrid.AutoSize();
 }
