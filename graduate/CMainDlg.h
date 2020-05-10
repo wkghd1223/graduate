@@ -83,7 +83,7 @@ public:
 	void ShowGraph();
 	int period = DAY;
 
-
+	void mouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	// this is chart
 	CChartCtrl chart;
 	// day | week | month

@@ -315,12 +315,12 @@ void CMainDlg::InitGraph() {
 	// 축 자동설정
 	pBottomAxis->SetAutomaticMode(CChartAxis::FullAutomatic);
 	pLeftAxis->SetAutomaticMode(CChartAxis::FullAutomatic);
+	//pBottomAxis->SetTickIncrement(FALSE, CChartDateTimeAxis::tiDay, 1);
 	// 축 수동설정
 	//COleDateTime minValue(2019, 1, 1, 0, 0, 0);
 	//COleDateTime maxValue(2019, 9, 30, 0, 0, 0);
 	//pBottomAxis->SetMinMax(CChartCtrl::DateToValue(minValue), CChartCtrl::DateToValue(maxValue));
 	//pBottomAxis->SetTickIncrement(false, CChartDateTimeAxis::tiMonth, 1);
-	//pBottomAxis->SetTickLabelFormat(false, _T("%b %Y"));
 
 
 	pBottomAxis->SetDiscrete(false);
@@ -333,13 +333,13 @@ void CMainDlg::ShowGraph() {
 	if (pCandle == nullptr) {
 		pCandle = chart.CreateCandlestickSerie();	
 	}
-	pCandle->SetPoints(pCandlePoint, showNum);
+	pCandle->SetPoints(pCandlePoint, pointNum);
 	//pCandle->SetShadowColor(RGB(255, 0, 0));
 	pCandle->SetColor(RGB(0, 0, 0));
 	//chart.SetBackGradient(RGB(255, 0, 0), RGB(0, 0, 255), gtHorizontal);
 	RECT rect;
 	chart.GetClientRect(&rect);
-	pCandle->SetWidth(rect.bottom / (showNum+1));
+	pCandle->SetWidth(rect.bottom / pointNum);
 }
 
 void CMainDlg::OnTcnSelchangeCurrentprice(NMHDR* pNMHDR, LRESULT* pResult)
@@ -372,20 +372,19 @@ BOOL CMainDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	// TODO: Add your message handler code here and/or call default
 	ScreenToClient(&pt);
-
-	if (zDelta > 1 && showNum < pointNum-1) {
-		showNum += 1;
-	}
-	else if (showNum > 0 && zDelta <= 0) {
-		showNum += -1;
-	}
-	double max, min;
 	RECT rect;
 	chart.GetClientRect(&rect);
-	pCandle->SetWidth(rect.bottom / (showNum+1));
-	pCandle->SetPoints(pCandlePoint, showNum);
 
-
+	//if (zDelta > 1 && showNum < pointNum-1) {
+	//	showNum += 1;
+	//}
+	//else if (showNum > 0 && zDelta <= 0) {
+	//	showNum += -1;
+	//}
+	//double max, min;
+	//
+	//pCandle->SetWidth(rect.bottom / (showNum+1));
+	//pCandle->SetPoints(pCandlePoint, showNum);
 
 	return CDialogEx::OnMouseWheel(nFlags, zDelta, pt);
 }
@@ -416,16 +415,7 @@ void CMainDlg::OnNMClickListInterestSearch(NMHDR* pNMHDR, LRESULT* pResult)
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 	listNum = pNMListView->iItem;
 	CString TempCode = chartList.GetItemText(listNum, 0);
-	showNum = 60;
-
-	//editSearch.GetWindowText(search);
-	//search.Trim();
-	//CgraduateDlg* parent = (CgraduateDlg*)m_pParent;
-	//std::map<CString, CString> temp = parent->GetHashStock();
-	//if (temp.count(search) != 0) {
-	//	search = temp.find(search)->second;
-	//}
-
+	
 	//날짜 선정 해줘야 함
 
 	// combobox 값 별 분기
