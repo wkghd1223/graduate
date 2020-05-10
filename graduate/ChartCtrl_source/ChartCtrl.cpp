@@ -1169,7 +1169,7 @@ BOOL CChartCtrl::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) {
 				m_pAxes[BottomAxis]->GetSeriesMinMax(TotalMin, TotalMax);
 
 				int n = serie->GetPointsCount();
-				double newN = 530 / ((MaxVal - MinVal)* (TotalMax - TotalMin)/n);
+				double newN = 520 / ((MaxVal - MinVal)* (TotalMax - TotalMin)/n);
 				serie->SetWidth(newN);
 			}
 			ZoomCenter = m_pAxes[LeftAxis]->ScreenToValue(pt.y);

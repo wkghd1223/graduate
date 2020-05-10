@@ -166,8 +166,9 @@ void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LP
 	}
 	else if (!(out.Compare( L"주식일봉차트조회") && out.Compare(L"주식주봉차트조회" )&&out.Compare( L"주식월봉차트조회"))) {
 		CString tempDate = theApp.kStock.GetCommData(sTrCode, sRQName, 0, listOPT10081[4]); tempDate.Trim();
-		COleDateTime nDate(_ttoi(tempDate.Left(4)), _ttoi(tempDate.Mid(4,2)), _ttoi(tempDate.Right(2)), 0, 0, 0);
-		double xval = CChartCtrl::DateToValue(nDate);
+		CTime nDate(_ttoi(tempDate.Left(4)), _ttoi(tempDate.Mid(4,2)), _ttoi(tempDate.Right(2)), 0, 0, 0);
+		
+		double xval = CChartCtrl::DateToValue(COleDateTime(nDate.GetTime()));
 		pointNum = theApp.kStock.GetRepeatCnt(sTrCode, sRQName);
 		for (int i = 0; i < pointNum; i++) {
 			//CString date;
@@ -176,10 +177,11 @@ void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LP
 			//year = _ttoi(date.Left(4));
 			//month = _ttoi(date.Mid(4, 2));
 			//day = _ttoi(date.Right(2));
-
 			//COleDateTime oDate(year, month, day, 0, 0, 0);
 			//pCandlePoint[i].XVal = CChartCtrl::DateToValue(oDate);
 			pCandlePoint[i].XVal = xval--;
+			nDate = nDate - CTimeSpan(1, 0, 0, 0);
+			xval = CChartCtrl::DateToValue(COleDateTime(nDate.GetTime()));
 
 			pCandlePoint[i].Open = _tstof(theApp.kStock.GetCommData(sTrCode, sRQName, i, listOPT10081[5])); 
 			pCandlePoint[i].Close = _tstof(theApp.kStock.GetCommData(sTrCode, sRQName, i, listOPT10081[1]));
@@ -317,16 +319,16 @@ void CMainDlg::InitGraph() {
 	pLeftAxis->SetAutomaticMode(CChartAxis::FullAutomatic);
 	//pBottomAxis->SetTickIncrement(FALSE, CChartDateTimeAxis::tiDay, 1);
 	// 축 수동설정
-	//COleDateTime minValue(2019, 1, 1, 0, 0, 0);
-	//COleDateTime maxValue(2019, 9, 30, 0, 0, 0);
-	//pBottomAxis->SetMinMax(CChartCtrl::DateToValue(minValue), CChartCtrl::DateToValue(maxValue));
+	
 	//pBottomAxis->SetTickIncrement(false, CChartDateTimeAxis::tiMonth, 1);
-
+	
 
 	pBottomAxis->SetDiscrete(false);
 	chart.ShowMouseCursor(false);
 	CChartCrossHairCursor* pCrossHair = chart.CreateCrossHairCursor();
 	pCandle = nullptr;
+
+	
 }
 void CMainDlg::ShowGraph() {
 
@@ -337,9 +339,16 @@ void CMainDlg::ShowGraph() {
 	//pCandle->SetShadowColor(RGB(255, 0, 0));
 	pCandle->SetColor(RGB(0, 0, 0));
 	//chart.SetBackGradient(RGB(255, 0, 0), RGB(0, 0, 255), gtHorizontal);
-	RECT rect;
-	chart.GetClientRect(&rect);
-	pCandle->SetWidth(rect.bottom / pointNum);
+	COleDateTime maxValue = COleDateTime::GetCurrentTime();
+	CTime tempMin = CTime::GetCurrentTime() - CTimeSpan(60, 0, 0, 0);
+	COleDateTime minValue(tempMin.GetTime());
+	double min = CChartCtrl::DateToValue(minValue);
+	double max = CChartCtrl::DateToValue(maxValue);
+	chart.GetBottomAxis()->SetMinMax(min, max);
+	pCandle->GetSerieYScreenMinMax(min, max);
+	chart.GetLeftAxis()->SetMinMax(min, max);
+	pCandle->SetWidth(12);
+
 }
 
 void CMainDlg::OnTcnSelchangeCurrentprice(NMHDR* pNMHDR, LRESULT* pResult)
