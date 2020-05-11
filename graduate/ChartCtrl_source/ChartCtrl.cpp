@@ -1145,53 +1145,53 @@ void CChartCtrl::SaveAsImage(const TChartString& strFilename,
 // Make a zoom according to the movement of mouse wheel // Wheel up : Zoom in / Wheel down : Zoom out 
 BOOL CChartCtrl::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) { 
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다. 
-	//ScreenToClient(&pt);
-	//double MinVal = 0; 
-	//double MaxVal = 0;
-	//double rate = 0.1; 
-	//if (m_bZoomEnabled) {
-	//	if (zDelta > 0) { 
-	//		rate = rate * 1;
-	//	} else 
-	//	{ 
-	//		rate = rate * -1;
-	//	} 
-	//	double ZoomCenter = 0; 
-	//	if (m_pAxes[BottomAxis]) { 
-	//		m_pAxes[BottomAxis]->GetMinMax(MinVal, MaxVal);
-	//		ZoomCenter = m_pAxes[BottomAxis]->ScreenToValue(pt.x); 
-	//		MinVal = MinVal + (ZoomCenter - MinVal) * rate;
-	//		//MaxVal = MaxVal - (MaxVal - ZoomCenter) * rate;
-	//		m_pAxes[BottomAxis]->SetZoomMinMax(MinVal, MaxVal);
-	//	} 
-	//	if (m_pAxes[LeftAxis]) { 
-	//		m_pAxes[LeftAxis]->GetMinMax(MinVal, MaxVal); 
-	//		ZoomCenter = m_pAxes[LeftAxis]->ScreenToValue(pt.y); 
-	//		//MinVal = MinVal + (ZoomCenter - MinVal) * rate; 
-	//		//MaxVal = MaxVal - (MaxVal - ZoomCenter) * rate; 
-	//		m_pAxes[LeftAxis]->SetZoomMinMax(MinVal, MaxVal); 
-	//	} 
-	//	if (m_pAxes[TopAxis]) {
-	//		m_pAxes[TopAxis]->GetMinMax(MinVal, MaxVal);
-	//		ZoomCenter = m_pAxes[TopAxis]->ScreenToValue(pt.x); 
-	//		MinVal = MinVal + (ZoomCenter - MinVal) * rate;
-	//		//MaxVal = MaxVal - (MaxVal - ZoomCenter) * rate; 
-	//		m_pAxes[TopAxis]->SetZoomMinMax(MinVal, MaxVal); 
-	//	}
-	//	if (m_pAxes[RightAxis]) { 
-	//		m_pAxes[RightAxis]->GetMinMax(MinVal, MaxVal); 
-	//		ZoomCenter = m_pAxes[RightAxis]->ScreenToValue(pt.y); 
-	//		//MinVal = MinVal + (ZoomCenter - MinVal) * rate; 
-	//		//MaxVal = MaxVal - (MaxVal - ZoomCenter) * rate; 
-	//		
-	//		m_pAxes[RightAxis]->SetZoomMinMax(MinVal, MaxVal);
-	//	}
-	//	RefreshCtrl(); 
-	//	if (m_PlottingRect.PtInRect(pt)) { 
-	//		TCursorMap::iterator iter = m_mapCursors.begin();
-	//		for (iter; iter != m_mapCursors.end(); iter++) 
-	//			iter->second->OnMouseButtonUp(pt); Invalidate(); 
-	//	} 
-	//} 
+	ScreenToClient(&pt);
+	double MinVal = 0; 
+	double MaxVal = 0;
+	double TotalMin = 0;
+	double TotalMax=0;
+	double rate = 0.1; 
+	if (m_bZoomEnabled) {
+		if (zDelta > 0) { 
+			rate = rate * 1;
+		} else 
+		{ 
+			rate = rate * -1;
+		} 
+		double ZoomCenter = 0; 
+		if (m_pAxes[BottomAxis]) { 
+			m_pAxes[BottomAxis]->GetMinMax(MinVal, MaxVal);
+			ZoomCenter = m_pAxes[BottomAxis]->ScreenToValue(pt.x); 
+			MinVal = MinVal + (ZoomCenter - MinVal) * rate;
+			for (GoToFirstSerie(); m_currentSeries != m_mapSeries.end(); GetNextSerie()) {
+				CChartCandlestickSerie* serie = (CChartCandlestickSerie*)m_currentSeries->second;
+				
+				m_pAxes[BottomAxis]->GetSeriesMinMax(TotalMin, TotalMax);
+
+				int n = serie->GetPointsCount();
+				double newN = 520 / ((MaxVal - MinVal)* (TotalMax - TotalMin)/n);
+				serie->SetWidth(newN);
+			}
+			ZoomCenter = m_pAxes[LeftAxis]->ScreenToValue(pt.y);
+			//MaxVal = MaxVal - (MaxVal - ZoomCenter) * rate;
+			m_pAxes[BottomAxis]->SetZoomMinMax(MinVal, MaxVal);
+		} 
+		if (m_pAxes[LeftAxis]) {
+			for (GoToFirstSerie(); m_currentSeries != m_mapSeries.end(); GetNextSerie()) {
+				m_currentSeries->second->GetSerieYScreenMinMax(MinVal, MaxVal);
+			}
+			ZoomCenter = m_pAxes[LeftAxis]->ScreenToValue(pt.y); 
+			
+			//MinVal = MinVal + (ZoomCenter - MinVal) * rate; 
+			//MaxVal = MaxVal - (MaxVal - ZoomCenter) * rate; 
+			m_pAxes[LeftAxis]->SetZoomMinMax(MinVal, MaxVal); 
+		}
+		RefreshCtrl(); 
+		if (m_PlottingRect.PtInRect(pt)) { 
+			TCursorMap::iterator iter = m_mapCursors.begin();
+			for (iter; iter != m_mapCursors.end(); iter++) 
+				iter->second->OnMouseButtonUp(pt); Invalidate(); 
+		} 
+	} 
 	return CWnd::OnMouseWheel(nFlags, zDelta, pt); 
 }
