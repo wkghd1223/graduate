@@ -105,3 +105,128 @@ BOOL CgraduateApp::InitInstance()
 	return FALSE;
 }
 
+
+//*******************************************************************/
+//! Function Name : SetSignData
+//! Function      : 그리드 셀 문자색 변경 및 기호 데이터 설정
+//! Param         : CGridCtrl *pGrid, int nRow, int nCol, LPCTSTR szData
+//! Return        : void
+//! Create        : , 2014/06/02
+//! Comment       : 
+//******************************************************************/
+void CgraduateApp::SetSignData(CGridCtrl* pGrid, int nRow, int nCol, LPCTSTR szData)
+{
+	CString strData = szData;
+	switch (_ttoi(strData))
+	{
+	case 1:
+		strData = "↑";
+		pGrid->SetItemFgColour(nRow, nCol, RGB(255, 0, 0));	// 지정된 셀의 텍스트 색상 설정
+		break;
+	case 2:
+		strData = "▲";
+		pGrid->SetItemFgColour(nRow, nCol, RGB(255, 0, 0));	// 지정된 셀의 텍스트 색상 설정
+		break;
+	case 3:	strData = "";		break;
+	case 4:
+		strData = "↓";
+		pGrid->SetItemFgColour(nRow, nCol, RGB(0, 0, 255));	// 지정된 셀의 텍스트 색상 설정
+		break;
+	case 5:
+		strData = "▼";
+		pGrid->SetItemFgColour(nRow, nCol, RGB(0, 0, 255));	// 지정된 셀의 텍스트 색상 설정
+		break;
+	}
+	pGrid->SetItemText(nRow, nCol, strData);
+}
+
+//*******************************************************************/
+//! Function Name : SetDataFgColour
+//! Function      : 그리드 셀 문자색 변경
+//! Param         : CGridCtrl *pGrid, int nRow, int nCol, LPCTSTR szData
+//! Return        : void
+//! Create        : , 2014/06/02
+//! Comment       : 
+//******************************************************************/
+void CgraduateApp::SetDataFgColour(CGridCtrl* pGrid, int nRow, int nCol, LPCTSTR szData)
+{
+	CString strData = szData;
+	if (_tstof(strData) > 0)
+	{
+		pGrid->SetItemFgColour(nRow, nCol, RGB(255, 0, 0));	// 지정된 셀의 텍스트 색상 설정
+	}
+	else if (_tstof(strData) < 0)
+	{
+		pGrid->SetItemFgColour(nRow, nCol, RGB(0, 0, 255));	// 지정된 셀의 텍스트 색상 설정
+	}
+}
+CString CgraduateApp::ConvDataFormat(int nType, LPCTSTR szData, LPCTSTR szBeforeData/* = ""*/, LPCTSTR szAfterData/* = ""*/)
+{
+	CString strReturn, strData, strTemp = strData = szData;
+	switch (nType)
+	{
+	case DT_DATE:			// 일자
+	{
+		if (strTemp.GetLength() == 6)
+		{
+			strData.Format(L"%02s/%02s/%02s", strTemp.Left(2), strTemp.Mid(2, 2), strTemp.Right(2));
+		}
+		else if (strTemp.GetLength() == 8)
+		{
+			strData.Format(L"%04s/%02s/%02s", strTemp.Left(4), strTemp.Mid(4, 2), strTemp.Right(2));
+		}
+	}
+	break;
+	case DT_TIME:			// 시간
+	{
+		if (strTemp.GetLength() == 6)
+		{
+			strData.Format(L"%02s:%02s:%02s", strTemp.Left(2), strTemp.Mid(2, 2), strTemp.Right(2));
+		}
+		else if (strTemp.GetLength() == 8)
+		{
+			strData.Format(L"%02s:%02s:%02s:%02s", strTemp.Left(2), strTemp.Mid(2, 2), strTemp.Mid(4, 2), strTemp.Right(2));
+		}
+	}
+	break;
+	case DT_NUMBER:			// 숫자
+	case DT_ZERO_NUMBER:	// 숫자(0표시)
+	{
+		strTemp.Replace(L"+", L"");
+		if (_tstof(strTemp) == 0.00)
+		{
+			strData = nType == DT_ZERO_NUMBER ? strTemp : L"";
+			break;
+		}
+
+		int nFind = strTemp.Find(L".");
+		if (nFind < 0)
+		{
+			strData = strTemp;
+		}
+		else
+		{
+			strData = strTemp.Left(nFind);
+			strTemp = strTemp.Mid(nFind);
+		}
+
+		TCHAR szFormatData[1024] = { 0, };
+		NUMBERFMT fmt = { 0, 0, 3, _T("."), _T(","), 1 };
+		::GetNumberFormat(NULL, 0, strData, &fmt, szFormatData, 1024);
+
+		if (nFind < 0)
+		{
+			nType == DT_ZERO_NUMBER ? strData.Format(L"%01s", szFormatData) : strData.Format(L"%s", szFormatData);
+		}
+		else
+		{
+			strData.Format(L"%01s%s", szFormatData, strTemp);
+		}
+	}
+	break;
+	}
+
+	strReturn.Format(L"%s%s%s", szBeforeData, strData, szAfterData);
+
+	return strReturn;
+}

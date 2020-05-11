@@ -1,6 +1,6 @@
 ﻿//{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
-// Used by graduate.rc
+// Microsoft Visual C++에서 생성한 포함 파일입니다.
+// graduate.rc에서 사용되고 있습니다.
 //
 #define IDM_ABOUTBOX                    0x0010
 #define IDD_ABOUTBOX                    100
@@ -14,10 +14,7 @@
 #define IDD_FO_ORDER_DLG                105
 #define IDD_CMainDlg                    106
 #define IDR_MAINFRAME                   128
-#define IDD_PRICE_HOGA                  144
-#define IDD_PRICE_CHAEGYUL              146
 #define IDD_DIALOG1                     148
-#define IDD_PRICE_D_CHAEGYUL            148
 #define IDD_CInterestDlg                150
 #define IDB_BITMAP_PLUS                 155
 #define IDB_BITMAP_PLUS_ON              156
@@ -77,7 +74,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        157
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1031
+#define _APS_NEXT_CONTROL_VALUE         1032
 #define _APS_NEXT_SYMED_VALUE           107
 #endif
 #endif
