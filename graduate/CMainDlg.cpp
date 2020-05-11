@@ -339,15 +339,19 @@ void CMainDlg::ShowGraph() {
 	//pCandle->SetShadowColor(RGB(255, 0, 0));
 	pCandle->SetColor(RGB(0, 0, 0));
 	//chart.SetBackGradient(RGB(255, 0, 0), RGB(0, 0, 255), gtHorizontal);
+
+	// 현재 날짜부터 60일을 차트에 보여줌
 	COleDateTime maxValue = COleDateTime::GetCurrentTime();
 	CTime tempMin = CTime::GetCurrentTime() - CTimeSpan(60, 0, 0, 0);
 	COleDateTime minValue(tempMin.GetTime());
 	double min = CChartCtrl::DateToValue(minValue);
 	double max = CChartCtrl::DateToValue(maxValue);
+
+	// 차트에 보여지는 크기 조정
 	chart.GetBottomAxis()->SetMinMax(min, max);
 	pCandle->GetSerieYScreenMinMax(min, max);
 	chart.GetLeftAxis()->SetMinMax(min, max);
-	pCandle->SetWidth(12);
+	pCandle->SetWidth(8);
 
 }
 
