@@ -150,15 +150,6 @@
     <ClInclude Include="ChartCtrl_source\ChartPointsSerie.h">
       <Filter>ChartCtrl</Filter>
     </ClInclude>
-    <ClInclude Include="CurrentPrice_hoga.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CurrentPrice_chaegyul.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CurrentPrice_day_chaegyul.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="GridCtrl\GridCellBase.h">
       <Filter>GridCtrl</Filter>
     </ClInclude>
@@ -280,15 +271,6 @@
     </ClCompile>
     <ClCompile Include="ChartCtrl_source\ChartScrollBar.cpp">
       <Filter>ChartCtrl</Filter>
-    </ClCompile>
-    <ClCompile Include="CurrentPrice_hoga.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CurrentPrice_chaegyul.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CurrentPrice_day_chaegyul.cpp">
-      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="GridCtrl\GridCellBase.cpp">
       <Filter>GridCtrl</Filter>

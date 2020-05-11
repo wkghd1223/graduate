@@ -223,9 +223,6 @@
     <ClInclude Include="CMainDlg.h" />
     <ClInclude Include="CStock.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="CurrentPrice_chaegyul.h" />
-    <ClInclude Include="CurrentPrice_day_chaegyul.h" />
-    <ClInclude Include="CurrentPrice_hoga.h" />
     <ClInclude Include="graduate.h" />
     <ClInclude Include="graduateDlg.h" />
     <ClInclude Include="GridCtrl\GridCell.h" />
@@ -269,9 +266,6 @@
     <ClCompile Include="CInterestDlg.cpp" />
     <ClCompile Include="CMainDlg.cpp" />
     <ClCompile Include="CStock.cpp" />
-    <ClCompile Include="CurrentPrice_chaegyul.cpp" />
-    <ClCompile Include="CurrentPrice_day_chaegyul.cpp" />
-    <ClCompile Include="CurrentPrice_hoga.cpp" />
     <ClCompile Include="graduate.cpp" />
     <ClCompile Include="graduateDlg.cpp" />
     <ClCompile Include="GridCtrl\GridCell.cpp" />

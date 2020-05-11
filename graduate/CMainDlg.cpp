@@ -6,6 +6,7 @@
 #include "CMainDlg.h"
 #include "afxdialogex.h"
 #include "graduateDlg.h"
+#include "GridCtrl\GridCtrl.h"
 
 //#include "CchartDlg.h"
 //#include "CWeekChartDlg.h"
@@ -43,7 +44,6 @@ BOOL CMainDlg::OnInitDialog() {
 	chartPeriod.SetCurSel(DAY);
 
 	initList();
-
 	InitGraph();
 
 	// 자동완성
@@ -62,23 +62,8 @@ BOOL CMainDlg::OnInitDialog() {
 		hr = m_pac->Init(editSearch.GetSafeHwnd(), m_pEum, NULL, NULL);
 	}
 
-	//현재가격(호가,체결,일별 체결)
-	CString currentPrice_tabName[3] = { _T("호가"), _T("체결"),_T("일별") };
-	for (int i = 0; i < (sizeof(currentPrice_tabName) / sizeof(*currentPrice_tabName)); i++) {
-		currentPrice.InsertItem(i + 1, currentPrice_tabName[i]);
-	}
-	CRect rect;
-	currentPrice.GetClientRect(&rect);
-
-	cPrice_Hoga.Create(IDD_PRICE_HOGA, &currentPrice);
-	cPrice_Hoga.SetWindowPos(NULL, 5, 25, rect.Width()+10, rect.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
-
-	cPrice_Chaegyul.Create(IDD_PRICE_CHAEGYUL, &currentPrice);
-	cPrice_Chaegyul.SetWindowPos(NULL, 5, 25, rect.Width()+10, rect.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
-
-	cPrice_dChaegyul.Create(IDD_PRICE_D_CHAEGYUL, &currentPrice);
-	cPrice_dChaegyul.SetWindowPos(NULL, 5, 25, rect.Width()+10, rect.Height() - 33, SWP_SHOWWINDOW | SWP_NOZORDER);
-
+	InitHogaGrid();
+	
 	return TRUE;
 }
 
@@ -137,8 +122,8 @@ void CMainDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TEXT_STOCK_INFO, stockInfo);
 	DDX_Control(pDX, IDC_CUSTOM_CHART, chart);
 	DDX_Control(pDX, IDC_COMBO_CHART_PERIOD, chartPeriod);
-	DDX_Control(pDX, IDC_CURRENTPRICE, currentPrice);
 	DDX_Control(pDX, IDC_LIST_INTEREST_SEARCH, chartList);
+	DDX_Control(pDX, IDC_GRD_HOGA, m_grdHoga);
 }
 void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LPCTSTR sTrCode, LPCTSTR sRecordName, LPCTSTR sPrevNext, long nDataLength, LPCTSTR sErrorCode, LPCTSTR sMessage, LPCTSTR sSplmMsg)
 {
@@ -199,7 +184,24 @@ void CMainDlg::OnReceiveTrDataKhopenapictrl1(LPCTSTR sScrNo, LPCTSTR sRQName, LP
 		}
 		ShowGraph();
 	}
-	else {
+	else if(!out.Compare(L"주식호가요청")){
+		CString strData;
+		CStringArray arrData;
+		int nFieldCnt = sizeof(lstOPT10004) / sizeof(*lstOPT10004);		// 전체크기 / 원소크기 = 원소개수
+
+		//sRQName = _T("주식호가");
+		int i, j, nCnt = theApp.kStock.GetRepeatCnt(sTrCode, sRQName);
+		for (i = 0; i < nCnt; i++)
+		{
+			arrData.RemoveAll();
+			for (j = 0; j < nFieldCnt; j++)
+			{
+				strData = theApp.kStock.GetCommData(sTrCode, sRQName, i, lstOPT10004[j].strKey);	strData.Trim();
+				//				strData = theApp.m_khOpenApi.CommGetData(sTrcode, _T(""), strRQName, i, lstOPT10004[j].strKey);	strData.Trim();
+				arrData.Add(strData);
+			}
+			SetDataHogaGrid(arrData);
+		}
 	}
 }
 void CMainDlg::initUserInfo()
@@ -219,7 +221,6 @@ void CMainDlg::initUserInfo()
 BEGIN_MESSAGE_MAP(CMainDlg, CDialogEx)
 	ON_BN_CLICKED(IDOK, &CMainDlg::OnBnClickedOk)
 
-	ON_NOTIFY(TCN_SELCHANGE, IDC_CURRENTPRICE, &CMainDlg::OnTcnSelchangeCurrentprice)
 
 	ON_BN_CLICKED(IDCANCEL, &CMainDlg::OnBnClickedCancel)
 	ON_CBN_SELCHANGE(IDC_COMBO_CHART_PERIOD, &CMainDlg::OnCbnSelchangeComboChartPeriod)
@@ -252,8 +253,6 @@ void CMainDlg::OnBnClickedOk()
 	for (auto i : searchedStock) {
 		setList(i);
 	}
-
-	
 
 	//CDialogEx::OnOK();
 }
@@ -342,30 +341,6 @@ void CMainDlg::ShowGraph() {
 	pCandle->SetWidth(rect.bottom / (showNum+1));
 }
 
-void CMainDlg::OnTcnSelchangeCurrentprice(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	if (pwndShow != NULL) {
-		pwndShow->ShowWindow(SW_HIDE);
-		pwndShow = NULL;
-	}
-	int pos = currentPrice.GetCurSel();
-	switch (pos) {
-	case 0:
-		cPrice_Hoga.ShowWindow(SW_SHOW);
-		pwndShow = &cPrice_Hoga;
-		break;
-	case 1:
-		cPrice_Chaegyul.ShowWindow(SW_SHOW);
-		pwndShow = &cPrice_Chaegyul;
-		break;
-	case 2:
-		cPrice_dChaegyul.ShowWindow(SW_SHOW);
-		pwndShow = &cPrice_dChaegyul;
-		break;
-	}
-	*pResult = 0;
-}
 
 
 BOOL CMainDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
@@ -460,7 +435,117 @@ void CMainDlg::OnNMClickListInterestSearch(NMHDR* pNMHDR, LRESULT* pResult)
 	theApp.kStock.SetInputValue(L"종목코드", TempCode);
 	theApp.kStock.CommRqData(_T("주식기본정보"), _T("OPT10001"), 0, m_strScrNo);
 
+	theApp.kStock.SetInputValue(L"종목코드", TempCode);
+	theApp.kStock.CommRqData(L"주식호가요청", _T("opt10004"), 0, m_strScrNo);
+
 	//주식일봉차트에 관한 정보 받아오기
 	//code : 종목입력 변수
 	*pResult = 0;
+}
+//*******************************************************************/
+//! Function Name : InitHogaGrid
+//! Function      : 호가 그리드 초기 처리
+//! Param         : void
+//! Return        : void
+//! Create        : , 2014/06/02
+//! Comment       : 
+//******************************************************************/
+void CMainDlg::InitHogaGrid()
+{
+	
+	m_grdHoga.SetEditable(false);				//cell을 에디트 못하게 함.
+	m_grdHoga.EnableScrollBar(SB_BOTH, FALSE);
+
+	// 행/열 갯수 설정
+	m_grdHoga.SetRowCount(23);
+	m_grdHoga.SetColumnCount(3);
+
+	// 열의 넓이 설정
+	int i;
+	for (i = 0; i < 3; i++)
+	{
+		m_grdHoga.SetColumnWidth(i, 80);
+	}
+
+	// 행의 높이 설정
+	for (i = 0; i < 21; i++)
+	{
+		m_grdHoga.SetRowHeight(i, 20);
+		m_grdHoga.SetItemFormat(i, 0, DT_RIGHT);
+		m_grdHoga.SetItemFormat(i, 1, DT_RIGHT);
+		m_grdHoga.SetItemFormat(i, 2, DT_RIGHT);
+	}
+
+	m_grdHoga.SetRowHeight(21, 22);
+	m_grdHoga.SetItemFormat(21, 0, DT_RIGHT);
+	m_grdHoga.SetItemFormat(21, 1, DT_CENTER);
+	m_grdHoga.SetItemFormat(21, 2, DT_RIGHT);
+	m_grdHoga.SetRowHeight(22, 22);
+	m_grdHoga.SetItemFormat(22, 0, DT_RIGHT);
+	m_grdHoga.SetItemFormat(22, 1, DT_CENTER);
+	m_grdHoga.SetItemFormat(22, 2, DT_RIGHT);
+	m_grdHoga.SetItemText(22, 1, L"시간외");
+
+	// 호가 그리드 배경색 설정
+	m_grdHoga.SetItemBkColour(0, 0, RGB(233, 243, 253));		// 지정된 셀의 배경색 설정
+	COLORREF clrHoga[] =
+	{
+		RGB(253,232,227),
+		RGB(205,230,235), RGB(209,234,238), RGB(216,235,241), RGB(222,237,242), RGB(226,241,244),
+		RGB(233,244,246), RGB(238,246,249), RGB(243,248,251), RGB(248,252,251), RGB(249,255,253),
+		RGB(251,255,250), RGB(255,250,247), RGB(255,241,241), RGB(252,239,231), RGB(252,233,226),
+		RGB(253,226,219), RGB(251,221,211), RGB(250,216,204), RGB(250,210,198), RGB(252,204,192),
+	};
+	for (i = 0; i < 21; i++)
+	{
+		m_grdHoga.SetItemBkColour(i, 1, clrHoga[i]);			// 지정된 셀의 배경색 설정
+	}
+
+	COLORREF clr = RGB(238, 238, 238);
+	for (i = 21; i < 23; i++)
+	{
+		m_grdHoga.SetItemBkColour(i, 0, clr);			// 지정된 셀의 배경색 설정
+		m_grdHoga.SetItemBkColour(i, 1, clr);			// 지정된 셀의 배경색 설정
+		m_grdHoga.SetItemBkColour(i, 2, clr);			// 지정된 셀의 배경색 설정
+	}
+	CRect rect;
+	m_grdHoga.GetClientRect(&rect);
+
+	m_grdHoga.Invalidate();
+}
+
+
+void CMainDlg::SetDataHogaGrid(CStringArray& arrData /*= ""*/)
+{
+	CString strData, strTemp;
+	CString strRealType;
+	int i, nCnt = arrData.GetSize();
+
+	int nStart = 0, nEnd = nCnt;
+	if (strRealType == "D")			// 주식호가잔량
+	{
+		nEnd = nCnt - 2;
+	}
+	else if (strRealType == "E")	// 주식시간외호가
+	{
+		nStart = nCnt - 3;
+	}
+
+	for (i = nStart; i < nEnd; i++)
+	{
+		strData = arrData.GetAt(i);
+		if (lstOPT10004[i].bTextColor)
+		{
+			theApp.SetDataFgColour(&m_grdHoga, lstOPT10004[i].nRow, lstOPT10004[i].nCol, strData);
+		}
+		if (lstOPT10004[i].nDataType == DT_SIGN)
+		{
+			theApp.SetSignData(&m_grdHoga, lstOPT10004[i].nRow, lstOPT10004[i].nCol, strData);
+		}
+		else
+		{
+			m_grdHoga.SetItemText(lstOPT10004[i].nRow, lstOPT10004[i].nCol, theApp.ConvDataFormat(lstOPT10004[i].nDataType, strData, lstOPT10004[i].strBeforeData, lstOPT10003[i].strAfterData));
+		}
+	}
+	m_grdHoga.Invalidate();
 }
