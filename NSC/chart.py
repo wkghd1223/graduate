@@ -1,6 +1,8 @@
 import sys
 import csv
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from PyQt5 import uic
 
 STOCK_LIST_PATH = 'res/stock_list.csv'
@@ -16,6 +18,7 @@ class ChartWindow(QMainWindow):
         self.show()
         self.stocks = self.getStockList()
         self.searchBtn.clicked.connect(self.searchFunc)
+        self.search.installEventFilter(self)
 
     def getStockList(self):
         f = open(STOCK_LIST_PATH, 'r')
@@ -27,6 +30,13 @@ class ChartWindow(QMainWindow):
         #     line[2] # category
         #     line[3] # date of ipo
 
+    def eventFilter(self, obj, event):
+        if obj is self.search and event.type() == QEvent.KeyPress:
+            if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+                self.searchFunc()
+                return True
+        return super().eventFilter(obj, event)
+
     def searchFunc(self):
         word = self.search.toPlainText()
         searchedStock = []
@@ -35,5 +45,9 @@ class ChartWindow(QMainWindow):
                 searchedStock.append(stock)
             if word in stock[1]:
                 searchedStock.append(stock)
-        print(searchedStock)
+        model = QStandardItemModel()
+        for stock in searchedStock:
+            model.appendRow(QStandardItem(stock[0]))
+        self.stockList.setModel(model)
+
         # print(self.stocks)
