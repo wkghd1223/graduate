@@ -1,14 +1,12 @@
 import sys
 import csv
+import pandas as pd
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5 import uic
 
-STOCK_LIST_PATH = 'res/stock_list.csv'
-
-
-
+STOCK_LIST_PATH = 'http://kind.krx.co.kr/corpgeneral/corpList.do?method=download&searchType=13'
 
 class ChartWindow(QMainWindow):
     def __init__(self, parent):
@@ -21,14 +19,14 @@ class ChartWindow(QMainWindow):
         self.search.installEventFilter(self)
 
     def getStockList(self):
-        f = open(STOCK_LIST_PATH, 'r')
-        rdr = csv.reader(f)
-        return list(rdr)
-        # for line in rdr:
-        #     line[0] # name
-        #     line[1] # code
-        #     line[2] # category
-        #     line[3] # date of ipo
+        code_df = pd.read_html(STOCK_LIST_PATH, header=0)[0]  # 종목코드가 6자리이기 때문에 6자리를 맞춰주기 위해 설정해줌
+        code_df.종목코드 = code_df.종목코드.map('{:06d}'.format)
+
+        # 우리가 필요한 것은 회사명과 종목코드이기 때문에 필요없는 column들은 제외해준다.
+        code_df = code_df[['회사명', '종목코드']] # 한글로된 컬럼명을 영어로 바꿔준다.
+        code_df = code_df.rename(columns={'회사명': 'name', '종목코드': 'code'})
+        code_df.head()
+        return code_df
 
     def eventFilter(self, obj, event):
         if obj is self.search and event.type() == QEvent.KeyPress:
@@ -40,14 +38,14 @@ class ChartWindow(QMainWindow):
     def searchFunc(self):
         word = self.search.toPlainText()
         searchedStock = []
-        for stock in self.stocks:
-            if word in stock[0]:
-                searchedStock.append(stock)
-            if word in stock[1]:
-                searchedStock.append(stock)
+        for idx, stock in self.stocks.iterrows():
+            if word in stock['name']:
+                searchedStock.append(stock['name'])
+            if word in stock['code']:
+                searchedStock.append(stock['name'])
         model = QStandardItemModel()
         for stock in searchedStock:
-            model.appendRow(QStandardItem(stock[0]))
+            model.appendRow(QStandardItem(stock))
         self.stockList.setModel(model)
 
         # print(self.stocks)
