@@ -1,6 +1,12 @@
 import pandas as pd
 import plotly.offline as offline
 import plotly.graph_objs as go
+import sys
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5 import uic
+
 
 # 한국거래소(krx)에서 주식시장에 상장된 기업들에 대해 종목코드 가져오기
 code_df = pd.read_html('http://kind.krx.co.kr/corpgeneral/corpList.do?method=download&searchType=13', header=0)[0]
