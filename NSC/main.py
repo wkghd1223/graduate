@@ -23,7 +23,6 @@ class Main(QMainWindow, form_class):
 
     def chartBtnFunc(self):
         ChartWindow(self)
-        print("chartBtn")
 
     def newsBtnFunc(self):
         print("chartBtn")
