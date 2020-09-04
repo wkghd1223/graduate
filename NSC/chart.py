@@ -1,5 +1,7 @@
 import sys
 import numpy as np
+from datetime import datetime as dt
+
 import pandas as pd
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -8,7 +10,6 @@ from PyQt5 import uic
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.ticker as ticker
-
 from mplfinance.original_flavor import candlestick2_ohlc
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -26,6 +27,7 @@ class ChartWindow(QMainWindow):
         self.show()
 
         self.stocks = self.getStockList()
+        self.term = DAY
         self.isClicked = False
 
         self.fig = plt.Figure()
@@ -40,7 +42,7 @@ class ChartWindow(QMainWindow):
 
         self.searchBtn.clicked.connect(self.searchFunc)
         self.search.installEventFilter(self)
-        self.stockList.clicked.connect(self.onClickItem)
+        self.stockList.clicked.connect(self.showGraph)
         # 콤보박스 리스너
         self.dayWeekMonth.activated[str].connect(self.onDayWeekMonthChanged)
         self.onDayWeekMonthChanged(self.dayWeekMonth.currentText())
@@ -80,17 +82,16 @@ class ChartWindow(QMainWindow):
         self.stockList.setModel(model)
 
     def onDayWeekMonthChanged(self, t):
+        self.term = t
         if self.isClicked:
-            if t == DAY:
-                print("a")
-            if t == WEEK:
-                print("b")
-            if t == MONTH:
-                print("c")
+            self.showGraph(self.graphIdx)
 
     # 리스트 뷰 클릭 함수
-    def onClickItem(self, idx):
+    def showGraph(self, idx):
+        # 한번이라도 리스트 뷰를 클릭해야 콤보박스 변경 시 그래프가 바뀐다
         self.isClicked = True
+        # 콤보박스 변경 시 인덱스 값 전달을 위한 변수
+        self.graphIdx = idx
         # get url
         code = self.stocks.query("name=='{}'".format(idx.data()))['code'].to_string(index=False).strip()
         url = 'http://finance.naver.com/item/sise_day.nhn?code={code}'.format(code=code)
@@ -111,12 +112,38 @@ class ChartWindow(QMainWindow):
         df.sort_values(by=['date'], axis=0, ascending=True, inplace=True)
 
         df.dropna(inplace=True)
+        ndf = df.copy()
 
-        ax.plot(df['date'], df['close'].rolling(window=5).mean(), label="5", linewidth=0.7)
-        ax.plot(df['date'], df['close'].rolling(window=20).mean(), label="20", linewidth=0.7)
-        ax.plot(df['date'], df['close'].rolling(window=60).mean(), label="60", linewidth=0.7)
-        ax.plot(df['date'], df['close'].rolling(window=120).mean(), label="120", linewidth=0.7)
-        candlestick2_ohlc(ax, df['open'], df['high'], df['low'], df['close'], width=1, colorup='r', colordown='b')
+        if self.term == DAY:
+            term = 1
+        if self.term == WEEK:
+            term = 7
+        if self.term == MONTH:
+            term = 30
+        curr = 0
+        idx = 0
+        for i, row in df.iterrows():
+            if idx == 0:
+                curr = i
+                # curr = dt.strptime(row['date'], "%Y.%m.%d")
+            else:
+                timeGap = (dt.strptime(df.loc[curr]['date'], "%Y.%m.%d") - dt.strptime(row['date'], "%Y.%m.%d")).days
+                if abs(timeGap) < term:
+                    if row['high'] > df.loc[curr]['high']:
+                        ndf.loc[curr, 'high'] = row['high']
+                    if row['low'] > df.loc[curr]['low']:
+                        ndf.loc[curr, 'low'] = row['low']
+                    ndf.loc[curr, 'close'] = row['close']
+                    ndf.drop(index=i, inplace=True)
+                else:
+                    curr = i
+            idx += 1
+
+        ax.plot(ndf['date'], ndf['close'].rolling(window=5).mean(), label="5", linewidth=0.7)
+        ax.plot(ndf['date'], ndf['close'].rolling(window=20).mean(), label="20", linewidth=0.7)
+        ax.plot(ndf['date'], ndf['close'].rolling(window=60).mean(), label="60", linewidth=0.7)
+        ax.plot(ndf['date'], ndf['close'].rolling(window=120).mean(), label="120", linewidth=0.7)
+        candlestick2_ohlc(ax, ndf['open'], ndf['high'], ndf['low'], ndf['close'], width=1, colorup='r', colordown='b')
 
         self.fig.suptitle("candle")
         ax.set_xlabel("date")
