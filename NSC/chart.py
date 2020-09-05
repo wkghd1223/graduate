@@ -1,7 +1,7 @@
 import sys
 import numpy as np
 from datetime import datetime as dt
-
+import datetime
 import pandas as pd
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -10,8 +10,9 @@ from PyQt5 import uic
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.ticker as ticker
+from matplotlib.widgets import Slider
 from mplfinance.original_flavor import candlestick2_ohlc
-
+from matplotlib.dates import DateFormatter, WeekdayLocator, DayLocator, MONDAY
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 DAY = '일'
@@ -149,7 +150,31 @@ class ChartWindow(QMainWindow):
             idx += 1
 
         self.fig.clear()
-        ax = self.fig.add_subplot()
+        ax = self.fig.add_subplot(111)
+
+        # mondays = WeekdayLocator(MONDAY)
+        # alldays = DayLocator()
+        # weekFormatter = DateFormatter("%b %d")
+        # dayFormatter = DateFormatter("%d")
+        #
+        # ax.xaxis.set_major_locator(mondays)
+        # ax.xaxis.set_minor_locator(alldays)
+        # ax.xaxis.set_major_formatter(weekFormatter)
+        #
+        # candlestick2_ohlc(ax, ndf['open'], ndf['high'], ndf['low'], ndf['close'], width=1, colorup='r', colordown='b')
+        #
+        # ax.xaxis_date()
+        # ax.autoscale_view()
+        #
+        # axpos = ax
+        # spos = Slider(axpos, 'Position', dt.date(dt.now() - datetime.timedelta(days=7)).toordinal(), dt.date(dt.now()).toordinal())
+        #
+        # def update(val):
+        #     pos = spos.val
+        #     ax.axis([pos, pos + 10, 18.5, 22.5])
+        #     self.canvas.draw_idle()
+        #
+        # spos.on_changed(update)
 
         ax.plot(ndf['date'], ndf['close'].rolling(window=5).mean(), label="5", linewidth=0.7)
         ax.plot(ndf['date'], ndf['close'].rolling(window=20).mean(), label="20", linewidth=0.7)
