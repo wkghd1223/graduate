@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+import os
 from datetime import datetime as dt
 import datetime
 import pandas as pd
@@ -15,6 +16,11 @@ from mplfinance.original_flavor import candlestick2_ohlc
 from matplotlib.dates import DateFormatter, WeekdayLocator, DayLocator, MONDAY
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
+from policy_learner import PolicyLearner
+from policy_network import PolicyNetwork
+import settings
+import data_manager
+
 DAY = '일'
 WEEK = '주'
 MONTH = '월'
@@ -27,6 +33,7 @@ class ChartWindow(QMainWindow):
         uic.loadUi(ui, self)
         self.show()
 
+        self.code = None
         self.df = pd.DataFrame()
         self.stocks = self.getStockList()
         self.term = DAY
@@ -43,6 +50,7 @@ class ChartWindow(QMainWindow):
         self.dayWeekMonth.addItem(MONTH)
 
         self.searchBtn.clicked.connect(self.searchFunc)
+        self.learnBtn.clicked.connect(self.learnFunc)
         self.search.installEventFilter(self)
         self.stockList.clicked.connect(self.onClickList)
         # 콤보박스 리스너
@@ -99,7 +107,8 @@ class ChartWindow(QMainWindow):
     # 주가데이터 가져오는 함수
     def getStockData(self, idx):
         # get url
-        code = self.stocks.query("name=='{}'".format(idx.data()))['code'].to_string(index=False).strip()
+        self.code = self.stocks.query("name=='{}'".format(idx.data()))['code'].to_string(index=False).strip()
+        code = self.code
         url = 'http://finance.naver.com/item/sise_day.nhn?code={code}'.format(code=code)
 
         # 일 데이터
@@ -192,3 +201,65 @@ class ChartWindow(QMainWindow):
         ax.xaxis.set_major_locator(ticker.MaxNLocator(5))
         ax.legend(loc=1) # legend 위치
         self.canvas.draw()
+
+    def learnFunc(self):
+        if self.code is None:
+            return
+        # 데이터 전처리
+        code = self.code
+        chart_data = self.df
+        prep_data = data_manager.preprocess(chart_data)
+        training_data = data_manager.build_training_data(prep_data)
+        training_data = training_data.dropna()
+
+        # 차트데이터 분리
+        feature_chart_data = ['date', 'open', 'high', 'low', 'close', 'volume']
+        chart_data = training_data[feature_chart_data]
+
+        # 학습데이터 분리
+        feature_chart_data = [
+            'open_lastclose_ratio','high_close_ratio','low_close_ratio',
+            'close_lastclose_ratio','volume_lastvolume_ratio',
+            'close_ma5_ratio','volume_ma5_ratio',
+            'close_ma10_ratio', 'volume_ma10_ratio',
+            'close_ma20_ratio', 'volume_ma20_ratio',
+            'close_ma60_ratio', 'volume_ma60_ratio',
+            'close_ma120_ratio', 'volume_ma120_ratio',
+        ]
+        training_data = training_data[feature_chart_data]
+
+        # 강화학습 시작
+        policy_learner = PolicyLearner(
+            stock_code=code,
+            chart_data=chart_data,
+            training_data=training_data,
+            fig=self.fig,
+            canvas=self.canvas,
+            min_trading_unit=1,
+            max_trading_unit=2,
+            delayed_reward_threshold=0.2,
+            lr=0.001
+        )
+        policy_learner.fit(
+            balance=10000000,
+            num_epoches=200,
+            discount_factor=0,
+            start_epsilon=0.5
+        )
+
+        # 정책 신경망을 파일로 저장
+        self.createFolder('model')
+        mdir = os.path.join(settings.BASE_DIR, 'model')
+        self.createFolder(os.path.join(mdir, code))
+
+        model_dir = os.path.join(mdir, code)
+        model_path = os.path.join(model_dir, 'model%s_%s.h5' %(code, settings.timestr))
+
+        policy_learner.policy_network.save_model(model_path)
+
+    def createFolder(self, directory):
+        try:
+            if not os.path.isdir(os.path.join(settings.BASE_DIR, directory)):
+                os.mkdir(os.path.join(settings.BASE_DIR, directory))
+        except OSError:
+            print('ERR\t:\tFail to make directory "'+directory+'"')
