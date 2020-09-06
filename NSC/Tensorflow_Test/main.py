@@ -12,15 +12,15 @@ if __name__ == '__main__':
     stock_code = '005930' #삼성전자
 
     #로그 기록
-    log_dir = os.path.join(settings.BASE_DIR,'logs\%s' % stock_code)
-    timestr = settings.get_time_str()
-    file_handler = logging.FileHandler(filename=os.path.join(
-        log_dir,"%s_%s.log" % (stock_code,timestr)),encoding='utf-8')
-    stream_handler = logging.StreamHandler()
-    file_handler.setLevel(logging.DEBUG)
-    stream_handler.setLevel(logging.INFO)
-    logging.basicConfig(format="%(message)s",
-                        handlers=[file_handler, stream_handler], level=logging.DEBUG)
+    # log_dir = os.path.join(settings.BASE_DIR,'logs\%s' % stock_code)
+    # timestr = settings.get_time_str()
+    # file_handler = logging.FileHandler(filename=os.path.join(
+    #     log_dir,"%s_%s.log" % (stock_code,timestr)),encoding='utf-8')
+    # stream_handler = logging.StreamHandler()
+    # file_handler.setLevel(logging.DEBUG)
+    # stream_handler.setLevel(logging.INFO)
+    # logging.basicConfig(format="%(message)s",
+    #                     handlers=[file_handler, stream_handler], level=logging.DEBUG)
 
     #주식 데이터 준비
     chart_data = data_manager.load_chart_data(

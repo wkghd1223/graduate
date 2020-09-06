@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1039</width>
+    <width>962</width>
     <height>672</height>
    </rect>
   </property>
@@ -77,13 +77,26 @@
     </property>
     <layout class="QVBoxLayout" name="layout"/>
    </widget>
+   <widget class="QPushButton" name="learnBtn">
+    <property name="geometry">
+     <rect>
+      <x>870</x>
+      <y>20</y>
+      <width>75</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>학습</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1039</width>
+     <width>962</width>
      <height>22</height>
     </rect>
    </property>
