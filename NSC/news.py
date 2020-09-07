@@ -21,7 +21,7 @@ class NewsWindow(QMainWindow):
     def getNews(self):
         maxpage = 2
         query = self.paramForSearch.text()
-        s_date = str(date.today()-timedelta(days=30))
+        s_date = str(date.today()-timedelta(days=2))
         e_date = str(date.today())
 
         c = crawling(maxpage, query, s_date, e_date)
@@ -40,7 +40,7 @@ class NewsWindow(QMainWindow):
 
     def setTable(self):
         self.crawledResult.setColumnCount(4)
-        self.crawledResult.setRowCount(50)
+        self.crawledResult.setRowCount(99)
         self.crawledResult.setHorizontalHeaderLabels(["날짜", "제목", "출처", "URL"])
 
     def OpenLink(self, item):
