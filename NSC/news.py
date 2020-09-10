@@ -19,7 +19,7 @@ class NewsWindow(QMainWindow):
         self.searchBtn.clicked.connect(self.getNews)
 
     def getNews(self):
-        maxpage = 2
+        maxpage = 3
         query = self.paramForSearch.text()
         s_date = str(date.today()-timedelta(days=2))
         e_date = str(date.today())
@@ -33,7 +33,7 @@ class NewsWindow(QMainWindow):
 
         for i in range(len(result)):
             for j in range(len(result[i])):
-                self.crawledResult.setItem(i,j,QTableWidgetItem(result[i][j]))
+                self.crawledResult.setItem(i, j, QTableWidgetItem(result[i][j]))
 
         self.crawledResult.itemClicked.connect(self.OpenLink)
         self.crawledResult.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
@@ -45,4 +45,4 @@ class NewsWindow(QMainWindow):
 
     def OpenLink(self, item):
         if item.column() == 1:
-            webbrowser.open(self.crawledResult.item(item.row(),3).text())
+            webbrowser.open(self.crawledResult.item(item.row(), 3).text())
