@@ -103,6 +103,7 @@ class Visualizer:
         self.axes[1].set_ylabel('Agent')
         self.axes[2].set_ylabel('PG')
         self.axes[3].set_ylabel('PV')
+        # Up Down 넣기 -> 로직은 매수세와 매도세의 비교로 판단하게끔 매수세가 크면 업 작으면 다운
         for ax in self.axes:
             ax.set_xlim(xlim)  # x축 limit 재설정
             ax.get_xaxis().get_major_formatter() \
