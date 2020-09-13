@@ -59,6 +59,7 @@ class NewsWindow(QMainWindow):
     def setTable(self):
         self.crawledResult.setColumnCount(4)
         self.crawledResult.setHorizontalHeaderLabels(["날짜", "제목", "출처", "URL"])
+        self.setNextBtn()
 
     def openLink(self, item):
         if item.column() == 1:
@@ -66,6 +67,7 @@ class NewsWindow(QMainWindow):
 
     def setNews(self):
         self.setPrevBtn()
+        self.setNextBtn()
 
         self.crawledResult.setRowCount(len(result))
 
@@ -122,6 +124,12 @@ class NewsWindow(QMainWindow):
             self.prevBtn.setEnabled(True)
         elif realPage is 1:
             self.prevBtn.setEnabled(False)
+
+    def setNextBtn(self):
+        global result
+        self.nextBtn.setEnabled(False)
+        if len(result) > 0:
+            self.nextBtn.setEnabled(True)
 
     def clickPrevBtn(self):
         global realPage
