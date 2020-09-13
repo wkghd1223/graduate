@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_finance import candlestick_ohlc
+from mplfinance import candlestick_ohlc
 from agent import Agent
 
 
@@ -92,6 +92,7 @@ class Visualizer:
             ax.relim()  # limit를 초기화
             ax.autoscale()  # 스케일 재설정
         # y축 레이블 재설정
+        # 차트 이름 바꾸기
         self.axes[1].set_ylabel('Agent')
         self.axes[2].set_ylabel('PG')
         self.axes[3].set_ylabel('PV')
