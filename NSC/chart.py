@@ -236,7 +236,7 @@ class ChartWindow(QMainWindow):
         self.createFolder(os.path.join(mdir, code))
 
         model_dir = os.path.join(mdir, code)
-        model_path = os.path.join(model_dir, 'model%s.h5' %(code))
+        model_path = os.path.join(model_dir, 'model%s.h5'%(code))
 
         if model_path is None:
             start_time = time.time()
