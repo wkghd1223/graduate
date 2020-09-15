@@ -253,9 +253,42 @@ class ChartWindow(QMainWindow):
         self.createFolder(os.path.join(mdir, code))
 
         model_dir = os.path.join(mdir, code)
-        model_path = os.path.join(model_dir, 'model%s_%s.h5' %(code, settings.timestr))
+        model_path = os.path.join(model_dir, 'model%s.h5' %(code))
 
-        policy_learner.policy_network.save_model(model_path)
+        if model_path is None:
+            start_time = time.time()
+            policy_learner = PolicyLearner(
+                stock_code=code,
+                chart_data=chart_data,
+                training_data=training_data,
+                fig=self.fig,
+                canvas=self.canvas,
+                min_trading_unit=1,
+                max_trading_unit=2,
+                delayed_reward_threshold=0.2,
+                lr=0.001)
+            policy_learner.fit(
+                balance=10000000,
+                num_epoches=200,
+                discount_factor=0,
+                start_epsilon=0.5)
+            end_time = time.time()
+            policy_learner.policy_network.save_model(model_path)
+            print("LearningTime: {} sec".format(end_time - start_time))
+        else:
+            start_time = time.time()
+            policy_learner = PolicyLearner(
+                stock_code=code,
+                chart_data=chart_data,
+                training_data=training_data,
+                fig=self.fig,
+                canvas=self.canvas,
+                min_trading_unit=1,
+                max_trading_unit=2)
+            end_time = time.time()
+            print("LearningTime: {} sec".format(end_time - start_time))
+            policy_learner.trade(balance=1000000,
+                                 model_path=os.path.join(model_dir, 'model%s.h5' %(code)))
 
     def createFolder(self, directory):
         try:
