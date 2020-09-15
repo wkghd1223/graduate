@@ -18,53 +18,56 @@ import time
 
 
 class crawling:
-    def __init__(self,start_page, maxpage, query, s_date, e_date):
-        self.start_page = start_page
+    def __init__(self, maxpage, query, s_date, e_date, result):
         self.maxpage = maxpage
         self.query = query
         self.s_date = s_date
         self.e_date = e_date
+        self.result = result
 
-    def crawler(self,start_page, maxpage, query, s_date, e_date):
-        result = []
+    def crawler(self, maxpage, query, s_date, e_date, result):
 
         s_from = self.s_date.replace("-", "")  # 우측부터 "-"을 찾아서 ""으로 바꿈
         e_to = self.e_date.replace("-", "")  # 우측부터 "-"을 찾아서 ""으로 바꿈
-        page = self.start_page*10 - 9
-        maxpage_t = (int(self.maxpage) - 1) * 10 + 1  # 11= 2페이지 21=3페이지 31=4페이지  ...81=9페이지 , 91=10페이지, 101=11페이지
+        page = self.maxpage*10 - 9
+        # maxpage_t = (int(self.maxpage) - 1) * 10 + 1  # 11= 2페이지 21=3페이지 31=4페이지  ...81=9페이지 , 91=10페이지, 101=11페이지
 
-        while page <= maxpage_t:  # page가 maxpage_t보다 작을 동안
+        print(page)
 
-            print(page)
+        url = "https://search.naver.com/search.naver?where=news&query=" + self.query \
+              + "&sort=0&ds=" + self.s_date \
+              + "&de=" + self.e_date \
+              + "&nso=so%3Ar%2Cp%3Afrom" + s_from \
+              + "to" + e_to \
+              + "%2Ca%3A&start=" + str(page)
 
-            url = "https://search.naver.com/search.naver?where=news&query=" + self.query \
-                  + "&sort=0&ds=" + self.s_date \
-                  + "&de=" + self.e_date \
-                  + "&nso=so%3Ar%2Cp%3Afrom" + s_from \
-                  + "to" + e_to \
-                  + "%2Ca%3A&start=" + str(page)
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        req = requests.get(url, headers=headers)
 
-            headers = {'User-Agent': 'Mozilla/5.0'}
-            req = requests.get(url, headers=headers)
+        print(url)
 
-            print(url)
+        cont = req.content
+        soup = BeautifulSoup(cont, 'html.parser')
+        # print(soup)
 
-            cont = req.content
-            soup = BeautifulSoup(cont, 'html.parser')
-            # print(soup)
+        for urls in soup.select("._sp_each_url"):  # '_sp_each_url'은 네이버뉴스로 가는 하이퍼링크가 걸린 부분의 클래스명
+            try:
+                if len(result) >= 10:
+                    return result
 
-            for urls in soup.select("._sp_each_url"):  # '_sp_each_url'은 네이버뉴스로 가는 하이퍼링크가 걸린 부분의 클래스명
-                try:
-                    if urls["href"].startswith("https://news.naver.com"):
-                        news_detail = self.get_news(urls["href"])
-                        if news_detail is not None:
-                            result.append(news_detail)
+                if urls["href"].startswith("https://news.naver.com"):
+                    news_detail = self.get_news(urls["href"])
 
-                except Exception as e:
-                    print("req ", e)
-                    continue
-            page += 10
-        # time.sleep(1)
+                    if news_detail is not None:
+                        if len(result) >= 10:
+                            return result
+                        result.append(news_detail)
+
+            except Exception as e:
+                print("req ", e)
+                continue
+        page += 10
+
         return result
 
     def get_news(self, n_url):
