@@ -46,12 +46,14 @@ class NewsWindow(QMainWindow):
         print("소요 시간: ", round(time.time() - start, 6))
 
     def setTable(self):
-        self.crawledResult.setColumnCount(4)
-        self.crawledResult.setHorizontalHeaderLabels(["시간", "제목", "출처", "URL"])
+        self.crawledResult.setColumnCount(3)
+        self.crawledResult.setHorizontalHeaderLabels(["시간", "제목", "출처"])
 
     def openLink(self, item):
+        global result
+
         if item.column() == 1:
-            webbrowser.open(self.crawledResult.item(item.row(), 3).text())
+            webbrowser.open(result[3][item.row()])
 
     def setNews(self):
         global result
@@ -70,7 +72,6 @@ class NewsWindow(QMainWindow):
         self.crawledResult.itemClicked.connect(self.openLink)
         self.crawledResult.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
 
-        result = []
         self.nextBtn.setEnabled(True)
         print("현재 페이지 :", page)
         print("")
