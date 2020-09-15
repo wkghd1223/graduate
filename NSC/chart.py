@@ -20,6 +20,7 @@ from policy_learner import PolicyLearner
 from policy_network import PolicyNetwork
 import settings
 import data_manager
+import time
 
 DAY = '일'
 WEEK = '주'
@@ -228,24 +229,6 @@ class ChartWindow(QMainWindow):
         ]
         training_data = training_data[feature_chart_data]
 
-        # 강화학습 시작
-        policy_learner = PolicyLearner(
-            stock_code=code,
-            chart_data=chart_data,
-            training_data=training_data,
-            fig=self.fig,
-            canvas=self.canvas,
-            min_trading_unit=1,
-            max_trading_unit=2,
-            delayed_reward_threshold=0.2,
-            lr=0.001
-        )
-        policy_learner.fit(
-            balance=10000000,
-            num_epoches=200,
-            discount_factor=0,
-            start_epsilon=0.5
-        )
 
         # 정책 신경망을 파일로 저장
         self.createFolder('model')
@@ -288,7 +271,7 @@ class ChartWindow(QMainWindow):
             end_time = time.time()
             print("LearningTime: {} sec".format(end_time - start_time))
             policy_learner.trade(balance=1000000,
-                                 model_path=os.path.join(model_dir, 'model%s.h5' %(code)))
+                                 model_path=os.path.join(model_dir, 'model%s.h5'%(code)))
 
     def createFolder(self, directory):
         try:
