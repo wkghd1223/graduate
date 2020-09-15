@@ -12,11 +12,11 @@ import webbrowser
 global realPage
 global result
 global pagingCount
-global cntPage
+global pagingHistory
 result = []
 realPage = 1
 pagingCount = 1
-cntPage = []
+pagingHistory = []
 
 
 class NewsWindow(QMainWindow):
@@ -50,8 +50,8 @@ class NewsWindow(QMainWindow):
         s_date = str(date.today()-timedelta(days=7))
         e_date = str(date.today())
         start = time.time()
-        c = crawling(realPage, realPage, query, s_date, e_date)
-        result = (c.crawler(realPage, realPage, query, s_date, e_date))
+        c = crawling(realPage, query, s_date, e_date, result)
+        result = c.crawler(realPage, query, s_date, e_date, result)
 
         print("크롤링 기사 개수 :", len(result))
         print("소요 시간: ", round(time.time() - start, 6))
@@ -66,6 +66,8 @@ class NewsWindow(QMainWindow):
             webbrowser.open(self.crawledResult.item(item.row(), 3).text())
 
     def setNews(self):
+        global result
+
         self.setPrevBtn()
         self.setNextBtn()
 
@@ -78,6 +80,7 @@ class NewsWindow(QMainWindow):
         self.crawledResult.itemClicked.connect(self.openLink)
         self.crawledResult.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         print("현재페이지:", realPage)
+        result = []
 
     def initPageNum(self):
         global realPage
@@ -87,9 +90,8 @@ class NewsWindow(QMainWindow):
         global realPage
         global result
         global pagingCount
-        global cntPage
+        global pagingHistory
 
-        result = []
         realPage = realPage + 1
         pagingCount = 1
 
@@ -98,8 +100,8 @@ class NewsWindow(QMainWindow):
         e_date = str(date.today())
         start = time.time()
 
-        c = crawling(realPage, realPage, query, s_date, e_date)
-        result = (c.crawler(realPage, realPage, query, s_date, e_date))
+        c = crawling(realPage, query, s_date, e_date, result)
+        result = c.crawler(realPage, query, s_date, e_date, result)
 
         print("페이징카운트:", pagingCount)
 
@@ -107,16 +109,16 @@ class NewsWindow(QMainWindow):
             while len(result) < 10:
                 realPage = realPage + 1
 
-                c = crawling(realPage, realPage, query, s_date, e_date)
-                result += (c.crawler(realPage, realPage, query, s_date, e_date))
+                c = crawling(realPage, query, s_date, e_date, result)
+                result = c.crawler(realPage, query, s_date, e_date, result)
                 pagingCount += 1
                 print("페이징카운트:", pagingCount)
 
-        cntPage.append(pagingCount)
+        pagingHistory.append(pagingCount)
 
         print("크롤링 기사 개수 :", len(result))
         print("소요 시간: ", round(time.time() - start, 6))
-        print("cntPage:", cntPage)
+        print("pagingHistory:", pagingHistory)
 
     def setPrevBtn(self):
         global realPage
@@ -135,27 +137,26 @@ class NewsWindow(QMainWindow):
         global realPage
         global result
         global pagingCount
-        global cntPage
+        global pagingHistory
 
-        result = []
         pagingCount = 1
 
-        if len(cntPage) <= 1:
-            cntPage = []
+        if len(pagingHistory) <= 1:
+            pagingHistory = []
             realPage = 1
 
         elif realPage > 1:
-            if len(cntPage) >= 2:
-                realPage = realPage - (cntPage[-1]+cntPage[-2]) + 1
-                del cntPage[-1]
+            if len(pagingHistory) >= 2:
+                realPage = realPage - (pagingHistory[-1]+pagingHistory[-2]) + 1
+                del pagingHistory[-1]
 
         query = self.paramForSearch.text()
         s_date = str(date.today() - timedelta(days=7))
         e_date = str(date.today())
         start = time.time()
 
-        c = crawling(realPage, realPage, query, s_date, e_date)
-        result = (c.crawler(realPage, realPage, query, s_date, e_date))
+        c = crawling(realPage, query, s_date, e_date, result)
+        result = c.crawler(realPage, query, s_date, e_date, result)
 
         print("페이징카운트:", pagingCount)
 
@@ -163,11 +164,11 @@ class NewsWindow(QMainWindow):
             while len(result) < 10:
                 realPage = realPage + 1
 
-                c = crawling(realPage, realPage, query, s_date, e_date)
-                result += (c.crawler(realPage, realPage, query, s_date, e_date))
+                c = crawling(realPage, query, s_date, e_date, result)
+                result = c.crawler(realPage, query, s_date, e_date, result)
                 pagingCount += 1
                 print("페이징카운트:", pagingCount)
 
         print("크롤링 기사 개수 :", len(result))
         print("소요 시간: ", round(time.time() - start, 6))
-        print("cntPage:", cntPage)
+        print("pagingHistory:", pagingHistory)
