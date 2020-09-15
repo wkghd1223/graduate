@@ -32,21 +32,24 @@ FIFTY = 50
 SEVENTY_FIVE = 75
 A_HUNDRED = 100
 
+
 class ChartWindow(QMainWindow):
+
+    isChecked = False
+
     def __init__(self, parent):
         super(ChartWindow, self).__init__(parent)
         ui = "ui/chart.ui"
         uic.loadUi(ui, self)
         self.show()
 
-        self.code = None
-        self.df = pd.DataFrame()
-        self.stocks = self.getStockList()
-        self.term = DAY
-        self.isClicked = False
-
         self.fig = plt.Figure()
         self.canvas = FigureCanvas(self.fig)
+
+        self.stocks = self.getStockList()
+
+        self.pgsb = QProgressBar()
+        self.chart = Chart(fig=self.fig, canvas=self.canvas, stock=self.stocks)
 
         self.initUi()
 
@@ -61,19 +64,10 @@ class ChartWindow(QMainWindow):
         self.stockList.clicked.connect(self.onClickList)
         # 콤보박스 리스너
         self.dayWeekMonth.activated[str].connect(self.onDayWeekMonthChanged)
-        self.onDayWeekMonthChanged(self.dayWeekMonth.currentText())
+        # self.onDayWeekMonthChanged(self.dayWeekMonth.currentText())
 
         # 위젯
         self.layout.addWidget(self.canvas)
-
-    def getStockList(self):
-        code_df = pd.read_html(STOCK_LIST_PATH, header=0)[0]  # 종목코드가 6자리이기 때문에 6자리를 맞춰주기 위해 설정해줌
-        code_df.종목코드 = code_df.종목코드.map('{:06d}'.format)
-
-        # 우리가 필요한 것은 회사명과 종목코드이기 때문에 필요없는 column들은 제외해준다.
-        code_df = code_df[['회사명', '종목코드']] # 한글로된 컬럼명을 영어로 바꿔준다.
-        code_df = code_df.rename(columns={'회사명': 'name', '종목코드': 'code'})
-        return code_df
 
     # enter key를 이용하여 검색 가능
     def eventFilter(self, obj, event):
@@ -100,93 +94,32 @@ class ChartWindow(QMainWindow):
     # 리스트 클릭 리스너
     def onClickList(self, idx):
         # 한번이라도 리스트 뷰를 클릭해야 콤보박스 변경 시 그래프가 바뀐다
-        self.isClicked = True
-        start = time.time()
+        self.isChecked = True
+        self.chart.set_idx(idx)
+        self.startShowChart()
 
-        self.getStockData(idx)
-        self.showGraph()
+    def getStockList(self):
+        code_df = pd.read_html(STOCK_LIST_PATH, header=0)[0]  # 종목코드가 6자리이기 때문에 6자리를 맞춰주기 위해 설정해줌
+        code_df.종목코드 = code_df.종목코드.map('{:06d}'.format)
 
-        print(self.stocks.query("name=='{}'".format(idx.data()))['name'] + '  ' + str(time.time() - start))
+        # 우리가 필요한 것은 회사명과 종목코드이기 때문에 필요없는 column들은 제외해준다.
+        code_df = code_df[['회사명', '종목코드']] # 한글로된 컬럼명을 영어로 바꿔준다.
+        code_df = code_df.rename(columns={'회사명': 'name', '종목코드': 'code'})
+        return code_df
 
     # 콤보박스 변경 리스너
     def onDayWeekMonthChanged(self, t):
         self.term = t
-        if self.isClicked:
-            self.showGraph()
 
-    # 주가데이터 가져오는 함수
-    def getStockData(self, idx):
-        # get url
-        self.code = self.stocks.query("name=='{}'".format(idx.data()))['code'].to_string(index=False).strip()
-        code = self.code
-        url = 'http://finance.naver.com/item/sise_day.nhn?code={code}'.format(code=code)
-
-        # 일 데이터
-        df = pd.DataFrame()
-
-        for page in range(1, 21):
-            pg_url = '{url}&page={page}'.format(url=url, page=page)
-            df = df.append(pd.read_html(pg_url, header=0)[0], ignore_index=True)
-
-        df.drop(['전일비'], axis='columns', inplace=True)
-        df.rename(columns={'날짜': 'date', '종가': 'close', '시가': 'open', '고가': 'high', '저가': 'low', '거래량': 'volume'},
-                  inplace=True)
-
-        df.sort_values(by=['date'], axis=0, ascending=True, inplace=True)
-        df.dropna(inplace=True)
-        self.df = df
-
-    # 리스트 뷰 클릭 함수
-    def showGraph(self):
-
-        df = self.df
-        ndf = df.copy()
-
-        term = 1
         if self.term == DAY:
-            term = 1
+            self.chart.set_term(1)
         if self.term == WEEK:
-            term = 7
+            self.chart.set_term(7)
         if self.term == MONTH:
-            term = 30
-        curr = 0
-        idx = 0
-        for i, row in df.iterrows():
-            if idx == 0:
-                curr = i
-                # curr = dt.strptime(row['date'], "%Y.%m.%d")
-            else:
-                timeGap = (dt.strptime(df.loc[curr]['date'], "%Y.%m.%d") - dt.strptime(row['date'], "%Y.%m.%d")).days
-                if abs(timeGap) < term:
-                    if row['high'] > df.loc[curr]['high']:
-                        ndf.loc[curr, 'high'] = row['high']
-                    if row['low'] > df.loc[curr]['low']:
-                        ndf.loc[curr, 'low'] = row['low']
-                    ndf.loc[curr, 'close'] = row['close']
-                    ndf.drop(index=i, inplace=True)
-                else:
-                    curr = i
-            idx += 1
+            self.chart.set_term(30)
 
-        self.fig.clear()
-        ax = self.fig.add_subplot(111)
-
-        ax.plot(ndf['date'], ndf['close'].rolling(window=5).mean(), label="5", linewidth=0.7)
-        ax.plot(ndf['date'], ndf['close'].rolling(window=20).mean(), label="20", linewidth=0.7)
-        ax.plot(ndf['date'], ndf['close'].rolling(window=60).mean(), label="60", linewidth=0.7)
-        ax.plot(ndf['date'], ndf['close'].rolling(window=120).mean(), label="120", linewidth=0.7)
-        candlestick2_ohlc(ax, ndf['open'], ndf['high'], ndf['low'], ndf['close'], width=1, colorup='r', colordown='b')
-
-        self.fig.suptitle("candle")
-        ax.set_xlabel("date")
-        ax.set_ylabel("stock price")
-
-        # ax.tick_params(axis='x', labelrotation=20)
-        ax.autoscale_view()
-
-        ax.xaxis.set_major_locator(ticker.MaxNLocator(5))
-        ax.legend(loc=1) # legend 위치
-        self.canvas.draw()
+        if self.isChecked:
+            self.startShowChart()
 
     def learnFunc(self):
         if self.code is None:
@@ -250,33 +183,53 @@ class ChartWindow(QMainWindow):
         except OSError:
             print('ERR\t:\tFail to make directory "'+directory+'"')
 
+    def startShowChart(self):
+        if self.chart.isRunning():
+            self.chart.terminate()
+            self.chart.wait()
+        self.chart.start()
 
 class Chart(QThread):
 
     change_value = pyqtSignal(int)
     idx = None
     code = None
+    prevIdx = None
 
     # self.change_value.emit(self.cnt)
 
-    def __init__(self, fig, canvas):
+    def __init__(self, fig, canvas, stock):
+        QThread.__init__(self)
         self.cond = QWaitCondition()
         self.mutex = QMutex()
         self.df = pd.DataFrame()
-        self.stocks = self.getStockList()
+        self.stocks = stock
         self.fig = fig
         self.canvas = canvas
+        self._term = 1
+        self._status = False
+
+    def __del__(self):
+        self.wait()
+
+    def set_term(self, term):
+        self._term = term
 
     def set_idx(self, idx):
         self.idx = idx
 
     def run(self):
-        self.getStockData(self.idx)
-        self.showGraph()
+
+        if self.prevIdx is None or not self.prevIdx == self.idx:
+            self.getStockData(self.idx)
+        self.showGraph(self._term)
+        print(self._term)
+        self.prevIdx = self.idx
 
     # 주가데이터 가져오는 함수
+    @pyqtSlot()
     def getStockData(self, idx):
-        self.mutex.lock()
+
         self.change_value.emit(ZERO)
         # get url
         self.code = self.stocks.query("name=='{}'".format(idx.data()))['code'].to_string(index=False).strip()
@@ -298,23 +251,15 @@ class Chart(QThread):
         df.dropna(inplace=True)
         self.df = df
         self.change_value.emit(A_HUNDRED)
-        self.mutex.unlock()
 
     # 리스트 뷰 클릭 함수
+    @pyqtSlot()
     def showGraph(self, term):
-        self.mutex.lock()
         self.change_value.emit(ZERO)
 
         df = self.df
         ndf = df.copy()
 
-        # term = 1
-        # if self.term == DAY:
-        #     term = 1
-        # if self.term == WEEK:
-        #     term = 7
-        # if self.term == MONTH:
-        #     term = 30
         curr = 0
         idx = 0
         for i, row in df.iterrows():
@@ -358,4 +303,3 @@ class Chart(QThread):
         self.canvas.draw()
 
         self.change_value.emit(A_HUNDRED)
-        self.mutex.unlock()
