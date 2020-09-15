@@ -47,7 +47,7 @@ class NewsWindow(QMainWindow):
 
     def setTable(self):
         self.crawledResult.setColumnCount(4)
-        self.crawledResult.setHorizontalHeaderLabels(["날짜", "제목", "출처", "URL"])
+        self.crawledResult.setHorizontalHeaderLabels(["시간", "제목", "출처", "URL"])
 
     def openLink(self, item):
         if item.column() == 1:
