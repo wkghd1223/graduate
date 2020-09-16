@@ -242,7 +242,21 @@ class ChartWindow(QMainWindow):
         #model_path가 있으면 해당 모델 선택 후 예측
         print(model_path)
 
-        if model_path is None:
+        if os.path.isfile(model_path):
+            start_time = time.time()
+            policy_learner = PolicyLearner(
+                stock_code=code,
+                chart_data=chart_data,
+                training_data=training_data,
+                fig=self.fig,
+                canvas=self.canvas,
+                min_trading_unit=1,
+                max_trading_unit=2)
+            end_time = time.time()
+            print("LearningTime: {} sec".format(end_time - start_time))
+            policy_learner.trade(balance=1000000,
+                                 model_path=os.path.join(model_dir, 'model%s.h5'%(code)))
+        else:
             start_time = time.time()
             policy_learner = PolicyLearner(
                 stock_code=code,
@@ -262,20 +276,6 @@ class ChartWindow(QMainWindow):
             end_time = time.time()
             policy_learner.policy_network.save_model(model_path)
             print("LearningTime: {} sec".format(end_time - start_time))
-        else:
-            start_time = time.time()
-            policy_learner = PolicyLearner(
-                stock_code=code,
-                chart_data=chart_data,
-                training_data=training_data,
-                fig=self.fig,
-                canvas=self.canvas,
-                min_trading_unit=1,
-                max_trading_unit=2)
-            end_time = time.time()
-            print("LearningTime: {} sec".format(end_time - start_time))
-            policy_learner.trade(balance=1000000,
-                                 model_path=os.path.join(model_dir, 'model%s.h5'%(code)))
 
     def createFolder(self, directory):
         try:
