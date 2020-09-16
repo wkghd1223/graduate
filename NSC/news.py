@@ -35,6 +35,8 @@ class NewsWindow(QMainWindow):
         self.prevBtn.clicked.connect(self.clickPrevBtn)
         self.prevBtn.clicked.connect(self.setNews)
 
+        self.crawledResult.itemClicked.connect(self.openLink)
+
     def getNews(self):
         query = self.paramForSearch.text()
         start = time.time()
@@ -66,14 +68,10 @@ class NewsWindow(QMainWindow):
             for j in range(len(result)):
                 self.crawledResult.setItem(i, j, QTableWidgetItem(result[j][i]))
 
-        if page > 1:
-            self.crawledResult.itemClicked.disconnect(self.openLink)
-
-        self.crawledResult.itemClicked.connect(self.openLink)
         self.crawledResult.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
 
         self.nextBtn.setEnabled(True)
-        print("현재 페이지 :", page)
+        self.printCurPage()
         print("")
 
     def clickNextBtn(self):
@@ -107,3 +105,10 @@ class NewsWindow(QMainWindow):
         print("크롤링 기사 개수 :", len(result[0]))
         print("소요 시간: ", round(time.time() - start, 6))
 
+    def printCurPage(self):
+        global page
+        curPage = 1
+        if page > 1:
+            curPage = int((page + 9) / 10)
+
+        print("현재 페이지:", curPage)

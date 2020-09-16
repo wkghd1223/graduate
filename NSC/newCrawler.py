@@ -48,6 +48,6 @@ def newsCrawling(query, page):
     result.append(headline)
     result.append(source)
     result.append(link)
-    print(result[3])
+
     return result
 
