@@ -5,18 +5,13 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5 import uic
-from NewsCrawler import crawling
+from newCrawler import newsCrawling
 from datetime import date, timedelta
 import webbrowser
 
-global realPage
 global result
-global pagingCount
-global pagingHistory
-result = []
-realPage = 1
-pagingCount = 1
-pagingHistory = []
+global page
+page = 1
 
 
 class NewsWindow(QMainWindow):
@@ -29,8 +24,8 @@ class NewsWindow(QMainWindow):
         self.show()
         self.setTable()
         self.setPrevBtn()
+        self.nextBtn.setEnabled(False)
 
-        self.searchBtn.clicked.connect(self.initPageNum)
         self.searchBtn.clicked.connect(self.getNews)
         self.searchBtn.clicked.connect(self.setNews)
 
@@ -40,127 +35,80 @@ class NewsWindow(QMainWindow):
         self.prevBtn.clicked.connect(self.clickPrevBtn)
         self.prevBtn.clicked.connect(self.setNews)
 
+        self.crawledResult.itemClicked.connect(self.openLink)
+
     def getNews(self):
-        global realPage
-        global result
-
-        self.initPageNum()
-
         query = self.paramForSearch.text()
-        s_date = str(date.today()-timedelta(days=7))
-        e_date = str(date.today())
         start = time.time()
-        c = crawling(realPage, query, s_date, e_date, result)
-        result = c.crawler(realPage, query, s_date, e_date, result)
+        global result
+        global page
+        result = newsCrawling(query, page)
 
-        print("크롤링 기사 개수 :", len(result))
+        print("크롤링 기사 개수 :", len(result[0]))
         print("소요 시간: ", round(time.time() - start, 6))
 
     def setTable(self):
-        self.crawledResult.setColumnCount(4)
-        self.crawledResult.setHorizontalHeaderLabels(["날짜", "제목", "출처", "URL"])
+        self.crawledResult.setColumnCount(3)
+        self.crawledResult.setHorizontalHeaderLabels(["시간", "제목", "출처"])
 
     def openLink(self, item):
+        global result
+
         if item.column() == 1:
-            webbrowser.open(self.crawledResult.item(item.row(), 3).text())
+            webbrowser.open(result[3][item.row()])
 
     def setNews(self):
         global result
 
         self.setPrevBtn()
 
-        self.crawledResult.setRowCount(len(result))
+        self.crawledResult.setRowCount(10)
 
-        for i in range(len(result)):
-            for j in range(len(result[i])):
-                self.crawledResult.setItem(i, j, QTableWidgetItem(result[i][j]))
+        for i in range(len(result[0])):
+            for j in range(len(result)):
+                self.crawledResult.setItem(i, j, QTableWidgetItem(result[j][i]))
 
-        self.crawledResult.itemClicked.connect(self.openLink)
         self.crawledResult.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
-        print("현재페이지:", realPage)
-        result = []
 
-    def initPageNum(self):
-        global realPage
-        realPage = 1
+        self.nextBtn.setEnabled(True)
+        self.printCurPage()
+        print("")
 
     def clickNextBtn(self):
-        global realPage
         global result
-        global pagingCount
-        global pagingHistory
-
-        realPage = realPage + 1
-        pagingCount = 1
-
+        global page
         query = self.paramForSearch.text()
-        s_date = str(date.today() - timedelta(days=7))
-        e_date = str(date.today())
         start = time.time()
+        page += 10
+        result = newsCrawling(query, page)
 
-        c = crawling(realPage, query, s_date, e_date, result)
-        result = c.crawler(realPage, query, s_date, e_date, result)
-
-        print("페이징카운트:", pagingCount)
-
-        if len(result) < 10:
-            while len(result) < 10:
-                realPage = realPage + 1
-
-                c = crawling(realPage, query, s_date, e_date, result)
-                result = c.crawler(realPage, query, s_date, e_date, result)
-                pagingCount += 1
-                print("페이징카운트:", pagingCount)
-
-        pagingHistory.append(pagingCount)
-
-        print("크롤링 기사 개수 :", len(result))
+        print("크롤링 기사 개수 :", len(result[0]))
         print("소요 시간: ", round(time.time() - start, 6))
-        print("pagingHistory:", pagingHistory)
 
     def setPrevBtn(self):
-        global realPage
-        if realPage > 1:
+        global page
+        if page > 1:
             self.prevBtn.setEnabled(True)
-        elif realPage is 1:
+        elif page is 1:
             self.prevBtn.setEnabled(False)
 
     def clickPrevBtn(self):
-        global realPage
+        global page
         global result
-        global pagingCount
-        global pagingHistory
-
-        pagingCount = 1
-
-        if len(pagingHistory) <= 1:
-            pagingHistory = []
-            realPage = 1
-
-        elif realPage > 1:
-            if len(pagingHistory) >= 2:
-                realPage = realPage - (pagingHistory[-1]+pagingHistory[-2]) + 1
-                del pagingHistory[-1]
 
         query = self.paramForSearch.text()
-        s_date = str(date.today() - timedelta(days=7))
-        e_date = str(date.today())
         start = time.time()
+        page -= 10
 
-        c = crawling(realPage, query, s_date, e_date, result)
-        result = c.crawler(realPage, query, s_date, e_date, result)
+        result = newsCrawling(query, page)
 
-        print("페이징카운트:", pagingCount)
-
-        if len(result) < 10:
-            while len(result) < 10:
-                realPage = realPage + 1
-
-                c = crawling(realPage, query, s_date, e_date, result)
-                result = c.crawler(realPage, query, s_date, e_date, result)
-                pagingCount += 1
-                print("페이징카운트:", pagingCount)
-
-        print("크롤링 기사 개수 :", len(result))
+        print("크롤링 기사 개수 :", len(result[0]))
         print("소요 시간: ", round(time.time() - start, 6))
-        print("pagingHistory:", pagingHistory)
+
+    def printCurPage(self):
+        global page
+        curPage = 1
+        if page > 1:
+            curPage = int((page + 9) / 10)
+
+        print("현재 페이지:", curPage)
