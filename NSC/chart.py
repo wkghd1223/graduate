@@ -48,8 +48,7 @@ class ChartWindow(QMainWindow):
 
         self.stocks = self.getStockList()
 
-        self.pgsb = QProgressBar()
-        self.chart = Chart(fig=self.fig, canvas=self.canvas, stock=self.stocks)
+        self.chart = Chart(fig=self.fig, canvas=self.canvas, stock=self.stocks, pgsb=self.pgsb)
 
         self.initUi()
 
@@ -198,7 +197,7 @@ class Chart(QThread):
 
     # self.change_value.emit(self.cnt)
 
-    def __init__(self, fig, canvas, stock):
+    def __init__(self, fig, canvas, stock, pgsb):
         QThread.__init__(self)
         self.cond = QWaitCondition()
         self.mutex = QMutex()
@@ -208,9 +207,7 @@ class Chart(QThread):
         self.canvas = canvas
         self._term = 1
         self._status = False
-
-    def __del__(self):
-        self.wait()
+        self.pgsb = pgsb
 
     def set_term(self, term):
         self._term = term
@@ -219,11 +216,10 @@ class Chart(QThread):
         self.idx = idx
 
     def run(self):
-
+        self.change_value.connect(self.pgsb.setValue)
         if self.prevIdx is None or not self.prevIdx == self.idx:
             self.getStockData(self.idx)
         self.showGraph(self._term)
-        print(self._term)
         self.prevIdx = self.idx
 
     # 주가데이터 가져오는 함수
