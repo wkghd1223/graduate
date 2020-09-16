@@ -236,7 +236,11 @@ class ChartWindow(QMainWindow):
         self.createFolder(os.path.join(mdir, code))
 
         model_dir = os.path.join(mdir, code)
-        model_path = os.path.join(model_dir, 'model%s.h5'%(code))
+        model_path = os.path.join(model_dir, 'model%s.h5'%code)
+
+        #model_path 경로가 없으면 학습모델을 해당 dir에 만들어서 학습
+        #model_path가 있으면 해당 모델 선택 후 예측
+        print(model_path)
 
         if model_path is None:
             start_time = time.time()
