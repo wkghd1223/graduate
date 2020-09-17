@@ -21,6 +21,7 @@ from policy_learner import PolicyLearner
 from policy_network import PolicyNetwork
 import settings
 import data_manager
+import time
 
 DAY = '일'
 WEEK = '주'
@@ -302,7 +303,7 @@ class Chart(QThread):
         # emit
         self.change_value.emit(FIFTY)
 
-        if model_path is None:
+        if not os.path.isfile(model_path):
             start_time = time.time()
             policy_learner = PolicyLearner(
                 stock_code=code,
