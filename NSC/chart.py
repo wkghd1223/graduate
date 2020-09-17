@@ -265,45 +265,27 @@ class Chart(QThread):
         code = self.code
         chart_data = self.df
         prep_data = data_manager.preprocess(chart_data)
-        self.change_value.emit(TWENTY_FIVE)
         training_data = data_manager.build_training_data(prep_data)
-        self.change_value.emit(FIFTY)
         training_data = training_data.dropna()
 
         # 차트데이터 분리
         feature_chart_data = ['date', 'open', 'high', 'low', 'close', 'volume']
         chart_data = training_data[feature_chart_data]
 
+        # emit
+        self.change_value.emit(TWENTY_FIVE)
+
         # 학습데이터 분리
         feature_chart_data = [
-            'open_lastclose_ratio','high_close_ratio','low_close_ratio',
-            'close_lastclose_ratio','volume_lastvolume_ratio',
-            'close_ma5_ratio','volume_ma5_ratio',
+            'open_lastclose_ratio', 'high_close_ratio', 'low_close_ratio',
+            'close_lastclose_ratio', 'volume_lastvolume_ratio',
+            'close_ma5_ratio', 'volume_ma5_ratio',
             'close_ma10_ratio', 'volume_ma10_ratio',
             'close_ma20_ratio', 'volume_ma20_ratio',
             'close_ma60_ratio', 'volume_ma60_ratio',
             'close_ma120_ratio', 'volume_ma120_ratio',
         ]
         training_data = training_data[feature_chart_data]
-        self.change_value.emit(A_HUNDRED)
-        # 강화학습 시작
-        policy_learner = PolicyLearner(
-            stock_code=code,
-            chart_data=chart_data,
-            training_data=training_data,
-            fig=self.fig,
-            canvas=self.canvas,
-            min_trading_unit=1,
-            max_trading_unit=2,
-            delayed_reward_threshold=0.2,
-            lr=0.001
-        )
-        policy_learner.fit(
-            balance=10000000,
-            num_epoches=200,
-            discount_factor=0,
-            start_epsilon=0.5
-        )
 
         # 정책 신경망을 파일로 저장
         self.createFolder('model')
@@ -311,9 +293,52 @@ class Chart(QThread):
         self.createFolder(os.path.join(mdir, code))
 
         model_dir = os.path.join(mdir, code)
-        model_path = os.path.join(model_dir, 'model%s_%s.h5' %(code, settings.timestr))
+        model_path = os.path.join(model_dir, 'model%s.h5' % code)
 
-        policy_learner.policy_network.save_model(model_path)
+        # model_path 경로가 없으면 학습모델을 해당 dir에 만들어서 학습
+        # model_path가 있으면 해당 모델 선택 후 예측
+        print(model_path)
+
+        # emit
+        self.change_value.emit(FIFTY)
+
+        if model_path is None:
+            start_time = time.time()
+            policy_learner = PolicyLearner(
+                stock_code=code,
+                chart_data=chart_data,
+                training_data=training_data,
+                fig=self.fig,
+                canvas=self.canvas,
+                min_trading_unit=1,
+                max_trading_unit=2,
+                delayed_reward_threshold=0.2,
+                lr=0.001)
+            policy_learner.fit(
+                balance=10000000,
+                num_epoches=200,
+                discount_factor=0,
+                start_epsilon=0.5)
+            end_time = time.time()
+            policy_learner.policy_network.save_model(model_path)
+            print("LearningTime: {} sec".format(end_time - start_time))
+        else:
+            start_time = time.time()
+            policy_learner = PolicyLearner(
+                stock_code=code,
+                chart_data=chart_data,
+                training_data=training_data,
+                fig=self.fig,
+                canvas=self.canvas,
+                min_trading_unit=1,
+                max_trading_unit=2)
+            end_time = time.time()
+            print("LearningTime: {} sec".format(end_time - start_time))
+            policy_learner.trade(balance=1000000,
+                                 model_path=os.path.join(model_dir, 'model%s.h5' % (code)))
+
+        # emit
+        self.change_value.emit(A_HUNDRED)
 
     def createFolder(self, directory):
         try:
