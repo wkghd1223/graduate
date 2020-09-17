@@ -220,7 +220,7 @@ class PolicyLearner:
         return None
 
     #투자 시뮬레이션을 하는 trade()함수 부분
-    def trade(self,model_path=None,balance=2000000):
+    def trade(self,model_path=None,balance=1000000):
         if model_path is None:
             return
         self.policy_network.load_model(model_path=model_path)

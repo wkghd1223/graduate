@@ -58,10 +58,10 @@
     <number>10</number>
    </property>
    <property name="columnCount">
-    <number>4</number>
+    <number>3</number>
    </property>
    <attribute name="horizontalHeaderDefaultSectionSize">
-    <number>220</number>
+    <number>350</number>
    </attribute>
    <row/>
    <row/>
@@ -73,7 +73,6 @@
    <row/>
    <row/>
    <row/>
-   <column/>
    <column/>
    <column/>
    <column/>
