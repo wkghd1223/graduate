@@ -20,6 +20,7 @@ from numpy.testing import clear_and_catch_warnings
 from policy_learner import PolicyLearner
 from policy_network import PolicyNetwork
 import settings
+from settings import resource_path
 import data_manager
 import time
 
@@ -35,6 +36,8 @@ A_HUNDRED = 100
 CHART = 0
 ML = 1
 
+form = resource_path("ui/chart.ui")
+
 class ChartWindow(QMainWindow):
 
     isChecked = False
@@ -43,8 +46,7 @@ class ChartWindow(QMainWindow):
 
     def __init__(self, parent):
         super(ChartWindow, self).__init__(parent)
-        ui = "ui/chart.ui"
-        uic.loadUi(ui, self)
+        uic.loadUi(form, self)
         self.show()
 
         self.fig = plt.Figure()

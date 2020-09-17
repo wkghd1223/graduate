@@ -8,18 +8,15 @@ from PyQt5 import uic
 from datetime import date, timedelta
 import webbrowser
 from newCrawler import Crawler
+from settings import resource_path
 
-# global result
-# global page
-# page = 1
-
+form = resource_path("ui/news.ui")
 
 class NewsWindow(QMainWindow):
     def __init__(self, parent):
         super(NewsWindow, self).__init__(parent)
 
-        ui = "ui/news.ui"
-        uic.loadUi(ui, self)
+        uic.loadUi(form, self)
 
         self.show()
         self.crawler = Crawler( prevBtn=self.prevBtn, nextBtn=self.nextBtn)
