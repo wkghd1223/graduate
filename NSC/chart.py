@@ -31,11 +31,14 @@ TWENTY_FIVE = 25
 FIFTY = 50
 SEVENTY_FIVE = 75
 A_HUNDRED = 100
-
+CHART = 0
+ML = 1
 
 class ChartWindow(QMainWindow):
 
     isChecked = False
+    code = None
+    term = None
 
     def __init__(self, parent):
         super(ChartWindow, self).__init__(parent)
@@ -48,7 +51,7 @@ class ChartWindow(QMainWindow):
 
         self.stocks = self.getStockList()
 
-        self.chart = Chart(fig=self.fig, canvas=self.canvas, stock=self.stocks, pgsb=self.pgsb)
+        self.chart = Chart(fig=self.fig, canvas=self.canvas, stocks=self.stocks, pgsb=self.pgsb)
 
         self.initUi()
 
@@ -94,6 +97,7 @@ class ChartWindow(QMainWindow):
     def onClickList(self, idx):
         # 한번이라도 리스트 뷰를 클릭해야 콤보박스 변경 시 그래프가 바뀐다
         self.isChecked = True
+        self.chart.set_switch(CHART)
         self.chart.set_idx(idx)
         self.startShowChart()
 
@@ -121,66 +125,8 @@ class ChartWindow(QMainWindow):
             self.startShowChart()
 
     def learnFunc(self):
-        if self.code is None:
-            return
-        # 데이터 전처리
-        code = self.code
-        chart_data = self.df
-        prep_data = data_manager.preprocess(chart_data)
-        training_data = data_manager.build_training_data(prep_data)
-        training_data = training_data.dropna()
-
-        # 차트데이터 분리
-        feature_chart_data = ['date', 'open', 'high', 'low', 'close', 'volume']
-        chart_data = training_data[feature_chart_data]
-
-        # 학습데이터 분리
-        feature_chart_data = [
-            'open_lastclose_ratio','high_close_ratio','low_close_ratio',
-            'close_lastclose_ratio','volume_lastvolume_ratio',
-            'close_ma5_ratio','volume_ma5_ratio',
-            'close_ma10_ratio', 'volume_ma10_ratio',
-            'close_ma20_ratio', 'volume_ma20_ratio',
-            'close_ma60_ratio', 'volume_ma60_ratio',
-            'close_ma120_ratio', 'volume_ma120_ratio',
-        ]
-        training_data = training_data[feature_chart_data]
-
-        # 강화학습 시작
-        policy_learner = PolicyLearner(
-            stock_code=code,
-            chart_data=chart_data,
-            training_data=training_data,
-            fig=self.fig,
-            canvas=self.canvas,
-            min_trading_unit=1,
-            max_trading_unit=2,
-            delayed_reward_threshold=0.2,
-            lr=0.001
-        )
-        policy_learner.fit(
-            balance=10000000,
-            num_epoches=200,
-            discount_factor=0,
-            start_epsilon=0.5
-        )
-
-        # 정책 신경망을 파일로 저장
-        self.createFolder('model')
-        mdir = os.path.join(settings.BASE_DIR, 'model')
-        self.createFolder(os.path.join(mdir, code))
-
-        model_dir = os.path.join(mdir, code)
-        model_path = os.path.join(model_dir, 'model%s_%s.h5' %(code, settings.timestr))
-
-        policy_learner.policy_network.save_model(model_path)
-
-    def createFolder(self, directory):
-        try:
-            if not os.path.isdir(os.path.join(settings.BASE_DIR, directory)):
-                os.mkdir(os.path.join(settings.BASE_DIR, directory))
-        except OSError:
-            print('ERR\t:\tFail to make directory "'+directory+'"')
+        self.chart.set_switch(ML)
+        self.startShowChart()
 
     def startShowChart(self):
         if self.chart.isRunning():
@@ -188,21 +134,22 @@ class ChartWindow(QMainWindow):
             self.chart.wait()
         self.chart.start()
 
+
 class Chart(QThread):
 
     change_value = pyqtSignal(int)
     idx = None
     code = None
     prevIdx = None
-
+    switch = CHART
     # self.change_value.emit(self.cnt)
 
-    def __init__(self, fig, canvas, stock, pgsb):
+    def __init__(self, fig, canvas, stocks, pgsb):
         QThread.__init__(self)
         self.cond = QWaitCondition()
         self.mutex = QMutex()
         self.df = pd.DataFrame()
-        self.stocks = stock
+        self.stocks = stocks
         self.fig = fig
         self.canvas = canvas
         self._term = 1
@@ -215,11 +162,20 @@ class Chart(QThread):
     def set_idx(self, idx):
         self.idx = idx
 
+    def set_switch(self, switch):
+        if switch == CHART:
+            self.switch = CHART
+        if switch == ML:
+            self.switch = ML
+
     def run(self):
         self.change_value.connect(self.pgsb.setValue)
         if self.prevIdx is None or not self.prevIdx == self.idx:
             self.getStockData(self.idx)
-        self.showGraph(self._term)
+        if self.switch == CHART:
+            self.showGraph(self._term)
+        elif self.switch == ML:
+            self.learnFunc()
         self.prevIdx = self.idx
 
     # 주가데이터 가져오는 함수
@@ -299,3 +255,69 @@ class Chart(QThread):
         self.canvas.draw()
 
         self.change_value.emit(A_HUNDRED)
+
+    @pyqtSlot()
+    def learnFunc(self):
+        if self.code is None or self.df is None:
+            return
+        self.change_value.emit(ZERO)
+        # 데이터 전처리
+        code = self.code
+        chart_data = self.df
+        prep_data = data_manager.preprocess(chart_data)
+        self.change_value.emit(TWENTY_FIVE)
+        training_data = data_manager.build_training_data(prep_data)
+        self.change_value.emit(FIFTY)
+        training_data = training_data.dropna()
+
+        # 차트데이터 분리
+        feature_chart_data = ['date', 'open', 'high', 'low', 'close', 'volume']
+        chart_data = training_data[feature_chart_data]
+
+        # 학습데이터 분리
+        feature_chart_data = [
+            'open_lastclose_ratio','high_close_ratio','low_close_ratio',
+            'close_lastclose_ratio','volume_lastvolume_ratio',
+            'close_ma5_ratio','volume_ma5_ratio',
+            'close_ma10_ratio', 'volume_ma10_ratio',
+            'close_ma20_ratio', 'volume_ma20_ratio',
+            'close_ma60_ratio', 'volume_ma60_ratio',
+            'close_ma120_ratio', 'volume_ma120_ratio',
+        ]
+        training_data = training_data[feature_chart_data]
+        self.change_value.emit(A_HUNDRED)
+        # 강화학습 시작
+        policy_learner = PolicyLearner(
+            stock_code=code,
+            chart_data=chart_data,
+            training_data=training_data,
+            fig=self.fig,
+            canvas=self.canvas,
+            min_trading_unit=1,
+            max_trading_unit=2,
+            delayed_reward_threshold=0.2,
+            lr=0.001
+        )
+        policy_learner.fit(
+            balance=10000000,
+            num_epoches=200,
+            discount_factor=0,
+            start_epsilon=0.5
+        )
+
+        # 정책 신경망을 파일로 저장
+        self.createFolder('model')
+        mdir = os.path.join(settings.BASE_DIR, 'model')
+        self.createFolder(os.path.join(mdir, code))
+
+        model_dir = os.path.join(mdir, code)
+        model_path = os.path.join(model_dir, 'model%s_%s.h5' %(code, settings.timestr))
+
+        policy_learner.policy_network.save_model(model_path)
+
+    def createFolder(self, directory):
+        try:
+            if not os.path.isdir(os.path.join(settings.BASE_DIR, directory)):
+                os.mkdir(os.path.join(settings.BASE_DIR, directory))
+        except OSError:
+            print('ERR\t:\tFail to make directory "'+directory+'"')

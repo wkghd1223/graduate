@@ -5,13 +5,13 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5 import uic
-from newCrawler import newsCrawling
 from datetime import date, timedelta
 import webbrowser
+from newCrawler import Crawler
 
-global result
-global page
-page = 1
+# global result
+# global page
+# page = 1
 
 
 class NewsWindow(QMainWindow):
@@ -22,93 +22,66 @@ class NewsWindow(QMainWindow):
         uic.loadUi(ui, self)
 
         self.show()
+        self.crawler = Crawler( prevBtn=self.prevBtn, nextBtn=self.nextBtn)
+
         self.setTable()
-        self.setPrevBtn()
+
         self.nextBtn.setEnabled(False)
+        self.prevBtn.setEnabled(False)
 
-        self.searchBtn.clicked.connect(self.getNews)
-        self.searchBtn.clicked.connect(self.setNews)
-
+        self.searchBtn.clicked.connect(self.searchFunc)
         self.nextBtn.clicked.connect(self.clickNextBtn)
-        self.nextBtn.clicked.connect(self.setNews)
-
         self.prevBtn.clicked.connect(self.clickPrevBtn)
-        self.prevBtn.clicked.connect(self.setNews)
 
         self.crawledResult.itemClicked.connect(self.openLink)
+        self.crawler.change_value.connect(self.some_function)
 
-    def getNews(self):
+        self.paramForSearch.installEventFilter(self)
+
+    def searchFunc(self):
         query = self.paramForSearch.text()
-        start = time.time()
-        global result
-        global page
-        result = newsCrawling(query, page)
+        self.crawler.set_query(query)
+        self.startCrawler()
 
-        print("크롤링 기사 개수 :", len(result[0]))
-        print("소요 시간: ", round(time.time() - start, 6))
+    # enter key를 이용하여 검색 가능
+    def eventFilter(self, obj, event):
+        if obj is self.paramForSearch and event.type() == QEvent.KeyPress:
+            if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+                self.searchFunc()
+                return True
+        return super().eventFilter(obj, event)
 
     def setTable(self):
+        self.crawledResult.setRowCount(10)
         self.crawledResult.setColumnCount(3)
         self.crawledResult.setHorizontalHeaderLabels(["시간", "제목", "출처"])
 
-    def openLink(self, item):
-        global result
+    def clickNextBtn(self):
+        page = self.crawler.page
+        self.crawler.set_page(page+10)
+        self.startCrawler()
 
+    def clickPrevBtn(self):
+        page = self.crawler.page
+        self.crawler.set_page(page - 10)
+        self.startCrawler()
+
+    def openLink(self, item):
+        result = self.crawler.result
         if item.column() == 1:
             webbrowser.open(result[3][item.row()])
 
-    def setNews(self):
-        global result
+    @pyqtSlot(int, int, str)
+    def some_function(self, r, c, text):
+        it = self.crawledResult.item(r, c)
+        if it:
+            it.setText(text)
+        else:
+            it = QTableWidgetItem(text)
+            self.crawledResult.setItem(r, c, it)
 
-        self.setPrevBtn()
-
-        self.crawledResult.setRowCount(10)
-
-        for i in range(len(result[0])):
-            for j in range(len(result)):
-                self.crawledResult.setItem(i, j, QTableWidgetItem(result[j][i]))
-
-        self.crawledResult.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
-
-        self.nextBtn.setEnabled(True)
-        self.printCurPage()
-        print("")
-
-    def clickNextBtn(self):
-        global result
-        global page
-        query = self.paramForSearch.text()
-        start = time.time()
-        page += 10
-        result = newsCrawling(query, page)
-
-        print("크롤링 기사 개수 :", len(result[0]))
-        print("소요 시간: ", round(time.time() - start, 6))
-
-    def setPrevBtn(self):
-        global page
-        if page > 1:
-            self.prevBtn.setEnabled(True)
-        elif page is 1:
-            self.prevBtn.setEnabled(False)
-
-    def clickPrevBtn(self):
-        global page
-        global result
-
-        query = self.paramForSearch.text()
-        start = time.time()
-        page -= 10
-
-        result = newsCrawling(query, page)
-
-        print("크롤링 기사 개수 :", len(result[0]))
-        print("소요 시간: ", round(time.time() - start, 6))
-
-    def printCurPage(self):
-        global page
-        curPage = 1
-        if page > 1:
-            curPage = int((page + 9) / 10)
-
-        print("현재 페이지:", curPage)
+    def startCrawler(self):
+        if self.crawler.isRunning():
+            self.crawler.terminate()
+            self.crawler.wait()
+        self.crawler.start()
