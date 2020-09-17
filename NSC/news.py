@@ -55,18 +55,11 @@ class NewsWindow(QMainWindow):
         self.crawledResult.setRowCount(10)
         self.crawledResult.setColumnCount(3)
         self.crawledResult.setHorizontalHeaderLabels(["시간", "제목", "출처"])
-        self.setNextBtn()
 
     def clickNextBtn(self):
         page = self.crawler.page
         self.crawler.set_page(page+10)
         self.startCrawler()
-
-    def setNextBtn(self):
-        global result
-        self.nextBtn.setEnabled(False)
-        if len(result) > 0:
-            self.nextBtn.setEnabled(True)
 
     def clickPrevBtn(self):
         page = self.crawler.page
