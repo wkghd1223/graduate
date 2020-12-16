@@ -157,6 +157,10 @@ class Chart(QThread):
         self._status = False
         self.pgsb = pgsb
 
+    def __del__(self):
+        self.quit()
+        self.wait()
+
     def set_term(self, term):
         self._term = term
 
@@ -231,6 +235,7 @@ class Chart(QThread):
                 else:
                     curr = i
             idx += 1
+
         self.change_value.emit(TWENTY_FIVE)
 
         self.fig.clear()
@@ -255,7 +260,9 @@ class Chart(QThread):
         ax.legend(loc=1) # legend 위치
         self.canvas.draw()
 
+        self.wait()
         self.change_value.emit(A_HUNDRED)
+
 
     @pyqtSlot()
     def learnFunc(self):
@@ -273,6 +280,12 @@ class Chart(QThread):
         feature_chart_data = ['date', 'open', 'high', 'low', 'close', 'volume']
         chart_data = training_data[feature_chart_data]
 
+        for i, row in self.df.iterrows():
+            print(row['date'])
+            if row['date'] == "2020.09.22":
+                print("a")
+                chart_data.drop(index=i, inplace=True)
+        print(chart_data)
         # emit
         self.change_value.emit(TWENTY_FIVE)
 
@@ -340,6 +353,7 @@ class Chart(QThread):
 
         # emit
         self.change_value.emit(A_HUNDRED)
+        self.wait()
 
     def createFolder(self, directory):
         try:

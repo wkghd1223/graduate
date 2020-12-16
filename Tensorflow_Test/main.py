@@ -58,5 +58,5 @@ if __name__ == '__main__':
 
     #정책 신경망을 파일로 저장
     model_dir= os.path.join(settings.BASE_DIR,'models\%s' % stock_code)
-    model_path = os.path.join(model_dir,'model%s.h5' % (stock_code))
+    model_path = os.path.join(model_dir,'model%s_%s.h5' % (stock_code,timestr))
     policy_learner.policy_network.save_model(model_path)
